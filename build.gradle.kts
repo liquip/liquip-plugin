@@ -18,6 +18,7 @@ repositories {
 
 dependencies {
     paperDevBundle("1.19.2-R0.1-SNAPSHOT")
+    compileOnly("com.typesafe:config:1.4.2")
 }
 
 tasks {
