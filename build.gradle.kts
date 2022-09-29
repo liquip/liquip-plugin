@@ -18,6 +18,7 @@ repositories {
 
 dependencies {
     paperDevBundle("1.19.2-R0.1-SNAPSHOT")
+    compileOnly("dev.triumphteam:triumph-gui:3.1.3")
     compileOnly("com.typesafe:config:1.4.2")
 }
 
