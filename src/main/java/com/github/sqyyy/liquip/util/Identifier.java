@@ -16,18 +16,18 @@ public class Identifier implements Namespaced {
         this.key = key.toLowerCase();
     }
 
-    public Result<Identifier, RegistryError> parse(String identifier) {
+    public static Result<Identifier, RegistryError> parse(String identifier) {
         Objects.requireNonNull(identifier);
-        String[] tiles = identifier.split(":");
+        final var tiles = identifier.split(":");
         if (tiles.length != 2) {
             return Result.err(RegistryError.INVALID_IDENTIFIER);
         }
         return Result.ok(new Identifier(tiles[0].toLowerCase(), tiles[1].toLowerCase()));
     }
 
-    public Result<Identifier, RegistryError> parse(String identifier, String defaultNamespace) {
+    public static Result<Identifier, RegistryError> parse(String identifier, String defaultNamespace) {
         Objects.requireNonNull(identifier);
-        String[] tiles = identifier.split(":");
+        final var tiles = identifier.split(":");
         return switch (tiles.length) {
             case 1 -> Result.ok(new Identifier(defaultNamespace.toLowerCase(), tiles[0].toLowerCase()));
             case 2 -> Result.ok(new Identifier(tiles[0].toLowerCase(), tiles[1].toLowerCase()));
@@ -49,7 +49,7 @@ public class Identifier implements Namespaced {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Identifier that = (Identifier) o;
+        final var that = (Identifier) o;
         return namespace.equals(that.namespace) && key.equals(that.key);
     }
 
