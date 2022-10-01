@@ -1,13 +1,14 @@
 package com.github.sqyyy.liquip.config;
 
 import com.github.sqyyy.liquip.Liquip;
-import com.github.sqyyy.liquip.items.LiquipItem;
+import com.github.sqyyy.liquip.items.BasicLiquipItem;
 import com.typesafe.config.ConfigException;
 import com.typesafe.config.ConfigFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,12 +38,10 @@ public class ConfigLoader {
         if (!Files.exists(configPath)) {
             try {
                 Files.createFile(configPath);
-                Files.writeString(configPath,
-                        """
-                                items: [
-                                ]
-                                """
-                );
+                Files.writeString(configPath, """
+                        items: [
+                        ]
+                        """);
             } catch (IOException e) {
                 return Optional.of(ConfigError.CONFIG_IO_EXCEPTION);
             }
@@ -97,9 +96,11 @@ public class ConfigLoader {
         if (!Files.isDirectory(itemsPath)) {
             return Optional.of(ConfigError.ITEMS_DIRECTORY_IS_FILE);
         }
+        if (path.contains("..")) {
+            return Optional.of(ConfigError.ITEM_PATH_INVALID);
+        }
 
-        // TODO check for ..
-        final var itemPath = itemsPath.resolve(path);
+        final var itemPath = itemsPath.resolve(Paths.get(path));
 
         if (!Files.exists(itemPath)) {
             return Optional.of(ConfigError.ITEM_FILE_NOT_FOUND);
@@ -109,14 +110,21 @@ public class ConfigLoader {
         }
 
         final var itemConfig = ConfigFactory.parseFile(itemPath.toFile());
-        final var itemResult = LiquipItem.fromConfig(itemConfig);
+        final var itemResult = BasicLiquipItem.fromConfig(itemConfig, liquip.getEnchantmentRegistry(),
+                liquip.getFeatureRegistry());
 
         if (itemResult.isErr()) {
+            liquip.getPublicLogger()
+                    .error("An error occurred while loading item: {}", itemResult.unwrapErr().getMessage());
             return Optional.of(ConfigError.ITEM_INVALID);
         }
 
         final var item = itemResult.unwrap();
-        liquip.getItems().register(item.getKey(), item);
+
+        if (!liquip.getItemRegistry().register(item.getKey(), item)) {
+            return Optional.of(ConfigError.COULD_NOT_REGISTER);
+        }
+
         return Optional.empty();
     }
 }
