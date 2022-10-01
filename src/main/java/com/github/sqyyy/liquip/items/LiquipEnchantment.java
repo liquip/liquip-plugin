@@ -1,4 +1,7 @@
 package com.github.sqyyy.liquip.items;
 
-public class LiquipEnchantment {
+import org.bukkit.inventory.ItemStack;
+
+public interface LiquipEnchantment {
+    void apply(ItemStack itemStack, int level);
 }
