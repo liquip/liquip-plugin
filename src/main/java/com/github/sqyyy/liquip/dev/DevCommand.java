@@ -48,7 +48,7 @@ public class DevCommand implements CommandExecutor {
                 }
 
                 final var identifier = identifierResult.unwrap();
-                final var item = liquip.getItemRegistry().get(identifier);
+                final var item = Liquip.getProvider().getItemRegistry().get(identifier);
 
                 if (item == null) {
                     sender.sendMessage(mm.deserialize("<red>The supplied item could not be found</red>"));

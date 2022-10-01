@@ -56,7 +56,7 @@ public class ConfigLoader {
             return Optional.of(ConfigError.NULL_CONFIG);
         }
         if (!config.hasPath("items")) {
-            liquip.getPublicLogger().info("config {}", configPath);
+            liquip.getSLF4JLogger().info("config {}", configPath);
             return Optional.of(ConfigError.NO_ITEMS_REGISTRY);
         }
 
@@ -75,7 +75,7 @@ public class ConfigLoader {
             final var item = loadItem(itemPath);
 
             if (item.isPresent()) {
-                liquip.getPublicLogger()
+                liquip.getSLF4JLogger()
                         .error("An error occurred while loading items: {} (in {})", item.get().getMessage(), itemPath);
             }
         }
@@ -110,18 +110,18 @@ public class ConfigLoader {
         }
 
         final var itemConfig = ConfigFactory.parseFile(itemPath.toFile());
-        final var itemResult = BasicLiquipItem.fromConfig(itemConfig, liquip.getEnchantmentRegistry(),
-                liquip.getFeatureRegistry());
+        final var itemResult = BasicLiquipItem.fromConfig(itemConfig, Liquip.getProvider().getEnchantmentRegistry(),
+                Liquip.getProvider().getFeatureRegistry());
 
         if (itemResult.isErr()) {
-            liquip.getPublicLogger()
+            liquip.getSLF4JLogger()
                     .error("An error occurred while loading item: {}", itemResult.unwrapErr().getMessage());
             return Optional.of(ConfigError.ITEM_INVALID);
         }
 
         final var item = itemResult.unwrap();
 
-        if (!liquip.getItemRegistry().register(item.getKey(), item)) {
+        if (!Liquip.getProvider().getItemRegistry().register(item.getKey(), item)) {
             return Optional.of(ConfigError.COULD_NOT_REGISTER);
         }
 
