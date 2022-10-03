@@ -57,4 +57,9 @@ public class Identifier implements Namespaced {
     public int hashCode() {
         return Objects.hash(namespace, key);
     }
+
+    @Override
+    public String toString() {
+        return namespace + ":" + key;
+    }
 }
