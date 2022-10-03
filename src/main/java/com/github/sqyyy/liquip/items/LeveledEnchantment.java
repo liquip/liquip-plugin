@@ -1,8 +1,9 @@
 package com.github.sqyyy.liquip.items;
 
+import com.github.sqyyy.liquip.system.LiquipError;
 import com.github.sqyyy.liquip.util.Identifier;
 import com.github.sqyyy.liquip.util.Registry;
-import com.github.sqyyy.liquip.util.Result;
+import com.github.sqyyy.liquip.util.Status;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -23,20 +24,23 @@ public class LeveledEnchantment {
         this.level = level;
     }
 
-    public static Result<LeveledEnchantment, LiquipError> parse(Identifier key, int level,
-                                                                Registry<LiquipEnchantment> enchantmentRegistry) {
-
+    public static Status<LeveledEnchantment> parse(Identifier key, int level,
+                                                   Registry<LiquipEnchantment> enchantmentRegistry) {
         if (key.getNamespace().equals("minecraft")) {
-            return Result.ok(new LeveledEnchantment(Enchantment.getByKey(new NamespacedKey(key.getNamespace(),
-                    key.getKey())), level));
+            final var enchantmentResult = Enchantment.getByKey(new NamespacedKey(key.getNamespace(), key.getKey()));
+
+            if (enchantmentRegistry == null) {
+                return Status.err(LiquipError.ENCHANTMENT_NOT_FOUND);
+            }
+
+            return Status.ok(new LeveledEnchantment(enchantmentResult, level));
         } else {
             if (!enchantmentRegistry.isRegistered(key)) {
-                return Result.err(LiquipError.ENCHANTMENT_NOT_FOUND);
+                return Status.err(LiquipError.ENCHANTMENT_NOT_FOUND);
             }
 
             final var enchantmentResult = enchantmentRegistry.get(key);
-
-            return Result.ok(new LeveledEnchantment(enchantmentResult, level));
+            return Status.ok(new LeveledEnchantment(enchantmentResult, level));
         }
     }
 
