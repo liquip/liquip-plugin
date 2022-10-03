@@ -1,4 +1,7 @@
-package com.github.sqyyy.liquip.util;
+package com.github.sqyyy.liquip.util.impl;
+
+import com.github.sqyyy.liquip.util.Identifier;
+import com.github.sqyyy.liquip.util.Registry;
 
 import java.util.HashMap;
 import java.util.Map;
