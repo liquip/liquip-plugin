@@ -9,7 +9,7 @@ public class LiquipExample extends JavaPlugin {
     private final String namespace = "liquip-example";
 
     @Override
-    public void onEnable() {
+    public void onLoad() {
         final var provider = Liquip.getProvider();
         provider.getFeatureRegistry().register(new Identifier(namespace, "grappling_hook"), new GrapplingHook());
     }
