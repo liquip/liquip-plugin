@@ -13,7 +13,7 @@ public class GrapplingHook implements Feature {
     public void onFish(PlayerFishEvent event) {
         final var state = event.getState();
 
-        if (state != PlayerFishEvent.State.REEL_IN) {
+        if (state != PlayerFishEvent.State.REEL_IN && state != PlayerFishEvent.State.IN_GROUND) {
             return;
         }
 
