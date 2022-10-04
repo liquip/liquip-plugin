@@ -66,7 +66,6 @@ public class ConfigLoader {
             status.setError(LiquipError.INVALID_CONFIG);
             return status;
         }
-
         if (config == null) {
             status.setError(LiquipError.NULL_CONFIG);
             return status;
