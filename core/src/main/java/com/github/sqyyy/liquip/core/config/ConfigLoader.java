@@ -90,6 +90,7 @@ public class ConfigLoader {
 
         for (String itemPath : itemsRegistry) {
             final var item = loadItem(itemPath);
+            status.addWarnings(item.getWarnings());
 
             if (item.isErr()) {
                 status.addWarning(new IgnoredError("Could not load item in '" + itemPath + "'", item.unwrapErr()));
@@ -136,6 +137,7 @@ public class ConfigLoader {
         final var itemConfig = ConfigFactory.parseFile(itemPath.toFile());
         final var itemResult = LiquipItem.fromConfig(itemConfig, Liquip.getProvider().getEnchantmentRegistry(),
                 Liquip.getProvider().getFeatureRegistry());
+        status.addWarnings(itemResult.getWarnings());
 
         if (itemResult.isErr()) {
             status.setError(LiquipError.ITEM_INVALID);
