@@ -1,6 +1,7 @@
 package com.github.sqyyy.liquip.core.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -131,5 +132,13 @@ public class Status<T> {
         }
 
         warnings.add(warning);
+    }
+
+    public void addWarnings(Collection<Warning> warnings) {
+        if (isFinal) {
+            return;
+        }
+
+        this.warnings.addAll(warnings);
     }
 }
