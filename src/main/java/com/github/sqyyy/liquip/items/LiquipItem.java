@@ -12,6 +12,7 @@ import com.google.common.collect.Multimap;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -56,6 +57,7 @@ public interface LiquipItem {
 
             id = keyResult.unwrap();
             name = miniMessage.deserialize(config.getString("name"));
+            name = name.decoration(TextDecoration.ITALIC, false);
             final var materialKey = NamespacedKey.fromString(config.getString("material"));
 
             if (materialKey == null) {
@@ -74,7 +76,7 @@ public interface LiquipItem {
                 lore = new ArrayList<>();
 
                 for (final var line : loreResult) {
-                    lore.add(miniMessage.deserialize(line));
+                    lore.add(miniMessage.deserialize(line).decoration(TextDecoration.ITALIC, false));
                 }
             }
             if (config.hasPath("enchantments")) {
