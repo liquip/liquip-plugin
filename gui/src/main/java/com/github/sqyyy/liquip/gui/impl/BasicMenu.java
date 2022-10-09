@@ -26,6 +26,63 @@ public class BasicMenu implements Menu {
     private final boolean[] takeSlots;
     private final List<MenuEventListener> listeners;
 
+    public BasicMenu(@NotNull Component title, int rows, @NotNull MenuType type, @NotNull List<@NotNull Pane> panes) {
+        switch (type) {
+            case CHEST -> {
+                if (rows > 6 || rows < 1) {
+                    throw new IllegalArgumentException("rows is not in range 1..6");
+                }
+                putSlots = new boolean[9 * rows];
+                takeSlots = new boolean[9 * rows];
+                Arrays.fill(putSlots, false);
+                Arrays.fill(takeSlots, false);
+            }
+            case HOPPER -> {
+                if (rows != 1) {
+                    throw new IllegalArgumentException("rows is not 1");
+                }
+                putSlots = new boolean[5];
+                takeSlots = new boolean[5];
+                Arrays.fill(putSlots, false);
+                Arrays.fill(takeSlots, false);
+            }
+            case DISPENSER -> {
+                if (rows != 3) {
+                    throw new IllegalArgumentException("rows is not 3");
+                }
+                putSlots = new boolean[9];
+                takeSlots = new boolean[9];
+                Arrays.fill(putSlots, false);
+                Arrays.fill(takeSlots, false);
+            }
+            default -> throw new IllegalArgumentException();
+        }
+        final List<Pane>[] orderedPanes = new List[Priority.MAX_PRIORITY + 1];
+        Arrays.fill(orderedPanes, new ArrayList<>(1));
+        for (Pane pane : panes) {
+            final int priority = pane.getPriority();
+            if (priority > Priority.MAX_PRIORITY) {
+                throw new IllegalArgumentException("pane.getPriority() > Priority.MAX_PRIORITY");
+            }
+            orderedPanes[priority].add(pane);
+        }
+        for (int i = 0; i < putSlots.length; i++) {
+            for (List<Pane> paneList : orderedPanes) {
+                for (Pane pane : paneList) {
+                    if (pane.collidesWith(i)) {
+                        putSlots[i] = pane.canPutItem(i);
+                        takeSlots[i] = pane.canTakeItem(i);
+                    }
+                }
+            }
+        }
+        this.title = title;
+        this.rows = rows;
+        this.type = type;
+        this.panes = orderedPanes;
+        listeners = new ArrayList<>();
+    }
+
     public BasicMenu(@NotNull Component title, int rows, @NotNull MenuType type, @NotNull List<@NotNull Pane>[] panes) {
         if (panes.length > Priority.MAX_PRIORITY) {
             throw new IllegalArgumentException("panes.length > Priority.MAX_PRIORITY");
@@ -77,9 +134,8 @@ public class BasicMenu implements Menu {
         listeners = new ArrayList<>();
     }
 
-    @NotNull
     @Override
-    public Component getTitle() {
+    public @NotNull Component getTitle() {
         return title;
     }
 
@@ -88,20 +144,18 @@ public class BasicMenu implements Menu {
         return rows;
     }
 
-    @NotNull
     @Override
-    public MenuType getType() {
+    public @NotNull MenuType getType() {
         return type;
     }
 
-    @NotNull
     @Override
-    public List<Pane> getPanes(int priority) {
+    public @NotNull List<@NotNull Pane> getPanes(int priority) {
         return panes[priority];
     }
 
     @Override
-    public int nextPutSlot(int fromSlot, Inventory inventory) {
+    public int nextPutSlot(int fromSlot, @NotNull Inventory inventory) {
         if (fromSlot > putSlots.length) {
             return -1;
         }
@@ -128,7 +182,7 @@ public class BasicMenu implements Menu {
     }
 
     @Override
-    public void open(Player player) {
+    public void open(@NotNull Player player) {
         final BasicMenuHolder holder = new BasicMenuHolder(this);
         final Inventory inventory = switch (type) {
             case CHEST -> Bukkit.createInventory(holder, rows * 9, title);
@@ -150,7 +204,7 @@ public class BasicMenu implements Menu {
     }
 
     @Override
-    public void onClickItem(InventoryClickEvent event) {
+    public void onClickItem(@NotNull InventoryClickEvent event) {
         for (MenuEventListener listener : listeners) {
             listener.onClickItem(event);
         }
@@ -299,7 +353,7 @@ public class BasicMenu implements Menu {
     }
 
     @Override
-    public void onCloseInventory(InventoryCloseEvent event) {
+    public void onCloseInventory(@NotNull InventoryCloseEvent event) {
         for (MenuEventListener listener : listeners) {
             listener.onCloseInventory(event);
         }
@@ -311,9 +365,19 @@ public class BasicMenu implements Menu {
     }
 
     @Override
-    public void onDragItems(InventoryDragEvent event) {
-        for (MenuEventListener listener : listeners) {
-            listener.onDragItems(event);
+    public void onDragItems(@NotNull InventoryDragEvent event) {
+        final int length = putSlots.length;
+        for (int rawSlot : event.getRawSlots()) {
+            if (rawSlot > length) {
+                continue;
+            }
+            if (!putSlots[rawSlot]) {
+                event.setCancelled(true);
+                for (MenuEventListener listener : listeners) {
+                    listener.onDragItems(event);
+                }
+                return;
+            }
         }
         for (List<Pane> paneList : panes) {
             for (Pane pane : paneList) {
