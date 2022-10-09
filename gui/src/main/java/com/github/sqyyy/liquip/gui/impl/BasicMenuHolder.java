@@ -16,22 +16,22 @@ public class BasicMenuHolder implements MenuHolder {
         this.menu = menu;
     }
 
-    public Menu getMenu() {
+    public @NotNull Menu getMenu() {
         return menu;
     }
 
     @Override
-    public void onClickItem(InventoryClickEvent event) {
+    public void onClickItem(@NotNull InventoryClickEvent event) {
         menu.onClickItem(event);
     }
 
     @Override
-    public void onCloseInventory(InventoryCloseEvent event) {
+    public void onCloseInventory(@NotNull InventoryCloseEvent event) {
         menu.onCloseInventory(event);
     }
 
     @Override
-    public void onDragItems(InventoryDragEvent event) {
+    public void onDragItems(@NotNull InventoryDragEvent event) {
         menu.onDragItems(event);
     }
 
@@ -40,7 +40,7 @@ public class BasicMenuHolder implements MenuHolder {
         return inventory;
     }
 
-    public void setInventory(Inventory inventory) {
+    public void setInventory(@NotNull Inventory inventory) {
         if (inventory.getHolder() != this) {
             throw new IllegalArgumentException("inventory has wrong holder");
         }

@@ -4,11 +4,12 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.InventoryHolder;
+import org.jetbrains.annotations.NotNull;
 
 public interface MenuHolder extends InventoryHolder {
-    void onClickItem(InventoryClickEvent event);
+    void onClickItem(@NotNull InventoryClickEvent event);
 
-    void onCloseInventory(InventoryCloseEvent event);
+    void onCloseInventory(@NotNull InventoryCloseEvent event);
 
-    void onDragItems(InventoryDragEvent event);
+    void onDragItems(@NotNull InventoryDragEvent event);
 }

@@ -1,5 +1,7 @@
 package com.github.sqyyy.liquip.gui;
 
+import org.jetbrains.annotations.NotNull;
+
 public class Slot {
     private static final Slot[][] slots = new Slot[6][9];
     public static final Slot ROW_ONE_SLOT_ONE = new Slot(0, 0);
@@ -71,6 +73,7 @@ public class Slot {
         slots[row][column] = this;
     }
 
+    @NotNull
     public static Slot get(int row, int column) {
         return slots[row][column];
     }

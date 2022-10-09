@@ -9,19 +9,24 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public interface Menu {
-    Component getTitle();
+    static void initialize(@NotNull Plugin plugin) {
+        Bukkit.getPluginManager().registerEvents(new MenuHolderEventListener(), plugin);
+    }
+
+    @NotNull Component getTitle();
 
     int getRows();
 
-    MenuType getType();
+    @NotNull MenuType getType();
 
-    List<Pane> getPanes(int priority);
+    @NotNull List<@NotNull Pane> getPanes(int priority);
 
-    int nextPutSlot(int fromSlot, Inventory inventory);
+    int nextPutSlot(int fromSlot, @NotNull Inventory inventory);
 
     default boolean canPutItem(int slot) {
         return false;
@@ -31,17 +36,13 @@ public interface Menu {
         return false;
     }
 
-    void open(Player player);
+    void open(@NotNull Player player);
 
-    void registerEventListener(MenuEventListener listener);
+    void registerEventListener(@NotNull MenuEventListener listener);
 
-    void onClickItem(InventoryClickEvent event);
+    void onClickItem(@NotNull InventoryClickEvent event);
 
-    void onCloseInventory(InventoryCloseEvent event);
+    void onCloseInventory(@NotNull InventoryCloseEvent event);
 
-    void onDragItems(InventoryDragEvent event);
-
-    static void initialize(Plugin plugin) {
-        Bukkit.getPluginManager().registerEvents(new MenuHolderEventListener(), plugin);
-    }
+    void onDragItems(@NotNull InventoryDragEvent event);
 }

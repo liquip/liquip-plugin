@@ -4,9 +4,10 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.NotNull;
 
 public interface Pane {
-    default void initialize(Menu menu) {
+    default void initialize(@NotNull Menu menu) {
     }
 
     int getPriority();
@@ -21,20 +22,21 @@ public interface Pane {
         return false;
     }
 
-    void apply(Inventory inventory);
-
-    default void onPutItem(InventoryClickEvent event) {
+    default void apply(@NotNull Inventory inventory) {
     }
 
-    default void onTakeItem(InventoryClickEvent event) {
+    default void onPutItem(@NotNull InventoryClickEvent event) {
     }
 
-    default void onClickItem(InventoryClickEvent event) {
+    default void onTakeItem(@NotNull InventoryClickEvent event) {
     }
 
-    default void onDragItems(InventoryDragEvent event) {
+    default void onClickItem(@NotNull InventoryClickEvent event) {
     }
 
-    default void onCloseInventory(InventoryCloseEvent event) {
+    default void onDragItems(@NotNull InventoryDragEvent event) {
+    }
+
+    default void onCloseInventory(@NotNull InventoryCloseEvent event) {
     }
 }

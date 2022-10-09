@@ -3,13 +3,14 @@ package com.github.sqyyy.liquip.gui.impl;
 import com.github.sqyyy.liquip.gui.Pane;
 import com.github.sqyyy.liquip.gui.Slot;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.NotNull;
 
 public class OutputSlotPane implements Pane {
     private final int priority;
     private final int row;
     private final int column;
 
-    public OutputSlotPane(int priority, Slot slot) {
+    public OutputSlotPane(int priority, @NotNull Slot slot) {
         this(priority, slot.getRow(), slot.getColumn());
     }
 
@@ -43,7 +44,7 @@ public class OutputSlotPane implements Pane {
     }
 
     @Override
-    public void apply(Inventory inventory) {
+    public void apply(@NotNull Inventory inventory) {
         inventory.setItem(row * 9 + column, null);
     }
 }

@@ -5,6 +5,8 @@ import com.github.sqyyy.liquip.gui.Priority;
 import com.github.sqyyy.liquip.gui.Slot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class FillPane implements Pane {
     private final int priority;
@@ -14,11 +16,12 @@ public class FillPane implements Pane {
     private final int endColumn;
     private final ItemStack fillItem;
 
-    public FillPane(int priority, Slot from, Slot to, ItemStack fillItem) {
+    public FillPane(int priority, @NotNull Slot from, @NotNull Slot to, @Nullable ItemStack fillItem) {
         this(priority, from.getRow(), from.getColumn(), to.getRow(), to.getColumn(), fillItem);
     }
 
-    public FillPane(int priority, int startRow, int startColumn, int endRow, int endColumn, ItemStack fillItem) {
+    public FillPane(int priority, int startRow, int startColumn, int endRow, int endColumn,
+                    @Nullable ItemStack fillItem) {
         if (priority < Priority.MIN_PRIORITY || priority > Priority.MAX_PRIORITY) {
             throw new IllegalArgumentException(
                     "priority must be Priority.MIN_PRIORITY < priority < Priority.MAX_PRIORITY");
@@ -53,7 +56,7 @@ public class FillPane implements Pane {
         return endColumn;
     }
 
-    public ItemStack getFillItem() {
+    public @Nullable ItemStack getFillItem() {
         return fillItem;
     }
 
@@ -70,7 +73,7 @@ public class FillPane implements Pane {
     }
 
     @Override
-    public void apply(Inventory inventory) {
+    public void apply(@NotNull Inventory inventory) {
         for (int row = startRow; row <= endRow; row++) {
             for (int column = startColumn; column <= endColumn; column++) {
                 inventory.setItem(row * 9 + column, fillItem);

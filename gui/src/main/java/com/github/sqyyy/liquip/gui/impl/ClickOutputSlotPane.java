@@ -7,6 +7,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
@@ -16,11 +17,13 @@ public class ClickOutputSlotPane implements Pane {
     private final int column;
     private final Function<InventoryClickEvent, ItemStack> itemStackSupplier;
 
-    public ClickOutputSlotPane(int priority, Slot slot, Function<InventoryClickEvent, ItemStack> itemStackSupplier) {
+    public ClickOutputSlotPane(int priority, @NotNull Slot slot,
+                               @NotNull Function<InventoryClickEvent, ItemStack> itemStackSupplier) {
         this(priority, slot.getRow(), slot.getColumn(), itemStackSupplier);
     }
 
-    public ClickOutputSlotPane(int priority, int row, int column, Function<InventoryClickEvent, ItemStack> itemStackSupplier) {
+    public ClickOutputSlotPane(int priority, int row, int column,
+                               @NotNull Function<InventoryClickEvent, ItemStack> itemStackSupplier) {
         this.priority = priority;
         this.row = row;
         this.column = column;
@@ -38,12 +41,12 @@ public class ClickOutputSlotPane implements Pane {
     }
 
     @Override
-    public void apply(Inventory inventory) {
+    public void apply(@NotNull Inventory inventory) {
         inventory.setItem(row * 9 + column, null);
     }
 
     @Override
-    public void onClickItem(InventoryClickEvent event) {
+    public void onClickItem(@NotNull InventoryClickEvent event) {
         if (event.getRawSlot() != row * 9 + column) {
             return;
         }

@@ -5,6 +5,7 @@ import com.github.sqyyy.liquip.gui.Priority;
 import com.github.sqyyy.liquip.gui.Slot;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;
 
@@ -17,13 +18,15 @@ public class StoragePane implements Pane {
     private final BiConsumer<StoragePane, Inventory> setup;
     private final BiConsumer<StoragePane, InventoryCloseEvent> onClose;
 
-    public StoragePane(int priority, Slot from, Slot to, BiConsumer<StoragePane, Inventory> setup,
-                       BiConsumer<StoragePane, InventoryCloseEvent> onClose) {
+    public StoragePane(int priority, @NotNull Slot from, @NotNull Slot to,
+                       @NotNull BiConsumer<@NotNull StoragePane, @NotNull Inventory> setup,
+                       @NotNull BiConsumer<@NotNull StoragePane, @NotNull InventoryCloseEvent> onClose) {
         this(priority, from.getRow(), from.getColumn(), to.getRow(), to.getColumn(), setup, onClose);
     }
 
     public StoragePane(int priority, int startRow, int startColumn, int endRow, int endColumn,
-                       BiConsumer<StoragePane, Inventory> setup, BiConsumer<StoragePane, InventoryCloseEvent> onClose) {
+                       @NotNull BiConsumer<@NotNull StoragePane, @NotNull Inventory> setup,
+                       @NotNull BiConsumer<@NotNull StoragePane, @NotNull InventoryCloseEvent> onClose) {
         if (priority < Priority.MIN_PRIORITY || priority > Priority.MAX_PRIORITY) {
             throw new IllegalArgumentException(
                     "priority must be Priority.MIN_PRIORITY < priority < Priority.MAX_PRIORITY");
@@ -86,7 +89,7 @@ public class StoragePane implements Pane {
     }
 
     @Override
-    public void apply(Inventory inventory) {
+    public void apply(@NotNull Inventory inventory) {
         for (int row = startRow; row <= endRow; row++) {
             for (int column = startColumn; column <= endColumn; column++) {
                 inventory.setItem(row * 9 + column, null);
@@ -96,7 +99,7 @@ public class StoragePane implements Pane {
     }
 
     @Override
-    public void onCloseInventory(InventoryCloseEvent event) {
+    public void onCloseInventory(@NotNull InventoryCloseEvent event) {
         onClose.accept(this, event);
     }
 }
