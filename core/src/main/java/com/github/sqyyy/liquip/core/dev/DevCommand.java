@@ -1,13 +1,15 @@
 package com.github.sqyyy.liquip.core.dev;
 
 import com.github.sqyyy.liquip.core.Liquip;
+import com.github.sqyyy.liquip.core.system.craft.CraftingOutputPane;
+import com.github.sqyyy.liquip.core.system.craft.CraftingPane;
 import com.github.sqyyy.liquip.core.util.Identifier;
 import com.github.sqyyy.liquip.gui.Menu;
 import com.github.sqyyy.liquip.gui.MenuType;
 import com.github.sqyyy.liquip.gui.Slot;
 import com.github.sqyyy.liquip.gui.impl.BasicMenu;
+import com.github.sqyyy.liquip.gui.impl.FillItemPane;
 import com.github.sqyyy.liquip.gui.impl.FillPane;
-import com.github.sqyyy.liquip.gui.impl.OutputSlotPane;
 import com.github.sqyyy.liquip.gui.impl.StoragePane;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -22,20 +24,19 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class DevCommand implements CommandExecutor {
-    private final Liquip liquip;
     private final Menu menu;
 
-    public DevCommand(Liquip liquip) {
-        this.liquip = liquip;
-        Menu.initialize(liquip);
-        menu = new BasicMenu(Component.text("Advanced Crafting"), 5, MenuType.CHEST, new List[]{
+    public DevCommand() {
+        Menu.initialize(Liquip.getProvidingPlugin(Liquip.class));
+        menu = new BasicMenu(Component.text("Advanced Crafting"), 5, MenuType.CHEST,
                 List.of(new FillPane(0, Slot.ROW_ONE_SLOT_ONE, Slot.ROW_FIVE_SLOT_NINE,
-                        new ItemStack(Material.BLACK_STAINED_GLASS_PANE))),
-                List.of(new FillPane(1, Slot.ROW_TWO_SLOT_SIX, Slot.ROW_FOUR_SLOT_EIGHT,
-                        new ItemStack(Material.LIME_STAINED_GLASS_PANE))),
-                List.of(new StoragePane(2, Slot.ROW_TWO_SLOT_TWO, Slot.ROW_FOUR_SLOT_FOUR, (storagePane, inventory) -> {
-                }, (storagePane, inventoryCloseEvent) -> {
-                }), new OutputSlotPane(2, Slot.ROW_THREE_SLOT_SEVEN))});
+                                new ItemStack(Material.BLACK_STAINED_GLASS_PANE)), new CraftingPane(0),
+                        new FillPane(1, Slot.ROW_TWO_SLOT_SIX, Slot.ROW_FOUR_SLOT_EIGHT,
+                                new ItemStack(Material.LIME_STAINED_GLASS_PANE)),
+                        new FillItemPane(1, Slot.ROW_THREE_SLOT_NINE, new ItemStack(Material.KNOWLEDGE_BOOK)),
+                        new StoragePane(2, Slot.ROW_TWO_SLOT_TWO, Slot.ROW_FOUR_SLOT_FOUR, (storagePane, inventory) -> {
+                        }, (storagePane, inventoryCloseEvent) -> {
+                        }), new CraftingOutputPane(2)));
     }
 
     @Override
@@ -79,9 +80,7 @@ public class DevCommand implements CommandExecutor {
 
                 player.getInventory().addItem(item.newItem());
             }
-            case "craft" -> {
-                menu.open(player);
-            }
+            case "craft" -> menu.open(player);
             default -> {
                 player.sendMessage(mm.deserialize("<red>Unknown subcommand</red>"));
                 return true;

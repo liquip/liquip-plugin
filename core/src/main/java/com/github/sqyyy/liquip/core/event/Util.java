@@ -31,6 +31,5 @@ class Util {
         }
 
         return handle;
-        // TODO - version dependent
     }
 }

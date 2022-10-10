@@ -32,12 +32,12 @@ public class FillPane implements Pane {
         if (startColumn > endColumn) {
             throw new IllegalArgumentException("startColumn > endColumn");
         }
-        this.fillItem = fillItem;
         this.priority = priority;
         this.startRow = startRow;
         this.startColumn = startColumn;
         this.endRow = endRow;
         this.endColumn = endColumn;
+        this.fillItem = fillItem;
     }
 
     public int getStartRow() {

@@ -16,22 +16,22 @@ public class Identifier implements Namespaced {
         this.key = key.toLowerCase();
     }
 
-    public static Result<Identifier, RegistryError> parse(String identifier) {
+    public static Result<Identifier, UtilError> parse(String identifier) {
         Objects.requireNonNull(identifier);
         final var tiles = identifier.split(":");
         if (tiles.length != 2) {
-            return Result.err(RegistryError.INVALID_IDENTIFIER);
+            return Result.err(UtilError.INVALID_IDENTIFIER);
         }
         return Result.ok(new Identifier(tiles[0].toLowerCase(), tiles[1].toLowerCase()));
     }
 
-    public static Result<Identifier, RegistryError> parse(String identifier, String defaultNamespace) {
+    public static Result<Identifier, UtilError> parse(String identifier, String defaultNamespace) {
         Objects.requireNonNull(identifier);
         final var tiles = identifier.split(":");
         return switch (tiles.length) {
             case 1 -> Result.ok(new Identifier(defaultNamespace.toLowerCase(), tiles[0].toLowerCase()));
             case 2 -> Result.ok(new Identifier(tiles[0].toLowerCase(), tiles[1].toLowerCase()));
-            default -> Result.err(RegistryError.INVALID_IDENTIFIER);
+            default -> Result.err(UtilError.INVALID_IDENTIFIER);
         };
     }
 

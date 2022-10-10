@@ -70,25 +70,18 @@ public class BasicLiquipItem implements LiquipItem {
 
     @Override
     public ItemStack newItem() {
-        // TODO - version dependent
-        final var itemStack =
-                org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack.asCraftCopy(new ItemStack(material));
+        final var itemStack = new ItemStack(material);
         final var itemMeta = itemStack.getItemMeta();
         itemMeta.displayName(name);
         itemMeta.lore(lore);
         itemStack.setItemMeta(itemMeta);
-        final var handle = itemStack.handle;
-        handle.getOrCreateTag().putString("liquip:identifier", id.toString());
-        // TODO - version dependent
-
         for (final var enchantment : enchantments) {
             enchantment.apply(itemStack);
         }
         for (final var feature : features) {
             feature.apply(itemStack);
         }
-
-        return itemStack;
+        return LiquipItem.setIdentifier(itemStack, id);
     }
 
     @Override

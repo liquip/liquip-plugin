@@ -44,6 +44,6 @@ public class Liquip extends JavaPlugin {
             return;
         }
 
-        devCommand.setExecutor(new DevCommand(this));
+        devCommand.setExecutor(new DevCommand());
     }
 }

@@ -58,7 +58,9 @@ public class BasicMenu implements Menu {
             default -> throw new IllegalArgumentException();
         }
         final List<Pane>[] orderedPanes = new List[Priority.MAX_PRIORITY + 1];
-        Arrays.fill(orderedPanes, new ArrayList<>(1));
+        for (int i = 0; i < orderedPanes.length; i++) {
+            orderedPanes[i] = new ArrayList<>(1);
+        }
         for (Pane pane : panes) {
             final int priority = pane.getPriority();
             if (priority > Priority.MAX_PRIORITY) {
@@ -80,7 +82,7 @@ public class BasicMenu implements Menu {
         this.rows = rows;
         this.type = type;
         this.panes = orderedPanes;
-        listeners = new ArrayList<>();
+        listeners = new ArrayList<>(1);
     }
 
     public BasicMenu(@NotNull Component title, int rows, @NotNull MenuType type, @NotNull List<@NotNull Pane>[] panes) {
@@ -131,7 +133,7 @@ public class BasicMenu implements Menu {
         this.rows = rows;
         this.type = type;
         this.panes = panes;
-        listeners = new ArrayList<>();
+        listeners = new ArrayList<>(1);
     }
 
     @Override
@@ -368,7 +370,7 @@ public class BasicMenu implements Menu {
     public void onDragItems(@NotNull InventoryDragEvent event) {
         final int length = putSlots.length;
         for (int rawSlot : event.getRawSlots()) {
-            if (rawSlot > length) {
+            if (rawSlot >= length) {
                 continue;
             }
             if (!putSlots[rawSlot]) {

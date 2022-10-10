@@ -1,6 +1,5 @@
 package com.github.sqyyy.liquip.gui.impl;
 
-import com.github.sqyyy.liquip.gui.MenuEventListener;
 import com.github.sqyyy.liquip.gui.Pane;
 import com.github.sqyyy.liquip.gui.Priority;
 import com.github.sqyyy.liquip.gui.Slot;
@@ -15,14 +14,12 @@ public abstract class ListenerPane implements Pane {
     private final int startColumn;
     private final int endRow;
     private final int endColumn;
-    private final MenuEventListener listener;
 
-    public ListenerPane(int priority, @NotNull Slot from, @NotNull Slot to, @NotNull MenuEventListener listener) {
-        this(priority, from.getRow(), from.getColumn(), to.getRow(), to.getColumn(), listener);
+    public ListenerPane(int priority, @NotNull Slot from, @NotNull Slot to) {
+        this(priority, from.getRow(), from.getColumn(), to.getRow(), to.getColumn());
     }
 
-    public ListenerPane(int priority, int startRow, int startColumn, int endRow, int endColumn,
-                        @NotNull MenuEventListener listener) {
+    public ListenerPane(int priority, int startRow, int startColumn, int endRow, int endColumn) {
         if (priority < Priority.MIN_PRIORITY || priority > Priority.MAX_PRIORITY) {
             throw new IllegalArgumentException(
                     "priority must be Priority.MIN_PRIORITY < priority < Priority.MAX_PRIORITY");
@@ -33,7 +30,6 @@ public abstract class ListenerPane implements Pane {
         if (startColumn > endColumn) {
             throw new IllegalArgumentException("startColumn > endColumn");
         }
-        this.listener = listener;
         this.priority = priority;
         this.startRow = startRow;
         this.startColumn = startColumn;
@@ -55,10 +51,6 @@ public abstract class ListenerPane implements Pane {
 
     public int getEndColumn() {
         return endColumn;
-    }
-
-    public @NotNull MenuEventListener getListener() {
-        return listener;
     }
 
     @Override

@@ -8,6 +8,8 @@ import com.github.sqyyy.liquip.core.util.Status;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;
 import com.typesafe.config.ConfigFactory;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -136,7 +138,7 @@ public class ConfigLoader {
 
         final var itemConfig = ConfigFactory.parseFile(itemPath.toFile());
         final var itemResult = LiquipItem.fromConfig(itemConfig, Liquip.getProvider().getEnchantmentRegistry(),
-                Liquip.getProvider().getFeatureRegistry());
+                Liquip.getProvider().getFeatureRegistry(), Liquip.getProvider().getCraftingRegistry());
         status.addWarnings(itemResult.getWarnings());
 
         if (itemResult.isErr()) {
@@ -151,6 +153,7 @@ public class ConfigLoader {
             return status;
         }
 
+        Bukkit.broadcast(Component.text("registered new item " + item.getId()));
         status.setOk(true);
         status.setValue(null);
         return status;
