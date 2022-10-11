@@ -76,7 +76,8 @@ public class DevCommand {
 
     public static String[] suggestGive(SuggestionInfo info) {
         final Set<Identifier> keySet = Liquip.getProvider().getItemRegistry().keySet();
-        return keySet.stream().map(Identifier::toString).filter(it -> it.startsWith(info.currentArg()))
-                .toArray(String[]::new);
+        return keySet.stream()
+                .filter(it -> it.toString().startsWith(info.currentArg()) || it.getKey().startsWith(info.currentArg()))
+                .map(Identifier::toString).toArray(String[]::new);
     }
 }
