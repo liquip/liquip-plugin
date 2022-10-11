@@ -4,7 +4,10 @@ import com.github.sqyyy.liquip.core.config.ConfigLoader;
 import com.github.sqyyy.liquip.core.dev.DevCommand;
 import com.github.sqyyy.liquip.core.event.BlockEventListener;
 import com.github.sqyyy.liquip.core.event.PlayerEventListener;
+import com.github.sqyyy.liquip.core.util.Status;
 import com.github.sqyyy.liquip.core.util.Warning;
+import dev.jorel.commandapi.CommandAPI;
+import dev.jorel.commandapi.CommandAPIConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -17,11 +20,16 @@ public class Liquip extends JavaPlugin {
     }
 
     @Override
-    public void onEnable() {
-        provider.registerDefaultFeatures();
-        final var configLoader = new ConfigLoader(this);
-        final var configResult = configLoader.loadConfig();
+    public void onLoad() {
+        CommandAPI.onLoad(new CommandAPIConfig());
+    }
 
+    @Override
+    public void onEnable() {
+        CommandAPI.onEnable(this);
+        provider.registerDefaultFeatures();
+        final ConfigLoader configLoader = new ConfigLoader();
+        final Status<Void> configResult = configLoader.loadConfig();
         for (Warning warning : configResult.getWarnings()) {
             warning.print(getSLF4JLogger());
         }
@@ -33,17 +41,8 @@ public class Liquip extends JavaPlugin {
         } else {
             getSLF4JLogger().info("Successfully loaded config");
         }
-
-        Bukkit.getPluginManager().registerEvents(new BlockEventListener(this), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerEventListener(this), this);
-
-        final var devCommand = getCommand("liquip");
-
-        if (devCommand == null) {
-            getSLF4JLogger().warn("Could not load liquip-command");
-            return;
-        }
-
-        devCommand.setExecutor(new DevCommand());
+        Bukkit.getPluginManager().registerEvents(new BlockEventListener(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerEventListener(), this);
+        new DevCommand();
     }
 }
