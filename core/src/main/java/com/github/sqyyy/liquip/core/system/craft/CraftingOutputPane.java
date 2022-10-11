@@ -21,6 +21,7 @@ public class CraftingOutputPane extends OutputSlotPane {
                           @NotNull CraftingRegistry registry) {
         final CraftingRecipe recipe = registry.get(craftingHashObject);
         if (!recipe.matches(items, identifiers)) {
+            event.setCancelled(true);
             new CraftingUpdateScheduler(event.getView()).runTaskLater(Liquip.getProvidingPlugin(Liquip.class), 0);
             return true;
         }
@@ -54,6 +55,7 @@ public class CraftingOutputPane extends OutputSlotPane {
         }
         craftingHashObject.setShaped(false);
         if (!registry.isRegistered(craftingHashObject)) {
+            event.setCancelled(true);
             new CraftingUpdateScheduler(event.getView()).runTaskLater(Liquip.getProvidingPlugin(Liquip.class), 0);
             return;
         }
