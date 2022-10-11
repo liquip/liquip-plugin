@@ -26,6 +26,7 @@ public class BasicMenu implements Menu {
     private final boolean[] takeSlots;
     private final List<MenuEventListener> listeners;
 
+    @SuppressWarnings("unchecked")
     public BasicMenu(@NotNull Component title, int rows, @NotNull MenuType type, @NotNull List<@NotNull Pane> panes) {
         switch (type) {
             case CHEST -> {
