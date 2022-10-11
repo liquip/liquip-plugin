@@ -1,6 +1,7 @@
 package com.github.sqyyy.liquip.core.items;
 
 import com.github.sqyyy.liquip.core.Liquip;
+import com.github.sqyyy.liquip.core.LiquipProvider;
 import com.github.sqyyy.liquip.core.items.impl.BasicLiquipItem;
 import com.github.sqyyy.liquip.core.system.IgnoredError;
 import com.github.sqyyy.liquip.core.system.LiquipError;
@@ -14,6 +15,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;
+import com.typesafe.config.ConfigValue;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -25,16 +27,14 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 public interface LiquipItem {
     static @NotNull Status<@NotNull LiquipItem> fromConfig(@NotNull Config config,
                                                            @NotNull Registry<@NotNull LiquipEnchantment> enchantmentRegistry,
                                                            @NotNull Registry<@NotNull Feature> featureRegistry,
+                                                           @NotNull Registry<@NotNull ModifierSupplier> modifierRegistry,
                                                            @NotNull CraftingRegistry craftingRegistry) {
         final Status<LiquipItem> status = new Status<LiquipItem>();
         final MiniMessage miniMessage = MiniMessage.miniMessage();
@@ -44,6 +44,7 @@ public interface LiquipItem {
         List<Component> lore = List.of();
         List<LeveledEnchantment> enchantments = List.of();
         List<Feature> features = List.of();
+        List<Modifier> modifiers = List.of();
         if (!config.hasPath("id")) {
             status.setError(LiquipError.NO_ID_FOUND);
             return status;
@@ -58,7 +59,7 @@ public interface LiquipItem {
         }
         try {
             final Result<Identifier, UtilError> keyResult =
-                    Identifier.parse(config.getString("id"), Liquip.DEFAULT_NAMESPACE);
+                    Identifier.parse(config.getString("id"), LiquipProvider.DEFAULT_NAMESPACE);
             if (keyResult.isErr()) {
                 status.setError(LiquipError.INVALID_ID);
                 return status;
@@ -93,7 +94,7 @@ public interface LiquipItem {
                     final String enchantmentIdResult = enchantment.getString("id");
                     final int enchantmentLevel = enchantment.getInt("level");
                     final Result<Identifier, UtilError> enchantmentId =
-                            Identifier.parse(enchantmentIdResult, Liquip.DEFAULT_NAMESPACE);
+                            Identifier.parse(enchantmentIdResult, LiquipProvider.DEFAULT_NAMESPACE);
                     if (enchantmentId.isErr()) {
                         status.addWarning(new IgnoredError(LiquipError.INVALID_ENCHANTMENT));
                         continue;
@@ -112,7 +113,8 @@ public interface LiquipItem {
                 final List<String> featuresResult = config.getStringList("features");
                 features = new ArrayList<>();
                 for (final String feature : featuresResult) {
-                    final Result<Identifier, UtilError> featureId = Identifier.parse(feature, Liquip.DEFAULT_NAMESPACE);
+                    final Result<Identifier, UtilError> featureId =
+                            Identifier.parse(feature, LiquipProvider.DEFAULT_NAMESPACE);
                     if (featureId.isErr()) {
                         status.addWarning(new IgnoredError(LiquipError.INVALID_FEATURE));
                         continue;
@@ -125,6 +127,34 @@ public interface LiquipItem {
                     }
                     final Feature featureResult = featureRegistry.get(featureIdResult);
                     features.add(featureResult);
+                }
+            }
+            if (config.hasPath("modifiers")) {
+                final Config modifiersResult = config.getConfig("modifiers");
+                modifiers = new ArrayList<>();
+                final Set<String> keyAccumulator = new HashSet<>();
+                for (Map.Entry<String, ConfigValue> modifiersEntry : modifiersResult.entrySet()) {
+                    final String key = modifiersEntry.getKey().split("\\.")[0];
+                    if (keyAccumulator.contains(key)) {
+                        continue;
+                    }
+                    keyAccumulator.add(key);
+                    final Result<@NotNull Identifier, @NotNull UtilError> modifierId =
+                            Identifier.parse(key, LiquipProvider.DEFAULT_NAMESPACE);
+                    final Config modifier = modifiersResult.getConfig(key);
+                    if (modifierId.isErr()) {
+                        status.addWarning(new SimpleWarning("Invalid modifier id"));
+                        continue;
+                    }
+                    final Identifier modifierIdResult = modifierId.unwrap();
+                    if (!modifierRegistry.isRegistered(modifierIdResult)) {
+                        status.addWarning(new SimpleWarning("Modifier is not registered: " + modifierIdResult));
+                        continue;
+                    }
+                    final Modifier modifierResult = modifierRegistry.get(modifierIdResult).get(modifier);
+                    if (modifierResult != null) {
+                        modifiers.add(modifierResult);
+                    }
                 }
             }
             if (config.hasPath("recipes")) {
@@ -150,7 +180,8 @@ public interface LiquipItem {
                                 continue recipe;
                             }
                             final String ingredientIdResult = ingredient.getString("id");
-                            final Result<Identifier, UtilError> ingredientId = Identifier.parse(ingredientIdResult);
+                            final Result<Identifier, UtilError> ingredientId =
+                                    Identifier.parse(ingredientIdResult, LiquipProvider.DEFAULT_NAMESPACE);
                             if (ingredientId.isErr()) {
                                 status.addWarning(new SimpleWarning("Ingredient of shapeless recipe has invalid id"));
                                 continue recipe;
@@ -219,7 +250,7 @@ public interface LiquipItem {
                         }
                         final char key = keyString.charAt(0);
                         final Result<Identifier, UtilError> typeResult =
-                                Identifier.parse(placeholder.getString("type"));
+                                Identifier.parse(placeholder.getString("type"), LiquipProvider.DEFAULT_NAMESPACE);
                         if (typeResult.isErr()) {
                             status.addWarning(new SimpleWarning("Shaped recipe has invalid placeholder type"));
                             continue recipe;
@@ -248,10 +279,12 @@ public interface LiquipItem {
             }
         } catch (ConfigException.WrongType wrongType) {
             status.setError(LiquipError.WRONG_TYPE);
+            wrongType.printStackTrace();
             return status;
         }
         status.setOk(true);
-        status.setValue(new BasicLiquipItem(id, name, material, lore, enchantments, features, HashMultimap.create()));
+        status.setValue(new BasicLiquipItem(id, name, material, lore, enchantments, features, modifiers,
+                HashMultimap.create()));
         return status;
     }
 
@@ -271,7 +304,8 @@ public interface LiquipItem {
             final NamespacedKey key = itemStack.getType().getKey();
             return new Identifier(key.getNamespace(), key.getKey());
         }
-        Result<Identifier, UtilError> identifierResult = Identifier.parse(nmsTag.getString("liquip:identifier"));
+        Result<Identifier, UtilError> identifierResult =
+                Identifier.parse(nmsTag.getString("liquip:identifier"), LiquipProvider.DEFAULT_NAMESPACE);
         if (identifierResult.isErr()) {
             Liquip.getProvidingPlugin(Liquip.class).getSLF4JLogger()
                     .warn("A player has an item with an invalid identifier tag");
@@ -304,6 +338,8 @@ public interface LiquipItem {
 
     @NotNull List<@NotNull Feature> getFeatures();
 
+    @NotNull List<@NotNull Modifier> getModifiers();
+
     @NotNull ItemStack newItem();
 
     <T extends Event> void callEvent(@NotNull Class<@NotNull T> eventClass, @NotNull T event);
@@ -319,6 +355,7 @@ public interface LiquipItem {
         private List<Component> lore = new ArrayList<>();
         private List<LeveledEnchantment> enchantments = new ArrayList<>();
         private List<Feature> features = new ArrayList<>();
+        private List<Modifier> modifiers = new ArrayList<>();
 
         public Builder() {
         }
@@ -379,6 +416,16 @@ public interface LiquipItem {
             return this;
         }
 
+        public @NotNull Builder modifiers(@NotNull List<@NotNull Modifier> modifiers) {
+            this.modifiers = modifiers;
+            return this;
+        }
+
+        public @NotNull Builder modifier(@NotNull Modifier modifier) {
+            modifiers.add(modifier);
+            return this;
+        }
+
         public <T extends Event> @NotNull Builder event(@NotNull Class<@NotNull T> eventClass,
                                                         @NotNull Consumer<@NotNull T> eventConsumer) {
             events.put(eventClass, eventConsumer);
@@ -395,7 +442,7 @@ public interface LiquipItem {
             if (material == null) {
                 return null;
             }
-            return new BasicLiquipItem(key, name, material, lore, enchantments, features, events);
+            return new BasicLiquipItem(key, name, material, lore, enchantments, features, modifiers, events);
         }
     }
 }

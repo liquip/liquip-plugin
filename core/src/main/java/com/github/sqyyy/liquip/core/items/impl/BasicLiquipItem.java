@@ -3,6 +3,7 @@ package com.github.sqyyy.liquip.core.items.impl;
 import com.github.sqyyy.liquip.core.items.Feature;
 import com.github.sqyyy.liquip.core.items.LeveledEnchantment;
 import com.github.sqyyy.liquip.core.items.LiquipItem;
+import com.github.sqyyy.liquip.core.items.Modifier;
 import com.github.sqyyy.liquip.core.util.Identifier;
 import com.google.common.collect.Multimap;
 import net.kyori.adventure.text.Component;
@@ -22,12 +23,13 @@ public class BasicLiquipItem implements LiquipItem {
     private final List<Component> lore;
     private final List<LeveledEnchantment> enchantments;
     private final List<Feature> features;
+    private final List<Modifier> modifiers;
     private final Multimap<Class<? extends Event>, Consumer<? extends Event>> events;
 
     public BasicLiquipItem(@NotNull Identifier id, @NotNull Component name, @NotNull Material material,
                            @NotNull List<@NotNull Component> lore,
                            @NotNull List<@NotNull LeveledEnchantment> enchantments,
-                           @NotNull List<@NotNull Feature> features,
+                           @NotNull List<@NotNull Feature> features, @NotNull List<@NotNull Modifier> modifiers,
                            @NotNull Multimap<@NotNull Class<? extends Event>, @NotNull Consumer<? extends Event>> events) {
         this.id = id;
         this.name = name;
@@ -35,6 +37,7 @@ public class BasicLiquipItem implements LiquipItem {
         this.lore = lore;
         this.enchantments = enchantments;
         this.features = features;
+        this.modifiers = modifiers;
         this.events = events;
         for (final Feature feature : features) {
             feature.initialize(this);
@@ -72,6 +75,11 @@ public class BasicLiquipItem implements LiquipItem {
     }
 
     @Override
+    public @NotNull List<@NotNull Modifier> getModifiers() {
+        return modifiers;
+    }
+
+    @Override
     public @NotNull ItemStack newItem() {
         final ItemStack itemStack = new ItemStack(material);
         final ItemMeta itemMeta = itemStack.getItemMeta();
@@ -83,6 +91,9 @@ public class BasicLiquipItem implements LiquipItem {
         }
         for (final Feature feature : features) {
             feature.apply(itemStack);
+        }
+        for (final Modifier modifier : modifiers) {
+            modifier.apply(itemStack);
         }
         return LiquipItem.setIdentifier(itemStack, id);
     }

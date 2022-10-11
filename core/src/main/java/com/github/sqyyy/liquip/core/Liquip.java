@@ -27,7 +27,7 @@ public class Liquip extends JavaPlugin {
     @Override
     public void onEnable() {
         CommandAPI.onEnable(this);
-        provider.registerDefaultFeatures();
+        provider.registerDefaults();
         final ConfigLoader configLoader = new ConfigLoader();
         final Status<Void> configResult = configLoader.loadConfig();
         for (Warning warning : configResult.getWarnings()) {

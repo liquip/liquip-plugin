@@ -37,14 +37,11 @@ public class ConfigLoader {
             status.setError(LiquipError.PLUGIN_DIRECTORY_DOES_NOT_EXIST);
             return status;
         }
-        final Path configPath = pluginPath.resolve("config.hocon");
+        final Path configPath = pluginPath.resolve("config.conf");
         if (!Files.exists(configPath)) {
             try {
                 Files.createFile(configPath);
-                Files.writeString(configPath, """
-                        items: [
-                        ]
-                        """);
+                Files.writeString(configPath, "items = []");
             } catch (IOException e) {
                 status.setError(LiquipError.CONFIG_IO_EXCEPTION);
                 return status;
@@ -123,9 +120,11 @@ public class ConfigLoader {
         final Config itemConfig = ConfigFactory.parseFile(itemPath.toFile());
         final Status<LiquipItem> itemResult =
                 LiquipItem.fromConfig(itemConfig, Liquip.getProvider().getEnchantmentRegistry(),
-                        Liquip.getProvider().getFeatureRegistry(), Liquip.getProvider().getCraftingRegistry());
+                        Liquip.getProvider().getFeatureRegistry(), Liquip.getProvider().getModifierRegistry(),
+                        Liquip.getProvider().getCraftingRegistry());
         status.addWarnings(itemResult.getWarnings());
         if (itemResult.isErr()) {
+            status.addWarning(new IgnoredError(itemResult.unwrapErr()));
             status.setError(LiquipError.ITEM_INVALID);
             return status;
         }
