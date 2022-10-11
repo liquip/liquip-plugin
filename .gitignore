@@ -2,4 +2,5 @@
 .gradle/
 **/.gradle/
 **/build/
+gitignored/
 liquip.iml
