@@ -239,7 +239,7 @@ public class BasicMenu implements Menu {
                     callClickItem(event);
                     break;
                 }
-                callPutItem(event);
+                callPutItem(event, event.getRawSlot());
             }
             case SWAP_WITH_CURSOR -> {
                 if (clickedInventory == bottomInventory) {
@@ -268,7 +268,7 @@ public class BasicMenu implements Menu {
                     event.setCancelled(true);
                     topInventory.setItem(nextSlot, item.clone());
                     clickedInventory.setItem(event.getSlot(), null);
-                    callPutItem(event);
+                    callPutItem(event, nextSlot);
                 } else {
                     if (!takeSlots[rawSlot]) {
                         event.setCancelled(true);
@@ -291,7 +291,7 @@ public class BasicMenu implements Menu {
                         callClickItem(event);
                         break;
                     }
-                    callPutItem(event);
+                    callPutItem(event, event.getRawSlot());
                     break;
                 }
                 if (!takeSlots[rawSlot]) {
@@ -325,10 +325,10 @@ public class BasicMenu implements Menu {
         }
     }
 
-    private void callPutItem(InventoryClickEvent event) {
+    private void callPutItem(InventoryClickEvent event, int slot) {
         for (List<Pane> paneList : panes) {
             for (Pane pane : paneList) {
-                if (pane.collidesWith(event.getRawSlot())) {
+                if (pane.collidesWith(slot)) {
                     pane.onPutItem(event);
                 }
             }
