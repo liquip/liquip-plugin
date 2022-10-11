@@ -12,7 +12,7 @@ public class BasicMenuHolder implements MenuHolder {
     private final Menu menu;
     private Inventory inventory = null;
 
-    public BasicMenuHolder(Menu menu) {
+    public BasicMenuHolder(@NotNull Menu menu) {
         this.menu = menu;
     }
 

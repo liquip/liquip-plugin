@@ -1,26 +1,28 @@
 package com.github.sqyyy.liquip.core.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 public class Cause {
     private final Error error;
     private final List<Warning> warnings;
 
-    public Cause(Error error, List<Warning> warnings) {
+    public Cause(@NotNull Error error, @NotNull List<@NotNull Warning> warnings) {
         this.error = error;
         this.warnings = warnings;
     }
 
-    public Cause(Status<?> status) {
+    public Cause(@NotNull Status<?> status) {
         this.error = status.unwrapErr();
         this.warnings = status.getWarnings();
     }
 
-    public Error getError() {
+    public @NotNull Error getError() {
         return error;
     }
 
-    public List<Warning> getWarnings() {
+    public @NotNull List<@NotNull Warning> getWarnings() {
         return warnings;
     }
 }

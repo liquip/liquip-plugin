@@ -1,11 +1,13 @@
 package com.github.sqyyy.liquip.core.util;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 public interface Warning {
-    Cause getCause();
+    @Nullable Cause getCause();
 
-    void print(Logger logger, Object... args);
+    void print(@NotNull Logger logger, @NotNull Object... args);
 
-    String getMessage(Object... args);
+    @NotNull String getMessage(@NotNull Object... args);
 }

@@ -2,7 +2,6 @@ package com.github.sqyyy.liquip.gui.impl;
 
 import com.github.sqyyy.liquip.gui.Pane;
 import com.github.sqyyy.liquip.gui.Slot;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -18,12 +17,12 @@ public class ClickOutputSlotPane implements Pane {
     private final Function<InventoryClickEvent, ItemStack> itemStackSupplier;
 
     public ClickOutputSlotPane(int priority, @NotNull Slot slot,
-                               @NotNull Function<InventoryClickEvent, ItemStack> itemStackSupplier) {
+                               @NotNull Function<@NotNull InventoryClickEvent, @NotNull ItemStack> itemStackSupplier) {
         this(priority, slot.getRow(), slot.getColumn(), itemStackSupplier);
     }
 
     public ClickOutputSlotPane(int priority, int row, int column,
-                               @NotNull Function<InventoryClickEvent, ItemStack> itemStackSupplier) {
+                               @NotNull Function<@NotNull InventoryClickEvent, @NotNull ItemStack> itemStackSupplier) {
         this.priority = priority;
         this.row = row;
         this.column = column;
@@ -50,13 +49,11 @@ public class ClickOutputSlotPane implements Pane {
         if (event.getRawSlot() != row * 9 + column) {
             return;
         }
-        final HumanEntity player = event.getWhoClicked();
-        final PlayerInventory inventory = player.getInventory();
+        final PlayerInventory inventory = event.getWhoClicked().getInventory();
         final int firstEmpty = inventory.firstEmpty();
         if (firstEmpty == -1) {
             return;
         }
-        final ItemStack itemStack = itemStackSupplier.apply(event);
-        inventory.setItem(firstEmpty, itemStack);
+        inventory.setItem(firstEmpty, itemStackSupplier.apply(event));
     }
 }

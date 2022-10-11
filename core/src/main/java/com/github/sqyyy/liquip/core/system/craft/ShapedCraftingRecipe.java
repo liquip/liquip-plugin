@@ -82,7 +82,7 @@ public class ShapedCraftingRecipe implements CraftingRecipe {
         private final Identifier type;
         private final int count;
 
-        public Placeholder(char key, Identifier type, int count) {
+        public Placeholder(char key, @NotNull Identifier type, int count) {
             this.key = key;
             this.type = type;
             this.count = count;
@@ -92,7 +92,7 @@ public class ShapedCraftingRecipe implements CraftingRecipe {
             return key;
         }
 
-        public Identifier getType() {
+        public @NotNull Identifier getType() {
             return type;
         }
 

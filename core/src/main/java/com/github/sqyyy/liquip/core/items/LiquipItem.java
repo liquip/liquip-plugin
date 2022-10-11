@@ -23,6 +23,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,10 +32,12 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public interface LiquipItem {
-    static Status<LiquipItem> fromConfig(Config config, Registry<LiquipEnchantment> enchantmentRegistry,
-                                         Registry<Feature> featureRegistry, CraftingRegistry craftingRegistry) {
-        final var status = new Status<LiquipItem>();
-        final var miniMessage = MiniMessage.miniMessage();
+    static @NotNull Status<@NotNull LiquipItem> fromConfig(@NotNull Config config,
+                                                           @NotNull Registry<@NotNull LiquipEnchantment> enchantmentRegistry,
+                                                           @NotNull Registry<@NotNull Feature> featureRegistry,
+                                                           @NotNull CraftingRegistry craftingRegistry) {
+        final Status<LiquipItem> status = new Status<LiquipItem>();
+        final MiniMessage miniMessage = MiniMessage.miniMessage();
         Identifier id;
         Component name;
         Material material;
@@ -54,7 +57,8 @@ public interface LiquipItem {
             return status;
         }
         try {
-            final var keyResult = Identifier.parse(config.getString("id"), Liquip.DEFAULT_NAMESPACE);
+            final Result<Identifier, UtilError> keyResult =
+                    Identifier.parse(config.getString("id"), Liquip.DEFAULT_NAMESPACE);
             if (keyResult.isErr()) {
                 status.setError(LiquipError.INVALID_ID);
                 return status;
@@ -62,7 +66,7 @@ public interface LiquipItem {
             id = keyResult.unwrap();
             name = miniMessage.deserialize(config.getString("name"));
             name = name.decoration(TextDecoration.ITALIC, false);
-            final var materialKey = NamespacedKey.fromString(config.getString("material"));
+            final NamespacedKey materialKey = NamespacedKey.fromString(config.getString("material"));
             if (materialKey == null) {
                 status.setError(LiquipError.INVALID_MATERIAL);
                 return status;
@@ -73,28 +77,28 @@ public interface LiquipItem {
                 return status;
             }
             if (config.hasPath("lore")) {
-                final var loreResult = config.getStringList("lore");
+                final List<String> loreResult = config.getStringList("lore");
                 lore = new ArrayList<>();
-                for (final var line : loreResult) {
+                for (final String line : loreResult)
                     lore.add(miniMessage.deserialize(line).decoration(TextDecoration.ITALIC, false));
-                }
             }
             if (config.hasPath("enchantments")) {
-                final var enchantmentsResult = config.getConfigList("enchantments");
+                final List<? extends Config> enchantmentsResult = config.getConfigList("enchantments");
                 enchantments = new ArrayList<>();
-                for (final var enchantment : enchantmentsResult) {
+                for (final Config enchantment : enchantmentsResult) {
                     if (!enchantment.hasPath("id") || !enchantment.hasPath("level")) {
                         status.addWarning(new IgnoredError(LiquipError.INVALID_ENCHANTMENT));
                         continue;
                     }
-                    final var enchantmentIdResult = enchantment.getString("id");
-                    final var enchantmentLevel = enchantment.getInt("level");
-                    final var enchantmentId = Identifier.parse(enchantmentIdResult, Liquip.DEFAULT_NAMESPACE);
+                    final String enchantmentIdResult = enchantment.getString("id");
+                    final int enchantmentLevel = enchantment.getInt("level");
+                    final Result<Identifier, UtilError> enchantmentId =
+                            Identifier.parse(enchantmentIdResult, Liquip.DEFAULT_NAMESPACE);
                     if (enchantmentId.isErr()) {
                         status.addWarning(new IgnoredError(LiquipError.INVALID_ENCHANTMENT));
                         continue;
                     }
-                    final var enchantmentResult =
+                    final Status<LeveledEnchantment> enchantmentResult =
                             LeveledEnchantment.parse(enchantmentId.unwrap(), enchantmentLevel, enchantmentRegistry);
                     if (enchantmentResult.isErr()) {
                         status.addWarning(new IgnoredError("Could not load enchantment '" + enchantmentId + "'",
@@ -105,29 +109,29 @@ public interface LiquipItem {
                 }
             }
             if (config.hasPath("features")) {
-                final var featuresResult = config.getStringList("features");
+                final List<String> featuresResult = config.getStringList("features");
                 features = new ArrayList<>();
-                for (final var feature : featuresResult) {
-                    final var featureId = Identifier.parse(feature, Liquip.DEFAULT_NAMESPACE);
+                for (final String feature : featuresResult) {
+                    final Result<Identifier, UtilError> featureId = Identifier.parse(feature, Liquip.DEFAULT_NAMESPACE);
                     if (featureId.isErr()) {
                         status.addWarning(new IgnoredError(LiquipError.INVALID_FEATURE));
                         continue;
                     }
-                    final var featureIdResult = featureId.unwrap();
+                    final Identifier featureIdResult = featureId.unwrap();
                     if (!featureRegistry.isRegistered(featureIdResult)) {
                         status.addWarning(
                                 new IgnoredError("Feature '" + featureIdResult + "'", LiquipError.FEATURE_NOT_FOUND));
                         continue;
                     }
-                    final var featureResult = featureRegistry.get(featureIdResult);
+                    final Feature featureResult = featureRegistry.get(featureIdResult);
                     features.add(featureResult);
                 }
             }
             if (config.hasPath("recipes")) {
-                final var recipesResult = config.getConfigList("recipes");
+                final List<? extends Config> recipesResult = config.getConfigList("recipes");
                 recipe:
-                for (final var recipe : recipesResult) {
-                    var shapeless = false;
+                for (final Config recipe : recipesResult) {
+                    boolean shapeless = false;
                     if (recipe.hasPath("shapeless")) {
                         shapeless = recipe.getBoolean("shapeless");
                     }
@@ -136,17 +140,17 @@ public interface LiquipItem {
                             status.addWarning(new SimpleWarning("Shapeless recipe has no ingredients tag"));
                             continue;
                         }
-                        final var ingredientIds = new Identifier[9];
-                        final var ingredientCounts = new Integer[9];
-                        final var ingredientsResult = recipe.getConfigList("ingredients");
-                        var index = 0;
-                        for (final var ingredient : ingredientsResult) {
+                        final Identifier[] ingredientIds = new Identifier[9];
+                        final Integer[] ingredientCounts = new Integer[9];
+                        final List<? extends Config> ingredientsResult = recipe.getConfigList("ingredients");
+                        int index = 0;
+                        for (final Config ingredient : ingredientsResult) {
                             if (!ingredient.hasPath("id")) {
                                 status.addWarning(new SimpleWarning("Ingredient of shapeless recipe has no id tag"));
                                 continue recipe;
                             }
-                            final var ingredientIdResult = ingredient.getString("id");
-                            final var ingredientId = Identifier.parse(ingredientIdResult);
+                            final String ingredientIdResult = ingredient.getString("id");
+                            final Result<Identifier, UtilError> ingredientId = Identifier.parse(ingredientIdResult);
                             if (ingredientId.isErr()) {
                                 status.addWarning(new SimpleWarning("Ingredient of shapeless recipe has invalid id"));
                                 continue recipe;
@@ -161,7 +165,7 @@ public interface LiquipItem {
                                 break;
                             }
                         }
-                        final var craftingHashObject = new CraftingHashObject(ingredientIds, false);
+                        final CraftingHashObject craftingHashObject = new CraftingHashObject(ingredientIds, false);
                         Bukkit.broadcast(Component.text("registered new recipe " + craftingHashObject.hashCode()));
                         craftingRegistry.register(craftingHashObject,
                                 new ShapelessCraftingRecipe(Arrays.asList(ingredientCounts),
@@ -176,14 +180,14 @@ public interface LiquipItem {
                         status.addWarning(new SimpleWarning("Shaped recipe has no placeholders tag"));
                         continue;
                     }
-                    final var shapeStrings = recipe.getStringList("shape");
-                    final var placeholders = recipe.getConfigList("placeholders");
-                    final var placeholderMap = new HashMap<Character, ShapedCraftingRecipe.Placeholder>();
+                    final List<String> shapeStrings = recipe.getStringList("shape");
+                    final List<? extends Config> placeholders = recipe.getConfigList("placeholders");
+                    final HashMap<Character, ShapedCraftingRecipe.Placeholder> placeholderMap = new HashMap<>();
                     placeholderMap.put(' ',
                             new ShapedCraftingRecipe.Placeholder(' ', new Identifier("minecraft", "air"), 0));
-                    final var shape = new char[9];
+                    final char[] shape = new char[9];
                     for (int i = 0; i < shapeStrings.size(); i++) {
-                        final var shapeString = shapeStrings.get(i);
+                        final String shapeString = shapeStrings.get(i);
                         if (shapeString.length() < 3) {
                             status.addWarning(new SimpleWarning("Shaped recipe invalid shape"));
                             continue recipe;
@@ -199,7 +203,7 @@ public interface LiquipItem {
                         status.addWarning(new SimpleWarning("Shaped recipe has too short shape tag"));
                         continue;
                     }
-                    for (final var placeholder : placeholders) {
+                    for (final Config placeholder : placeholders) {
                         if (!placeholder.hasPath("key")) {
                             status.addWarning(new SimpleWarning("Shaped recipe has no placeholder key"));
                             continue recipe;
@@ -208,36 +212,37 @@ public interface LiquipItem {
                             status.addWarning(new SimpleWarning("Shaped recipe has no placeholder type"));
                             continue recipe;
                         }
-                        final var keyString = placeholder.getString("key");
+                        final String keyString = placeholder.getString("key");
                         if (keyString.isEmpty()) {
                             status.addWarning(new SimpleWarning("Shaped recipe has invalid placeholder key"));
                             continue recipe;
                         }
-                        final var key = keyString.charAt(0);
-                        final var typeResult = Identifier.parse(placeholder.getString("type"));
+                        final char key = keyString.charAt(0);
+                        final Result<Identifier, UtilError> typeResult =
+                                Identifier.parse(placeholder.getString("type"));
                         if (typeResult.isErr()) {
                             status.addWarning(new SimpleWarning("Shaped recipe has invalid placeholder type"));
                             continue recipe;
                         }
-                        var count = 1;
+                        int count = 1;
                         if (placeholder.hasPath("count")) {
                             count = placeholder.getInt("count");
                         }
                         placeholderMap.put(key, new ShapedCraftingRecipe.Placeholder(key, typeResult.unwrap(), count));
                     }
-                    final var ingredientIds = new Identifier[9];
-                    final var ingredientCounts = new int[9];
+                    final Identifier[] ingredientIds = new Identifier[9];
+                    final int[] ingredientCounts = new int[9];
                     for (int i = 0; i < shape.length; i++) {
                         if (!placeholderMap.containsKey(shape[i])) {
                             status.addWarning(
                                     new SimpleWarning("Shaped recipe is missing '" + shape[i] + "' placeholder"));
                             continue recipe;
                         }
-                        final var placeholder = placeholderMap.get(shape[i]);
+                        final ShapedCraftingRecipe.Placeholder placeholder = placeholderMap.get(shape[i]);
                         ingredientIds[i] = placeholder.getType();
                         ingredientCounts[i] = placeholder.getCount();
                     }
-                    final var hash = new CraftingHashObject(ingredientIds, true);
+                    final CraftingHashObject hash = new CraftingHashObject(ingredientIds, true);
                     craftingRegistry.register(hash, new ShapedCraftingRecipe(ingredientCounts, ingredientIds, id));
                 }
             }
@@ -250,7 +255,7 @@ public interface LiquipItem {
         return status;
     }
 
-    static Identifier getIdentifier(@NotNull ItemStack itemStack) {
+    static @NotNull Identifier getIdentifier(@NotNull ItemStack itemStack) {
         // TODO - version dependent
         final org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack craftItemStack =
                 itemStack instanceof org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack it ? it :
@@ -287,23 +292,24 @@ public interface LiquipItem {
         return craftItemStack;
     }
 
-    Identifier getId();
+    @NotNull Identifier getId();
 
-    Component getName();
+    @NotNull Component getName();
 
-    Material getMaterial();
+    @NotNull Material getMaterial();
 
-    List<Component> getLore();
+    @NotNull List<@NotNull Component> getLore();
 
-    List<LeveledEnchantment> getEnchantments();
+    @NotNull List<@NotNull LeveledEnchantment> getEnchantments();
 
-    List<Feature> getFeatures();
+    @NotNull List<@NotNull Feature> getFeatures();
 
-    ItemStack newItem();
+    @NotNull ItemStack newItem();
 
-    <T extends Event> void callEvent(Class<T> eventClass, T event);
+    <T extends Event> void callEvent(@NotNull Class<@NotNull T> eventClass, @NotNull T event);
 
-    <T extends Event> void registerEvent(Class<T> eventClass, Consumer<T> eventHandler);
+    <T extends Event> void registerEvent(@NotNull Class<@NotNull T> eventClass,
+                                         @NotNull Consumer<@NotNull T> eventHandler);
 
     class Builder {
         private final Multimap<Class<? extends Event>, Consumer<? extends Event>> events = HashMultimap.create();
@@ -317,90 +323,69 @@ public interface LiquipItem {
         public Builder() {
         }
 
-        public Builder(Identifier key, String name, Material material) {
+        public Builder(@NotNull Identifier key, @NotNull String name, @NotNull Material material) {
             this.key = key;
             this.name = MiniMessage.miniMessage().deserialize(name);
             this.material = material;
         }
 
-        public Builder identifier(Identifier identifier) {
+        public @NotNull Builder identifier(@NotNull Identifier identifier) {
             this.key = identifier;
             return this;
         }
 
-        public Builder name(String name) {
+        public @NotNull Builder name(@NotNull String name) {
             this.name = MiniMessage.miniMessage().deserialize(name);
             return this;
         }
 
-        public Builder name(Component name) {
+        public @NotNull Builder name(@NotNull Component name) {
             this.name = name;
             return this;
         }
 
-        public Builder material(Material material) {
+        public @NotNull Builder material(@NotNull Material material) {
             this.material = material;
             return this;
         }
 
-        public Builder lore(List<Component> lore) {
-            if (lore == null) {
-                this.lore = new ArrayList<>();
-                return this;
-            }
+        public @NotNull Builder lore(@NotNull List<@NotNull Component> lore) {
             this.lore = lore;
             return this;
         }
 
-        public Builder loreLine(Component line) {
-            if (line == null) {
-                lore.add(Component.newline());
-                return this;
-            }
+        public @NotNull Builder loreLine(@NotNull Component line) {
             lore.add(line);
             return this;
         }
 
-        public Builder enchantments(List<LeveledEnchantment> enchantments) {
-            if (enchantments == null) {
-                this.enchantments = new ArrayList<>();
-                return this;
-            }
+        public @NotNull Builder enchantments(@NotNull List<@NotNull LeveledEnchantment> enchantments) {
             this.enchantments = enchantments;
             return this;
         }
 
-        public Builder enchantment(LeveledEnchantment enchantment) {
-            if (enchantment == null) {
-                return this;
-            }
+        public @NotNull Builder enchantment(@NotNull LeveledEnchantment enchantment) {
             enchantments.add(enchantment);
             return this;
         }
 
-        public Builder features(List<Feature> features) {
-            if (features == null) {
-                this.features = new ArrayList<>();
-                return this;
-            }
+        public @NotNull Builder features(@NotNull List<@NotNull Feature> features) {
             this.features = features;
             return this;
         }
 
-        public Builder feature(Feature feature) {
-            if (feature == null) {
-                return this;
-            }
+        public @NotNull Builder feature(@NotNull Feature feature) {
             features.add(feature);
             return this;
         }
 
-        public <T extends Event> Builder event(Class<T> eventClass, Consumer<T> eventConsumer) {
+        public <T extends Event> @NotNull Builder event(@NotNull Class<@NotNull T> eventClass,
+                                                        @NotNull Consumer<@NotNull T> eventConsumer) {
             events.put(eventClass, eventConsumer);
             return this;
         }
 
-        public LiquipItem build() {
+        public @Nullable LiquipItem build() {
             if (key == null) {
                 return null;
             }

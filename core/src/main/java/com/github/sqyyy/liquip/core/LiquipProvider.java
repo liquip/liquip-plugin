@@ -8,6 +8,7 @@ import com.github.sqyyy.liquip.core.system.craft.CraftingRegistry;
 import com.github.sqyyy.liquip.core.util.Identifier;
 import com.github.sqyyy.liquip.core.util.Registry;
 import com.github.sqyyy.liquip.core.util.impl.BasicRegistry;
+import org.jetbrains.annotations.NotNull;
 
 public class LiquipProvider {
     public static final String DEFAULT_NAMESPACE = "minecraft";
@@ -23,19 +24,19 @@ public class LiquipProvider {
         recipes = new CraftingRegistry();
     }
 
-    public Registry<Feature> getFeatureRegistry() {
+    public @NotNull Registry<@NotNull Feature> getFeatureRegistry() {
         return features;
     }
 
-    public Registry<LiquipItem> getItemRegistry() {
+    public @NotNull Registry<@NotNull LiquipItem> getItemRegistry() {
         return items;
     }
 
-    public Registry<LiquipEnchantment> getEnchantmentRegistry() {
+    public @NotNull Registry<@NotNull LiquipEnchantment> getEnchantmentRegistry() {
         return enchantments;
     }
 
-    public CraftingRegistry getCraftingRegistry() {
+    public @NotNull CraftingRegistry getCraftingRegistry() {
         return recipes;
     }
 

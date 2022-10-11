@@ -2,6 +2,8 @@ package com.github.sqyyy.liquip.core.system;
 
 import com.github.sqyyy.liquip.core.util.Cause;
 import com.github.sqyyy.liquip.core.util.Error;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 public enum LiquipError implements Error {
@@ -32,22 +34,22 @@ public enum LiquipError implements Error {
 
     private final String message;
 
-    LiquipError(String message) {
+    LiquipError(@NotNull String message) {
         this.message = message;
     }
 
     @Override
-    public Cause getCause() {
+    public @Nullable Cause getCause() {
         return null;
     }
 
     @Override
-    public void print(Logger logger, Object... args) {
+    public void print(@NotNull Logger logger, @NotNull Object... args) {
         logger.error(message);
     }
 
     @Override
-    public String getMessage(Object... args) {
+    public @NotNull String getMessage(@NotNull Object... args) {
         return message;
     }
 }

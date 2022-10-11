@@ -73,8 +73,7 @@ public class Slot {
         slots[row][column] = this;
     }
 
-    @NotNull
-    public static Slot get(int row, int column) {
+    public static @NotNull Slot get(int row, int column) {
         return slots[row][column];
     }
 

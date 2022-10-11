@@ -16,6 +16,19 @@ public class CraftingOutputPane extends OutputSlotPane {
         super(priority, Slot.ROW_THREE_SLOT_SEVEN);
     }
 
+    private boolean craft(@NotNull InventoryClickEvent event, @NotNull ItemStack @NotNull [] items,
+                          @NotNull Identifier @NotNull [] identifiers, @NotNull CraftingHashObject craftingHashObject,
+                          @NotNull CraftingRegistry registry) {
+        final CraftingRecipe recipe = registry.get(craftingHashObject);
+        if (!recipe.matches(items, identifiers)) {
+            new CraftingUpdateScheduler(event.getView()).runTaskLater(Liquip.getProvidingPlugin(Liquip.class), 0);
+            return true;
+        }
+        recipe.craft(items, event);
+        new CraftingUpdateScheduler(event.getView()).runTaskLater(Liquip.getProvidingPlugin(Liquip.class), 0);
+        return false;
+    }
+
     @Override
     public void onTakeItem(@NotNull InventoryClickEvent event) {
         if (event.getRawSlot() != Slot.ROW_THREE_SLOT_SEVEN.getSlot()) {
@@ -36,24 +49,14 @@ public class CraftingOutputPane extends OutputSlotPane {
         final CraftingHashObject craftingHashObject = new CraftingHashObject(items, true);
         final CraftingRegistry registry = Liquip.getProvider().getCraftingRegistry();
         if (registry.isRegistered(craftingHashObject)) {
-            final CraftingRecipe recipe = registry.get(craftingHashObject);
-            if (!recipe.matches(items, identifiers)) {
-                topInventory.setItem(Slot.ROW_THREE_SLOT_SEVEN.getSlot(), null);
-                return;
-            }
-            recipe.craft(items, event);
+            if (craft(event, items, identifiers, craftingHashObject, registry)) return;
             return;
         }
         craftingHashObject.setShaped(false);
         if (!registry.isRegistered(craftingHashObject)) {
-            topInventory.setItem(Slot.ROW_THREE_SLOT_SEVEN.getSlot(), null);
+            new CraftingUpdateScheduler(event.getView()).runTaskLater(Liquip.getProvidingPlugin(Liquip.class), 0);
             return;
         }
-        final CraftingRecipe recipe = registry.get(craftingHashObject);
-        if (!recipe.matches(items, identifiers)) {
-            topInventory.setItem(Slot.ROW_THREE_SLOT_SEVEN.getSlot(), null);
-            return;
-        }
-        recipe.craft(items, event);
+        if (craft(event, items, identifiers, craftingHashObject, registry)) return;
     }
 }

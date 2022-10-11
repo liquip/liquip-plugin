@@ -9,25 +9,26 @@ public class Identifier implements Namespaced {
     private final String namespace;
     private final String key;
 
-    public Identifier(String namespace, String key) {
+    public Identifier(@NotNull String namespace, @NotNull String key) {
         Objects.requireNonNull(namespace);
         Objects.requireNonNull(key);
         this.namespace = namespace.toLowerCase();
         this.key = key.toLowerCase();
     }
 
-    public static Result<Identifier, UtilError> parse(String identifier) {
+    public static @NotNull Result<@NotNull Identifier, @NotNull UtilError> parse(@NotNull String identifier) {
         Objects.requireNonNull(identifier);
-        final var tiles = identifier.split(":");
+        final String[] tiles = identifier.split(":");
         if (tiles.length != 2) {
             return Result.err(UtilError.INVALID_IDENTIFIER);
         }
         return Result.ok(new Identifier(tiles[0].toLowerCase(), tiles[1].toLowerCase()));
     }
 
-    public static Result<Identifier, UtilError> parse(String identifier, String defaultNamespace) {
+    public static @NotNull Result<@NotNull Identifier, @NotNull UtilError> parse(@NotNull String identifier,
+                                                                                 @NotNull String defaultNamespace) {
         Objects.requireNonNull(identifier);
-        final var tiles = identifier.split(":");
+        final String[] tiles = identifier.split(":");
         return switch (tiles.length) {
             case 1 -> Result.ok(new Identifier(defaultNamespace.toLowerCase(), tiles[0].toLowerCase()));
             case 2 -> Result.ok(new Identifier(tiles[0].toLowerCase(), tiles[1].toLowerCase()));
@@ -49,7 +50,7 @@ public class Identifier implements Namespaced {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final var that = (Identifier) o;
+        final Identifier that = (Identifier) o;
         return namespace.equals(that.namespace) && key.equals(that.key);
     }
 
@@ -59,7 +60,7 @@ public class Identifier implements Namespaced {
     }
 
     @Override
-    public String toString() {
+    public @NotNull String toString() {
         return namespace + ":" + key;
     }
 }

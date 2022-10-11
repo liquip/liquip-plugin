@@ -4,8 +4,6 @@ import com.github.sqyyy.liquip.core.Liquip;
 import com.github.sqyyy.liquip.core.items.LiquipItem;
 import com.github.sqyyy.liquip.core.util.Identifier;
 import com.github.sqyyy.liquip.gui.Slot;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;

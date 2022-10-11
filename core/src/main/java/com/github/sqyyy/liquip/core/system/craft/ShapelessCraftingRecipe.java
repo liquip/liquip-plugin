@@ -62,7 +62,7 @@ public class ShapelessCraftingRecipe implements CraftingRecipe {
     }
 
     @Override
-    public void craft(@NotNull ItemStack[] grid, @NotNull InventoryClickEvent event) {
+    public void craft(@NotNull ItemStack @NotNull [] grid, @NotNull InventoryClickEvent event) {
         final Inventory topInventory = event.getView().getTopInventory();
         if (event.isShiftClick()) {
             // TODO - implement shift-click support

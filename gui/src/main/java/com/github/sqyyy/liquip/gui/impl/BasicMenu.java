@@ -85,7 +85,8 @@ public class BasicMenu implements Menu {
         listeners = new ArrayList<>(1);
     }
 
-    public BasicMenu(@NotNull Component title, int rows, @NotNull MenuType type, @NotNull List<@NotNull Pane>[] panes) {
+    public BasicMenu(@NotNull Component title, int rows, @NotNull MenuType type,
+                     @NotNull List<@NotNull Pane> @NotNull [] panes) {
         if (panes.length > Priority.MAX_PRIORITY) {
             throw new IllegalArgumentException("panes.length > Priority.MAX_PRIORITY");
         }

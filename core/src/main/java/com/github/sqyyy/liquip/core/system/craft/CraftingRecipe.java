@@ -6,9 +6,9 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public interface CraftingRecipe {
-    boolean matches(@NotNull ItemStack[] grid, @NotNull Identifier[] idGrid);
+    boolean matches(@NotNull ItemStack @NotNull [] grid, @NotNull Identifier @NotNull [] idGrid);
 
     @NotNull ItemStack getResult();
 
-    void craft(@NotNull ItemStack[] grid, @NotNull InventoryClickEvent event);
+    void craft(@NotNull ItemStack @NotNull [] grid, @NotNull InventoryClickEvent event);
 }

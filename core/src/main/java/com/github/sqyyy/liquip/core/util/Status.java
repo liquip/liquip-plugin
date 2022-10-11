@@ -1,5 +1,8 @@
 package com.github.sqyyy.liquip.core.util;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -28,19 +31,19 @@ public class Status<T> {
         isFinal = true;
     }
 
-    public static <T> Status<T> ok(T value) {
+    public static <T> @NotNull Status<@NotNull T> ok(@NotNull T value) {
         return new Status<>(value, null, new ArrayList<>(1), true);
     }
 
-    public static <T> Status<T> ok(T value, List<Warning> warnings) {
+    public static <T> @NotNull Status<@NotNull T> ok(@NotNull T value, @NotNull List<@NotNull Warning> warnings) {
         return new Status<>(value, null, warnings, true);
     }
 
-    public static <T> Status<T> err(Error error) {
+    public static <T> @NotNull Status<@NotNull T> err(@NotNull Error error) {
         return new Status<>(null, error, new ArrayList<>(1), false);
     }
 
-    public static <T> Status<T> err(Error error, List<Warning> warnings) {
+    public static <T> @NotNull Status<@NotNull T> err(@NotNull Error error, @NotNull List<@NotNull Warning> warnings) {
         return new Status<>(null, error, warnings, false);
     }
 
@@ -52,7 +55,6 @@ public class Status<T> {
         if (isFinal) {
             return;
         }
-
         isOk = ok;
     }
 
@@ -64,81 +66,77 @@ public class Status<T> {
         return !isOk;
     }
 
-    public Optional<T> ok() {
+    public @NotNull Optional<@NotNull T> ok() {
         return isOk ? Optional.of(value) : Optional.empty();
     }
 
-    public Optional<Error> err() {
+    public @NotNull Optional<@NotNull Error> err() {
         return isOk ? Optional.empty() : Optional.of(error);
     }
 
-    public T expect(String message) {
+    public @NotNull T expect(String message) {
         if (!isOk) {
             throw new UnwrapException(message);
         }
         return value;
     }
 
-    public T unwrap() {
+    public @NotNull T unwrap() {
         if (!isOk) {
             throw new UnwrapException("Status was not ok");
         }
         return value;
     }
 
-    public Error expectErr(String message) {
+    public @NotNull Error expectErr(String message) {
         if (isOk) {
             throw new UnwrapException(message);
         }
         return error;
     }
 
-    public Error unwrapErr() {
+    public @NotNull Error unwrapErr() {
         if (isOk) {
             throw new UnwrapException("Status was ok");
         }
         return error;
     }
 
-    public T unwrapOr(T defaultValue) {
+    public @NotNull T unwrapOr(@NotNull T defaultValue) {
         return isOk ? value : defaultValue;
     }
 
-    public List<Warning> getWarnings() {
+    public @NotNull List<@NotNull Warning> getWarnings() {
         return List.copyOf(warnings);
     }
 
-    public void setValue(T value) {
+    public void setValue(@Nullable T value) {
         if (isFinal) {
             return;
         }
-
         isOk = true;
         this.value = value;
     }
 
-    public void setError(Error error) {
+    public void setError(@Nullable Error error) {
         if (isFinal) {
             return;
         }
-
         isOk = false;
         this.error = error;
     }
 
-    public void addWarning(Warning warning) {
+    public void addWarning(@NotNull Warning warning) {
         if (isFinal) {
             return;
         }
-
         warnings.add(warning);
     }
 
-    public void addWarnings(Collection<Warning> warnings) {
+    public void addWarnings(@NotNull Collection<@NotNull Warning> warnings) {
         if (isFinal) {
             return;
         }
-
         this.warnings.addAll(warnings);
     }
 }

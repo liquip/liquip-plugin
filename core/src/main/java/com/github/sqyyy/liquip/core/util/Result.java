@@ -1,5 +1,7 @@
 package com.github.sqyyy.liquip.core.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Optional;
 
 public class Result<T, E> {
@@ -13,11 +15,11 @@ public class Result<T, E> {
         this.ok = isOk;
     }
 
-    public static <T, E> Result<T, E> ok(T value) {
+    public static <T, E> @NotNull Result<@NotNull T, @NotNull E> ok(@NotNull T value) {
         return new Result<>(value, null, true);
     }
 
-    public static <T, E> Result<T, E> err(E error) {
+    public static <T, E> @NotNull Result<@NotNull T, @NotNull E> err(@NotNull E error) {
         return new Result<>(null, error, false);
     }
 
@@ -29,43 +31,43 @@ public class Result<T, E> {
         return !ok;
     }
 
-    public Optional<T> ok() {
+    public @NotNull Optional<@NotNull T> ok() {
         return ok ? Optional.of(value) : Optional.empty();
     }
 
-    public Optional<E> err() {
+    public @NotNull Optional<@NotNull E> err() {
         return ok ? Optional.empty() : Optional.of(error);
     }
 
-    public T expect(String msg) {
+    public @NotNull T expect(String msg) {
         if (!ok) {
             throw new UnwrapException(msg);
         }
         return value;
     }
 
-    public T unwrap() {
+    public @NotNull T unwrap() {
         if (!ok) {
             throw new UnwrapException("Result was not ok");
         }
         return value;
     }
 
-    public E expectErr(String msg) {
+    public @NotNull E expectErr(String msg) {
         if (ok) {
             throw new UnwrapException(msg);
         }
         return error;
     }
 
-    public E unwrapErr() {
+    public @NotNull E unwrapErr() {
         if (ok) {
             throw new UnwrapException("Result was ok");
         }
         return error;
     }
 
-    public T unwrapOr(T defaultValue) {
+    public @NotNull T unwrapOr(T defaultValue) {
         return ok ? value : defaultValue;
     }
 }

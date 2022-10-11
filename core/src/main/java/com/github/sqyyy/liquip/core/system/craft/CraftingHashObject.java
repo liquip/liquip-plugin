@@ -3,6 +3,7 @@ package com.github.sqyyy.liquip.core.system.craft;
 import com.github.sqyyy.liquip.core.items.LiquipItem;
 import com.github.sqyyy.liquip.core.util.Identifier;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
@@ -10,7 +11,7 @@ public class CraftingHashObject {
     private final Identifier[] identifiers;
     private boolean shaped;
 
-    public CraftingHashObject(ItemStack[] items, boolean shaped) {
+    public CraftingHashObject(@NotNull ItemStack @NotNull [] items, boolean shaped) {
         if (items.length != 9) {
             throw new IllegalArgumentException("items.length != 9");
         }
@@ -21,7 +22,7 @@ public class CraftingHashObject {
         this.shaped = shaped;
     }
 
-    public CraftingHashObject(Identifier[] identifiers, boolean shaped) {
+    public CraftingHashObject(@NotNull Identifier @NotNull [] identifiers, boolean shaped) {
         if (identifiers.length != 9) {
             throw new IllegalArgumentException("identifiers.length != 9");
         }

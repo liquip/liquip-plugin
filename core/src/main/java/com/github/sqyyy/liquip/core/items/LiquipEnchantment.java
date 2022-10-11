@@ -1,7 +1,8 @@
 package com.github.sqyyy.liquip.core.items;
 
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public interface LiquipEnchantment {
-    void apply(ItemStack itemStack, int level);
+    void apply(@NotNull ItemStack itemStack, int level);
 }

@@ -18,7 +18,7 @@ public class CraftingPane extends ListenerPane {
         super(priority, Slot.ROW_TWO_SLOT_TWO, Slot.ROW_FOUR_SLOT_FOUR);
     }
 
-    private CraftingUpdateScheduler buildScheduler(InventoryInteractEvent event) {
+    private @NotNull CraftingUpdateScheduler buildScheduler(@NotNull InventoryInteractEvent event) {
         return new CraftingUpdateScheduler(event.getView());
     }
 
