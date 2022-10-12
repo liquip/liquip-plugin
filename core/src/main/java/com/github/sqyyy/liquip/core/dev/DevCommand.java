@@ -1,6 +1,7 @@
 package com.github.sqyyy.liquip.core.dev;
 
 import com.github.sqyyy.liquip.core.Liquip;
+import com.github.sqyyy.liquip.core.LiquipProvider;
 import com.github.sqyyy.liquip.core.items.LiquipItem;
 import com.github.sqyyy.liquip.core.system.craft.CraftingOutputPane;
 import com.github.sqyyy.liquip.core.system.craft.CraftingPane;
@@ -17,7 +18,7 @@ import dev.jorel.commandapi.SuggestionInfo;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.NamespacedKeyArgument;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
@@ -28,7 +29,6 @@ import java.util.List;
 import java.util.Set;
 
 public class DevCommand {
-    private static final MiniMessage miniMessage = MiniMessage.miniMessage();
     private static final Menu menu;
 
     static {
@@ -45,18 +45,22 @@ public class DevCommand {
     }
 
     public DevCommand() {
-        new CommandAPICommand("liquip").executes(DevCommand::liquip)
-                .withSubcommands(new CommandAPICommand("craft").executesPlayer(DevCommand::craft),
-                        new CommandAPICommand("give").withArguments(new NamespacedKeyArgument("id").replaceSuggestions(
-                                ArgumentSuggestions.strings(DevCommand::suggestGive))).executesPlayer(DevCommand::give))
+        new CommandAPICommand("liquip").executes(DevCommand::liquip).withSubcommands(
+                        new CommandAPICommand("craft").withPermission("liquip.command.craft").executesPlayer(DevCommand::craft),
+                        new CommandAPICommand("give").withPermission("liquip.command.give").withArguments(
+                                new NamespacedKeyArgument("identifier").replaceSuggestions(
+                                        ArgumentSuggestions.strings(DevCommand::suggestGive))).executesPlayer(DevCommand::give),
+                        new CommandAPICommand("reload").withPermission("liquip.command.reload").executes(DevCommand::reload))
                 .register();
     }
 
     public static void liquip(CommandSender sender, Object[] args) {
-        sender.sendMessage(Component.text("--- Liquip help ---"));
-        sender.sendMessage(Component.text("/liquip - Show this help"));
-        sender.sendMessage(Component.text("/liquip craft - Open a crafting table"));
-        sender.sendMessage(Component.text("/liquip give <id> - Give yourself a liquip-item"));
+        sender.sendMessage(Component.text("--- Liquip help ---").color(TextColor.color(0xC2EFB3)));
+        sender.sendMessage(Component.text("/liquip - Show this help").color(TextColor.color(0xC2EFB3)));
+        sender.sendMessage(Component.text("/liquip craft - Open a crafting table").color(TextColor.color(0xC2EFB3)));
+        sender.sendMessage(
+                Component.text("/liquip give <id> - Give yourself a liquip-item").color(TextColor.color(0xC2EFB3)));
+        sender.sendMessage(Component.text("/liquip reload - Reload the config").color(TextColor.color(0xC2EFB3)));
     }
 
     public static void craft(Player player, Object[] args) {
@@ -68,16 +72,26 @@ public class DevCommand {
         final Identifier identifier = new Identifier(key.getNamespace(), key.getKey());
         final LiquipItem item = Liquip.getProvider().getItemRegistry().get(identifier);
         if (item == null) {
-            sender.sendMessage(miniMessage.deserialize("<red>The supplied item could not be found</red>"));
+            sender.sendMessage(Component.text("The supplied item could not be found").color(TextColor.color(0xDD1C1A)));
             return;
         }
         sender.getInventory().addItem(item.newItem());
+        sender.sendMessage(
+                Component.text("Gave [" + identifier + "] to " + sender.getName()).color(TextColor.color(0xC2EFB3)));
+    }
+
+    public static void reload(CommandSender sender, Object[] args) {
+        sender.sendMessage(Component.text("Reloading config...").color(TextColor.color(0x32A852)));
+        Liquip.getProvider().reload();
+        sender.sendMessage(Component.text("Done").color(TextColor.color(0x32A852)));
     }
 
     public static String[] suggestGive(SuggestionInfo info) {
+        final String currentArg = info.currentArg();
         final Set<Identifier> keySet = Liquip.getProvider().getItemRegistry().keySet();
-        return keySet.stream()
-                .filter(it -> it.toString().startsWith(info.currentArg()) || it.getKey().startsWith(info.currentArg()))
-                .map(Identifier::toString).toArray(String[]::new);
+        return keySet.stream().filter(it -> it.toString().startsWith(currentArg) ||
+                        (it.getNamespace().equals(LiquipProvider.DEFAULT_NAMESPACE) && it.getKey().startsWith(currentArg)))
+                .map(it -> it.getNamespace().equals(LiquipProvider.DEFAULT_NAMESPACE) ? it.getKey() : it.toString())
+                .toArray(String[]::new);
     }
 }
