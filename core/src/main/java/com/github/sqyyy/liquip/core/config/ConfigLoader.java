@@ -8,8 +8,6 @@ import com.github.sqyyy.liquip.core.util.Status;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;
 import com.typesafe.config.ConfigFactory;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,9 +18,10 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class ConfigLoader {
-    private final Plugin plugin = Liquip.getProvidingPlugin(Liquip.class);
+    private Plugin plugin = null;
 
     public Status<Void> loadConfig() {
+        plugin = Liquip.getProvidingPlugin(Liquip.class);
         final Status<Void> status = new Status<Void>();
         final Path pluginPath = Path.of(plugin.getDataFolder().toURI());
         if (!Files.exists(pluginPath)) {
@@ -133,7 +132,6 @@ public class ConfigLoader {
             status.setError(LiquipError.COULD_NOT_REGISTER);
             return status;
         }
-        Bukkit.broadcast(Component.text("registered new item " + item.getId()));
         status.setOk(true);
         status.setValue(null);
         return status;
