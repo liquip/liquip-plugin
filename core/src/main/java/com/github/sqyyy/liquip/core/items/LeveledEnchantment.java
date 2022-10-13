@@ -1,9 +1,7 @@
 package com.github.sqyyy.liquip.core.items;
 
-import com.github.sqyyy.liquip.core.system.LiquipError;
+import com.github.sqyyy.liquip.core.LiquipProvider;
 import com.github.sqyyy.liquip.core.util.Identifier;
-import com.github.sqyyy.liquip.core.util.Registry;
-import com.github.sqyyy.liquip.core.util.Status;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -25,21 +23,19 @@ public class LeveledEnchantment {
         this.level = level;
     }
 
-    public static Status<LeveledEnchantment> parse(@NotNull Identifier key, int level,
-                                                   @NotNull Registry<@NotNull LiquipEnchantment> enchantmentRegistry) {
+    public static Optional<LeveledEnchantment> parse(@NotNull Identifier key, int level, @NotNull LiquipProvider provider) {
         if (key.getNamespace().equals("minecraft")) {
-            final Enchantment enchantmentResult =
-                    Enchantment.getByKey(new NamespacedKey(key.getNamespace(), key.getKey()));
+            final Enchantment enchantmentResult = Enchantment.getByKey(new NamespacedKey(key.getNamespace(), key.getKey()));
             if (enchantmentResult == null) {
-                return Status.err(LiquipError.ENCHANTMENT_NOT_FOUND);
+                return Optional.empty();
             }
-            return Status.ok(new LeveledEnchantment(enchantmentResult, level));
+            return Optional.of(new LeveledEnchantment(enchantmentResult, level));
         } else {
-            if (!enchantmentRegistry.isRegistered(key)) {
-                return Status.err(LiquipError.ENCHANTMENT_NOT_FOUND);
+            if (!provider.getEnchantmentRegistry().isRegistered(key)) {
+                return Optional.empty();
             }
-            final LiquipEnchantment enchantmentResult = enchantmentRegistry.get(key);
-            return Status.ok(new LeveledEnchantment(enchantmentResult, level));
+            final LiquipEnchantment enchantmentResult = provider.getEnchantmentRegistry().get(key);
+            return Optional.of(new LeveledEnchantment(enchantmentResult, level));
         }
     }
 

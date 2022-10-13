@@ -4,6 +4,7 @@ import com.destroystokyo.paper.Namespaced;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class Identifier implements Namespaced {
     private final String namespace;
@@ -16,23 +17,22 @@ public class Identifier implements Namespaced {
         this.key = key.toLowerCase();
     }
 
-    public static @NotNull Result<@NotNull Identifier, @NotNull UtilError> parse(@NotNull String identifier) {
+    public static @NotNull Optional<@NotNull Identifier> parse(@NotNull String identifier) {
         Objects.requireNonNull(identifier);
         final String[] tiles = identifier.split(":");
         if (tiles.length != 2) {
-            return Result.err(UtilError.INVALID_IDENTIFIER);
+            return Optional.empty();
         }
-        return Result.ok(new Identifier(tiles[0].toLowerCase(), tiles[1].toLowerCase()));
+        return Optional.of(new Identifier(tiles[0].toLowerCase(), tiles[1].toLowerCase()));
     }
 
-    public static @NotNull Result<@NotNull Identifier, @NotNull UtilError> parse(@NotNull String identifier,
-                                                                                 @NotNull String defaultNamespace) {
+    public static @NotNull Optional<@NotNull Identifier> parse(@NotNull String identifier, @NotNull String defaultNamespace) {
         Objects.requireNonNull(identifier);
         final String[] tiles = identifier.split(":");
         return switch (tiles.length) {
-            case 1 -> Result.ok(new Identifier(defaultNamespace.toLowerCase(), tiles[0].toLowerCase()));
-            case 2 -> Result.ok(new Identifier(tiles[0].toLowerCase(), tiles[1].toLowerCase()));
-            default -> Result.err(UtilError.INVALID_IDENTIFIER);
+            case 1 -> Optional.of(new Identifier(defaultNamespace.toLowerCase(), tiles[0].toLowerCase()));
+            case 2 -> Optional.of(new Identifier(tiles[0].toLowerCase(), tiles[1].toLowerCase()));
+            default -> Optional.empty();
         };
     }
 

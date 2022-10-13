@@ -10,8 +10,6 @@ import com.github.sqyyy.liquip.core.items.impl.AttributeModifierModifierSupplier
 import com.github.sqyyy.liquip.core.system.craft.CraftingRegistry;
 import com.github.sqyyy.liquip.core.util.Identifier;
 import com.github.sqyyy.liquip.core.util.Registry;
-import com.github.sqyyy.liquip.core.util.Status;
-import com.github.sqyyy.liquip.core.util.Warning;
 import com.github.sqyyy.liquip.core.util.impl.BasicRegistry;
 import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
@@ -65,32 +63,22 @@ public class LiquipProvider {
     }
 
     void load() {
-        final Status<Void> configResult = configLoader.loadConfig();
-        for (Warning warning : configResult.getWarnings()) {
-            warning.print(Liquip.getProvidingPlugin(Liquip.class).getSLF4JLogger());
-        }
-        if (configResult.isErr()) {
-            configResult.unwrapErr().print(Liquip.getProvidingPlugin(Liquip.class).getSLF4JLogger());
+        if (configLoader.loadConfig()) {
+            Liquip.getProvidingPlugin(Liquip.class).getSLF4JLogger().info("Successfully loaded config");
+        } else {
             Liquip.getProvidingPlugin(Liquip.class).getSLF4JLogger().error("Could not load config successfully");
             Bukkit.getPluginManager().disablePlugin(Liquip.getProvidingPlugin(Liquip.class));
-        } else {
-            Liquip.getProvidingPlugin(Liquip.class).getSLF4JLogger().info("Successfully loaded config");
         }
     }
 
     public void reload() {
         items = new BasicRegistry<>();
         recipes = new CraftingRegistry();
-        final Status<Void> configResult = configLoader.loadConfig();
-        for (Warning warning : configResult.getWarnings()) {
-            warning.print(Liquip.getProvidingPlugin(Liquip.class).getSLF4JLogger());
-        }
-        if (configResult.isErr()) {
-            configResult.unwrapErr().print(Liquip.getProvidingPlugin(Liquip.class).getSLF4JLogger());
+        if (configLoader.loadConfig()) {
+            Liquip.getProvidingPlugin(Liquip.class).getSLF4JLogger().info("Successfully reloaded config");
+        } else {
             Liquip.getProvidingPlugin(Liquip.class).getSLF4JLogger().error("Could not reload config successfully");
             Bukkit.getPluginManager().disablePlugin(Liquip.getProvidingPlugin(Liquip.class));
-        } else {
-            Liquip.getProvidingPlugin(Liquip.class).getSLF4JLogger().info("Successfully reloaded config");
         }
     }
 }

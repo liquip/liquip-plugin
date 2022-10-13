@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
+@Deprecated
 public class Result<T, E> {
     private final T value;
     private final E error;

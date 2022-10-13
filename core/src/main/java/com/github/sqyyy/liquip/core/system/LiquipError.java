@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
+@Deprecated(forRemoval = true)
 public enum LiquipError implements Error {
     CONFIG_IO_EXCEPTION("An IO-Exception was thrown"),
     CONFIG_IS_DIRECTORY("The config is not a file"),
