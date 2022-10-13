@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Liquip extends JavaPlugin {
-    public static final String DEFAULT_NAMESPACE = LiquipProvider.DEFAULT_NAMESPACE;
     private static final LiquipProvider provider = new LiquipProvider();
 
     public static LiquipProvider getProvider() {
