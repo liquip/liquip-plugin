@@ -24,7 +24,7 @@ public class LiquipExample extends JavaPlugin {
         treecapitator = new Treecapitator(new Treecapitator.Queue(1024, 128));
         final LiquipProvider provider = Liquip.getProvider();
         provider.getFeatureRegistry().register(new Identifier(namespace, "grappling_hook"), grapplingHook);
-        provider.getFeatureRegistry().register(new Identifier(namespace, "aspect_of_the_end"), magicalWaterBucket);
+        provider.getFeatureRegistry().register(new Identifier(namespace, "aspect_of_the_end"), aspectOfTheEnd);
         provider.getFeatureRegistry().register(new Identifier(namespace, "magical_water_bucket"), magicalWaterBucket);
         provider.getFeatureRegistry().register(new Identifier(namespace, "treecapitator"), treecapitator);
     }
