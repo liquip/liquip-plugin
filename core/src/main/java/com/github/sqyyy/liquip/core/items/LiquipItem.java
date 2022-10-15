@@ -34,6 +34,7 @@ public interface LiquipItem {
         Identifier id;
         Component name;
         Material material;
+        Optional<Integer> customModelData = Optional.empty();
         List<Component> lore = List.of();
         List<LeveledEnchantment> enchantments = List.of();
         List<Feature> features = List.of();
@@ -60,6 +61,16 @@ public interface LiquipItem {
             logger.warn("  Config contains unknown material");
             logger.warn("  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#material");
             return Optional.empty();
+        }
+        if (config.hasPath("customModelData")) {
+            final Optional<Integer> customModelDataResult = ConfigUtil.getInt(config, "customModelData");
+            if (customModelDataResult.isEmpty()) {
+                logger.warn("Could not parse custom model-data for item '{}'", id);
+                logger.warn("  Config contains invalid custom model-data");
+                logger.warn("  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#"); // TODO
+            } else {
+                customModelData = customModelDataResult;
+            }
         }
         lore:
         if (config.hasPath("lore")) {
@@ -198,7 +209,6 @@ public interface LiquipItem {
         }
         recipes:
         if (config.hasPath("recipes")) {
-            // TODO - add safe ConfigUtil functions
             final Optional<List<? extends Config>> recipesResult = ConfigUtil.getConfigList(config, "recipes");
             if (recipesResult.isEmpty()) {
                 logger.warn("Could not parse recipes for item '{}'", id);
@@ -356,8 +366,8 @@ public interface LiquipItem {
                 provider.getCraftingRegistry().register(hash, new ShapedCraftingRecipe(ingredientCounts, ingredientIds, id));
             }
         }
-        return Optional.of(
-                new BasicLiquipItem(id, name, material, lore, enchantments, features, modifiers, HashMultimap.create()));
+        return Optional.of(new BasicLiquipItem(id, name, material, customModelData, lore, enchantments, features, modifiers,
+                HashMultimap.create()));
     }
 
     static @NotNull Identifier getIdentifier(@NotNull ItemStack itemStack) {
@@ -421,6 +431,8 @@ public interface LiquipItem {
 
     @NotNull Material getMaterial();
 
+    @NotNull Optional<Integer> getCustomModelData();
+
     @NotNull List<@NotNull Component> getLore();
 
     @NotNull List<@NotNull LeveledEnchantment> getEnchantments();
@@ -440,6 +452,7 @@ public interface LiquipItem {
         private Identifier key = null;
         private Component name = null;
         private Material material = null;
+        private Optional<Integer> customModelData = Optional.empty();
         private List<Component> lore = new ArrayList<>();
         private List<LeveledEnchantment> enchantments = new ArrayList<>();
         private List<Feature> features = new ArrayList<>();
@@ -471,6 +484,16 @@ public interface LiquipItem {
 
         public @NotNull Builder material(@NotNull Material material) {
             this.material = material;
+            return this;
+        }
+
+        public @NotNull Builder customModelData(int customModelData) {
+            this.customModelData = Optional.of(customModelData);
+            return this;
+        }
+
+        public @NotNull Builder noCustomModelData() {
+            customModelData = Optional.empty();
             return this;
         }
 
@@ -530,7 +553,7 @@ public interface LiquipItem {
             if (material == null) {
                 return null;
             }
-            return new BasicLiquipItem(key, name, material, lore, enchantments, features, modifiers, events);
+            return new BasicLiquipItem(key, name, material, customModelData, lore, enchantments, features, modifiers, events);
         }
     }
 }

@@ -19,9 +19,9 @@ public class LiquipProvider {
     private final Registry<Feature> features;
     private final Registry<ModifierSupplier> modifiers;
     private final Registry<LiquipEnchantment> enchantments;
+    private final ConfigLoader configLoader;
     private Registry<LiquipItem> items;
     private CraftingRegistry recipes;
-    private final ConfigLoader configLoader;
 
     public LiquipProvider() {
         items = new BasicRegistry<>();
@@ -71,14 +71,15 @@ public class LiquipProvider {
         }
     }
 
-    public void reload() {
+    public boolean reload() {
         items = new BasicRegistry<>();
         recipes = new CraftingRegistry();
         if (configLoader.loadConfig()) {
             Liquip.getProvidingPlugin(Liquip.class).getSLF4JLogger().info("Successfully reloaded config");
-        } else {
-            Liquip.getProvidingPlugin(Liquip.class).getSLF4JLogger().error("Could not reload config successfully");
-            Bukkit.getPluginManager().disablePlugin(Liquip.getProvidingPlugin(Liquip.class));
+            return true;
         }
+        Liquip.getProvidingPlugin(Liquip.class).getSLF4JLogger().error("Could not reload config successfully");
+        Bukkit.getPluginManager().disablePlugin(Liquip.getProvidingPlugin(Liquip.class));
+        return false;
     }
 }

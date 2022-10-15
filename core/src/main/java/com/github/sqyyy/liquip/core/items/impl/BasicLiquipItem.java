@@ -14,12 +14,14 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class BasicLiquipItem implements LiquipItem {
     private final Identifier id;
     private final Component name;
     private final Material material;
+    private final Integer customModelData;
     private final List<Component> lore;
     private final List<LeveledEnchantment> enchantments;
     private final List<Feature> features;
@@ -27,13 +29,14 @@ public class BasicLiquipItem implements LiquipItem {
     private final Multimap<Class<? extends Event>, Consumer<? extends Event>> events;
 
     public BasicLiquipItem(@NotNull Identifier id, @NotNull Component name, @NotNull Material material,
-                           @NotNull List<@NotNull Component> lore,
-                           @NotNull List<@NotNull LeveledEnchantment> enchantments,
-                           @NotNull List<@NotNull Feature> features, @NotNull List<@NotNull Modifier> modifiers,
+                           @NotNull Optional<@NotNull Integer> customModelData, @NotNull List<@NotNull Component> lore,
+                           @NotNull List<@NotNull LeveledEnchantment> enchantments, @NotNull List<@NotNull Feature> features,
+                           @NotNull List<@NotNull Modifier> modifiers,
                            @NotNull Multimap<@NotNull Class<? extends Event>, @NotNull Consumer<? extends Event>> events) {
         this.id = id;
         this.name = name;
         this.material = material;
+        this.customModelData = customModelData.orElse(null);
         this.lore = lore;
         this.enchantments = enchantments;
         this.features = features;
@@ -57,6 +60,11 @@ public class BasicLiquipItem implements LiquipItem {
     @Override
     public @NotNull Material getMaterial() {
         return material;
+    }
+
+    @Override
+    public @NotNull Optional<@NotNull Integer> getCustomModelData() {
+        return Optional.ofNullable(customModelData);
     }
 
     @Override
@@ -84,6 +92,9 @@ public class BasicLiquipItem implements LiquipItem {
         final ItemStack itemStack = new ItemStack(material);
         final ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.displayName(name);
+        if (customModelData != null) {
+            itemMeta.setCustomModelData(customModelData);
+        }
         itemMeta.lore(lore);
         itemStack.setItemMeta(itemMeta);
         for (final LeveledEnchantment enchantment : enchantments) {
@@ -107,8 +118,7 @@ public class BasicLiquipItem implements LiquipItem {
     }
 
     @Override
-    public <T extends Event> void registerEvent(@NotNull Class<T> eventClass,
-                                                @NotNull Consumer<@NotNull T> eventHandler) {
+    public <T extends Event> void registerEvent(@NotNull Class<T> eventClass, @NotNull Consumer<@NotNull T> eventHandler) {
         events.put(eventClass, eventHandler);
     }
 }

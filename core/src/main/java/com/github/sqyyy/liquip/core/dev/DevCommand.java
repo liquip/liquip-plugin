@@ -1,7 +1,6 @@
 package com.github.sqyyy.liquip.core.dev;
 
 import com.github.sqyyy.liquip.core.Liquip;
-import com.github.sqyyy.liquip.core.LiquipProvider;
 import com.github.sqyyy.liquip.core.items.LiquipItem;
 import com.github.sqyyy.liquip.core.system.craft.CraftingOutputPane;
 import com.github.sqyyy.liquip.core.system.craft.CraftingPane;
@@ -25,11 +24,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class DevCommand {
     private static final Menu menu;
+    private static List<String> suggestions;
 
     static {
         Menu.initialize(Liquip.getProvidingPlugin(Liquip.class));
@@ -52,6 +54,7 @@ public class DevCommand {
                                         ArgumentSuggestions.strings(DevCommand::suggestGive))).executesPlayer(DevCommand::give),
                         new CommandAPICommand("reload").withPermission("liquip.command.reload").executes(DevCommand::reload))
                 .register();
+        reloadGiveSuggestions();
     }
 
     public static void liquip(CommandSender sender, Object[] args) {
@@ -69,6 +72,9 @@ public class DevCommand {
 
     public static void give(Player sender, Object[] args) {
         final NamespacedKey key = (NamespacedKey) args[0];
+        if (key == null) {
+            return;
+        }
         final Identifier identifier = new Identifier(key.getNamespace(), key.getKey());
         final LiquipItem item = Liquip.getProvider().getItemRegistry().get(identifier);
         if (item == null) {
@@ -82,16 +88,31 @@ public class DevCommand {
 
     public static void reload(CommandSender sender, Object[] args) {
         sender.sendMessage(Component.text("Reloading config...").color(TextColor.color(0x32A852)));
-        Liquip.getProvider().reload();
+        if (!Liquip.getProvider().reload()) {
+            sender.sendMessage(Component.text("Could not reload successfully").color(TextColor.color(0xDD1C1A)));
+            return;
+        }
+        reloadGiveSuggestions();
         sender.sendMessage(Component.text("Done").color(TextColor.color(0x32A852)));
     }
 
     public static String[] suggestGive(SuggestionInfo info) {
         final String currentArg = info.currentArg();
+        return suggestions.stream().filter(it -> it.startsWith(currentArg)).toArray(String[]::new);
+    }
+
+    public static void reloadGiveSuggestions() {
         final Set<Identifier> keySet = Liquip.getProvider().getItemRegistry().keySet();
-        return keySet.stream().filter(it -> it.toString().startsWith(currentArg) ||
-                        (it.getNamespace().equals(LiquipProvider.DEFAULT_NAMESPACE) && it.getKey().startsWith(currentArg)))
-                .map(it -> it.getNamespace().equals(LiquipProvider.DEFAULT_NAMESPACE) ? it.getKey() : it.toString())
-                .toArray(String[]::new);
+        suggestions = new ArrayList<>();
+        final Set<String> namespaces = new HashSet<>();
+        for (Identifier identifier : keySet) {
+            if (!namespaces.contains(identifier.getNamespace())) {
+                namespaces.add(identifier.getNamespace());
+                suggestions.add(identifier.getNamespace() + ":");
+            }
+        }
+        for (Identifier identifier : keySet) {
+            suggestions.add(identifier.toString());
+        }
     }
 }

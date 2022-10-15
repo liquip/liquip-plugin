@@ -36,5 +36,6 @@ public class AspectOfTheEnd implements Feature {
             return;
         }
         player.teleport(pos);
+        player.setVelocity(new Vector(0, 0, 0));
     }
 }
