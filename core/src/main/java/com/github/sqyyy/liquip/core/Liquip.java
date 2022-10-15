@@ -19,12 +19,12 @@ public class Liquip extends JavaPlugin {
     public void onLoad() {
         CommandAPI.onLoad(new CommandAPIConfig());
         provider.registerDefaults();
-        provider.load();
     }
 
     @Override
     public void onEnable() {
         CommandAPI.onEnable(this);
+        provider.load();
         Bukkit.getPluginManager().registerEvents(new BlockEventListener(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerEventListener(), this);
         new DevCommand();
