@@ -17,6 +17,6 @@ Below you can see an overview over the features and their state.
 |:white_check_mark:|Vanilla features   |Hide unbreaking, hide enchantments for custom items||implemented|
 |:white_check_mark:|Vanilla modifiers  |Add attribute modifiers to custom items||implemented|
 |:white_check_mark:|3x3 shaped recipes |Create 3 by 3 shaped recipes for custom items||implemented|
+|:white_check_mark:|Custom model data      |Set custom model data of custom items||implemented|
 |:white_check_mark:|Custom enchantments|Create custom enchantments with Java||api availabale|
-|:x:|Custom model data      |Set custom model data of custom items||not implemented|
 |:x:|Advanced crafting table|Crafting table to craft custom items||not openable yet|
