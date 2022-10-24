@@ -2,11 +2,21 @@ package com.github.sqyyy.liquip.example.util;
 
 import org.bukkit.Location;
 
-public class VectorBuilder {
+public class VectorBuilder implements Cloneable {
     private final Location location;
 
     public VectorBuilder(Location location) {
         this.location = location.clone();
+    }
+
+    public VectorBuilder pitch(float pitch) {
+        location.setPitch(pitch);
+        return this;
+    }
+
+    public VectorBuilder yaw(float yaw) {
+        location.setYaw(yaw);
+        return this;
     }
 
     public VectorBuilder up(double blocks) {
@@ -21,7 +31,7 @@ public class VectorBuilder {
 
     public VectorBuilder right(double blocks) {
         final Location rotatedLocation = location.clone();
-        rotatedLocation.setYaw(rotatedLocation.getYaw() + 90f);
+        rotatedLocation.setYaw((rotatedLocation.getYaw() + 180f + 90f) % 360f - 180f);
         rotatedLocation.setPitch(0);
         location.add(rotatedLocation.getDirection().multiply(blocks));
         return this;
@@ -29,7 +39,7 @@ public class VectorBuilder {
 
     public VectorBuilder left(double blocks) {
         final Location rotatedLocation = location.clone();
-        rotatedLocation.setYaw(rotatedLocation.getYaw() - 90f);
+        rotatedLocation.setYaw((rotatedLocation.getYaw() + 180f - 90f) % 360f - 180f);
         rotatedLocation.setPitch(0);
         location.add(rotatedLocation.getDirection().multiply(blocks));
         return this;
@@ -79,7 +89,12 @@ public class VectorBuilder {
         return this;
     }
 
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
+    public VectorBuilder clone() {
+        return new VectorBuilder(location.clone());
+    }
+
     public Location build() {
-        return location.clone();
+        return location;
     }
 }
