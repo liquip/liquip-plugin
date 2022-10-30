@@ -2,34 +2,34 @@ package com.github.sqyyy.liquip.example.util;
 
 import org.bukkit.Location;
 
-public class VectorBuilder implements Cloneable {
+public class LocationBuilder implements Cloneable {
     private final Location location;
 
-    public VectorBuilder(Location location) {
+    public LocationBuilder(Location location) {
         this.location = location.clone();
     }
 
-    public VectorBuilder pitch(float pitch) {
+    public LocationBuilder pitch(float pitch) {
         location.setPitch(pitch);
         return this;
     }
 
-    public VectorBuilder yaw(float yaw) {
+    public LocationBuilder yaw(float yaw) {
         location.setYaw(yaw);
         return this;
     }
 
-    public VectorBuilder up(double blocks) {
+    public LocationBuilder up(double blocks) {
         location.add(0, blocks, 0);
         return this;
     }
 
-    public VectorBuilder down(double blocks) {
+    public LocationBuilder down(double blocks) {
         location.subtract(0, blocks, 0);
         return this;
     }
 
-    public VectorBuilder right(double blocks) {
+    public LocationBuilder right(double blocks) {
         final Location rotatedLocation = location.clone();
         rotatedLocation.setYaw((rotatedLocation.getYaw() + 180f + 90f) % 360f - 180f);
         rotatedLocation.setPitch(0);
@@ -37,7 +37,7 @@ public class VectorBuilder implements Cloneable {
         return this;
     }
 
-    public VectorBuilder left(double blocks) {
+    public LocationBuilder left(double blocks) {
         final Location rotatedLocation = location.clone();
         rotatedLocation.setYaw((rotatedLocation.getYaw() + 180f - 90f) % 360f - 180f);
         rotatedLocation.setPitch(0);
@@ -45,53 +45,53 @@ public class VectorBuilder implements Cloneable {
         return this;
     }
 
-    public VectorBuilder forward(double blocks) {
+    public LocationBuilder forward(double blocks) {
         final Location rotatedLocation = location.clone();
         rotatedLocation.setPitch(0);
         location.add(rotatedLocation.getDirection().multiply(blocks));
         return this;
     }
 
-    public VectorBuilder backward(double blocks) {
+    public LocationBuilder backward(double blocks) {
         final Location rotatedLocation = location.clone();
         rotatedLocation.setPitch(0);
         location.add(rotatedLocation.getDirection().multiply(-blocks));
         return this;
     }
 
-    public VectorBuilder ahead(double blocks) {
+    public LocationBuilder ahead(double blocks) {
         location.add(location.getDirection().multiply(blocks));
         return this;
     }
 
-    public VectorBuilder behind(double blocks) {
+    public LocationBuilder behind(double blocks) {
         location.add(location.getDirection().multiply(-blocks));
         return this;
     }
 
-    public VectorBuilder turnUp(float degrees) {
+    public LocationBuilder turnUp(float degrees) {
         location.setPitch((location.getPitch() + 90f - degrees) % 180f - 90);
         return this;
     }
 
-    public VectorBuilder turnDown(float degrees) {
+    public LocationBuilder turnDown(float degrees) {
         location.setPitch((location.getPitch() + 90f + degrees) % 180f - 90);
         return this;
     }
 
-    public VectorBuilder turnRight(float degrees) {
+    public LocationBuilder turnRight(float degrees) {
         location.setYaw((location.getYaw() + degrees) % 360f);
         return this;
     }
 
-    public VectorBuilder turnLeft(float degrees) {
+    public LocationBuilder turnLeft(float degrees) {
         location.setYaw((location.getYaw() - degrees) % 360f);
         return this;
     }
 
     @SuppressWarnings("MethodDoesntCallSuperMethod")
-    public VectorBuilder clone() {
-        return new VectorBuilder(location.clone());
+    public LocationBuilder clone() {
+        return new LocationBuilder(location.clone());
     }
 
     public Location build() {
