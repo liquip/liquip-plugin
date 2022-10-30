@@ -48,12 +48,13 @@ public class DevCommand {
 
     public DevCommand() {
         new CommandAPICommand("liquip").executes(DevCommand::liquip).withSubcommands(
-                        new CommandAPICommand("craft").withPermission("liquip.command.craft").executesPlayer(DevCommand::craft),
-                        new CommandAPICommand("give").withPermission("liquip.command.give").withArguments(
-                                new NamespacedKeyArgument("identifier").replaceSuggestions(
-                                        ArgumentSuggestions.strings(DevCommand::suggestGive))).executesPlayer(DevCommand::give),
-                        new CommandAPICommand("reload").withPermission("liquip.command.reload").executes(DevCommand::reload))
-                .register();
+                new CommandAPICommand("craft").withPermission("liquip.command.craft").executesPlayer(DevCommand::craft),
+                new CommandAPICommand("give").withPermission("liquip.command.give").withArguments(
+                        new NamespacedKeyArgument("identifier").replaceSuggestions(
+                                ArgumentSuggestions.strings(DevCommand::suggestGive))).executesPlayer(DevCommand::give),
+                new CommandAPICommand("reload").withPermission("liquip.command.reload").executes(DevCommand::reload),
+                new CommandAPICommand("loaded-features").withPermission("liquip.command.loaded.features")
+                        .executes(DevCommand::features)).register();
         reloadGiveSuggestions();
     }
 
@@ -61,9 +62,9 @@ public class DevCommand {
         sender.sendMessage(Component.text("--- Liquip help ---").color(TextColor.color(0xC2EFB3)));
         sender.sendMessage(Component.text("/liquip - Show this help").color(TextColor.color(0xC2EFB3)));
         sender.sendMessage(Component.text("/liquip craft - Open a crafting table").color(TextColor.color(0xC2EFB3)));
-        sender.sendMessage(
-                Component.text("/liquip give <id> - Give yourself a liquip-item").color(TextColor.color(0xC2EFB3)));
+        sender.sendMessage(Component.text("/liquip give <id> - Give yourself a liquip-item").color(TextColor.color(0xC2EFB3)));
         sender.sendMessage(Component.text("/liquip reload - Reload the config").color(TextColor.color(0xC2EFB3)));
+        sender.sendMessage(Component.text("/liquip features - Print all registered features").color(TextColor.color(0xC2EFB3)));
     }
 
     public static void craft(Player player, Object[] args) {
@@ -82,8 +83,7 @@ public class DevCommand {
             return;
         }
         sender.getInventory().addItem(item.newItem());
-        sender.sendMessage(
-                Component.text("Gave [" + identifier + "] to " + sender.getName()).color(TextColor.color(0xC2EFB3)));
+        sender.sendMessage(Component.text("Gave [" + identifier + "] to " + sender.getName()).color(TextColor.color(0xC2EFB3)));
     }
 
     public static void reload(CommandSender sender, Object[] args) {
@@ -94,6 +94,17 @@ public class DevCommand {
         }
         reloadGiveSuggestions();
         sender.sendMessage(Component.text("Done").color(TextColor.color(0x32A852)));
+    }
+
+    public static void features(CommandSender sender, Object[] args) {
+        Component message = Component.text("--- Features registry ---").color(TextColor.color(0xC2EFB3));
+        for (Identifier identifier : Liquip.getProvider().getFeatureRegistry().keySet()) {
+            message = message.append(Component.newline());
+            message = message.append(Component.text(identifier.toString())).color(TextColor.color(0xC2EFB3));
+        }
+        message = message.append(Component.newline());
+        message = message.append(Component.text("--- Features registry ---").color(TextColor.color(0xC2EFB3)));
+        sender.sendMessage(message);
     }
 
     public static String[] suggestGive(SuggestionInfo info) {
