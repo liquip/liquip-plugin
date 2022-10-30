@@ -6,6 +6,7 @@ import com.github.sqyyy.liquip.core.items.Feature;
 import com.github.sqyyy.liquip.core.util.Identifier;
 import com.github.sqyyy.liquip.core.util.Registry;
 import com.github.sqyyy.liquip.example.features.*;
+import com.github.sqyyy.liquip.example.util.AsyncQueue;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -15,7 +16,8 @@ import java.util.UUID;
 
 public class LiquipExample extends JavaPlugin {
     private final String NAMESPACE = "liquip";
-    private Map<UUID, PlayerData> playerData = new HashMap<>();
+    private final AsyncQueue asyncQueue = new AsyncQueue(2, 10);
+    private final Map<UUID, PlayerData> playerData = new HashMap<>();
     private GrapplingHook grapplingHook;
     private AspectOfTheEnd aspectOfTheEnd;
     private MagicalWaterBucket magicalWaterBucket;
@@ -24,6 +26,7 @@ public class LiquipExample extends JavaPlugin {
 
     @Override
     public void onLoad() {
+        asyncQueue.tryPrestart();
         grapplingHook = new GrapplingHook();
         aspectOfTheEnd = new AspectOfTheEnd(this);
         magicalWaterBucket = new MagicalWaterBucket();
@@ -44,9 +47,14 @@ public class LiquipExample extends JavaPlugin {
         }
     }
 
+    public AsyncQueue getAsyncQueue() {
+        return asyncQueue;
+    }
+
     @Override
     public void onEnable() {
         treecapitator.start();
+        staffOfPower.start();
         Bukkit.getPluginManager().registerEvents(new ExampleEventHandler(this), this);
     }
 
