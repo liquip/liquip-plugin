@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+@Deprecated(forRemoval = true)
 public class Status<T> {
     private final List<Warning> warnings;
     private final boolean isFinal;

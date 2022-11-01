@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
+@Deprecated(forRemoval = true)
 public class IgnoredError implements Warning {
     private final Error error;
     private final String message;

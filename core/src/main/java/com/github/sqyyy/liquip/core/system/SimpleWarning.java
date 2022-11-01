@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
+@Deprecated(forRemoval = true)
 public class SimpleWarning implements Warning {
     private final String message;
 

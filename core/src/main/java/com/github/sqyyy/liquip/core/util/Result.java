@@ -4,7 +4,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-@Deprecated
+@Deprecated(forRemoval = true)
 public class Result<T, E> {
     private final T value;
     private final E error;

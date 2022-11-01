@@ -2,6 +2,7 @@ package com.github.sqyyy.liquip.core.util;
 
 import org.jetbrains.annotations.NotNull;
 
+@Deprecated(forRemoval = true)
 public enum UtilError {
     INVALID_IDENTIFIER("The identifier is invalid");
 
