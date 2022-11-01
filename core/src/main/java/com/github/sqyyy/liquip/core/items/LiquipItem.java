@@ -1,6 +1,5 @@
 package com.github.sqyyy.liquip.core.items;
 
-import com.github.sqyyy.liquip.core.Liquip;
 import com.github.sqyyy.liquip.core.LiquipProvider;
 import com.github.sqyyy.liquip.core.config.ConfigUtil;
 import com.github.sqyyy.liquip.core.items.impl.BasicLiquipItem;
@@ -15,10 +14,13 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,13 +29,15 @@ import java.util.*;
 import java.util.function.Consumer;
 
 public interface LiquipItem {
+    NamespacedKey IDENTIFIER_PDC = new NamespacedKey("liquip", "identifier");
+
     static @NotNull Optional<@NotNull LiquipItem> fromConfig(@NotNull ComponentLogger componentLogger, @NotNull Path path,
                                                              @NotNull Config config, @NotNull LiquipProvider provider) {
         final MiniMessage miniMessage = MiniMessage.miniMessage();
         Identifier id;
         Component name;
         Material material;
-        Optional<Integer> customModelData = Optional.empty();
+        Integer customModelData = null;
         List<Component> lore = List.of();
         List<LeveledEnchantment> enchantments = List.of();
         List<Feature> features = List.of();
@@ -68,7 +72,7 @@ public interface LiquipItem {
                 warn(componentLogger, "  Config contains invalid custom model-data");
                 warn(componentLogger, "  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#");
             } else {
-                customModelData = customModelDataResult;
+                customModelData = customModelDataResult.get();
             }
         }
         lore:
@@ -186,8 +190,7 @@ public interface LiquipItem {
                 final Optional<Identifier> modifierIdResult =
                         Identifier.parse(modifierIdString, LiquipProvider.DEFAULT_NAMESPACE);
                 if (modifierIdResult.isEmpty()) {
-                    warn(componentLogger, "Could not parse modifier '{}' for item <aqua>'{}'</aqua>",
-                            modifierIdString, id);
+                    warn(componentLogger, "Could not parse modifier '{}' for item <aqua>'{}'</aqua>", modifierIdString, id);
                     warn(componentLogger, "  Config contains invalid id");
                     warn(componentLogger,
                             "  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#modifiers");
@@ -196,8 +199,7 @@ public interface LiquipItem {
                 final Identifier modifierId = modifierIdResult.get();
                 final Optional<Config> modifierResult = ConfigUtil.getConfig(modifiersMap, modifierIdString);
                 if (modifierResult.isEmpty()) {
-                    warn(componentLogger, "Could not parse modifier '{}' for item <aqua>'{}'</aqua>", modifierId,
-                            id);
+                    warn(componentLogger, "Could not parse modifier '{}' for item <aqua>'{}'</aqua>", modifierId, id);
                     warn(componentLogger, "  Config contains invalid modifier-value");
                     warn(componentLogger,
                             "  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#modifiers");
@@ -391,40 +393,45 @@ public interface LiquipItem {
     }
 
     static @NotNull Identifier getIdentifier(@NotNull ItemStack itemStack) {
-        // TODO - version dependent
-        final org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack craftItemStack =
-                itemStack instanceof org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack it ? it :
-                        org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack.asCraftCopy(itemStack);
-        final net.minecraft.world.item.ItemStack nmsHandle = craftItemStack.handle != null ? craftItemStack.handle :
-                org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack.asNMSCopy(itemStack);
-        if (!nmsHandle.hasTag()) {
-            final NamespacedKey key = itemStack.getType().getKey();
-            return new Identifier(key.getNamespace(), key.getKey());
+        final ItemMeta itemMeta = itemStack.getItemMeta();
+        if (itemMeta == null) {
+            return Identifier.from(itemStack.getType().getKey());
         }
-        final net.minecraft.nbt.CompoundTag nmsTag = nmsHandle.tag;
-        if (!nmsTag.contains("liquip:identifier")) {
-            final NamespacedKey key = itemStack.getType().getKey();
-            return new Identifier(key.getNamespace(), key.getKey());
+        final String identifierString = itemMeta.getPersistentDataContainer().get(IDENTIFIER_PDC, PersistentDataType.STRING);
+        if (identifierString == null) {
+            return Identifier.from(itemStack.getType().getKey());
         }
-        Optional<Identifier> identifierResult =
-                Identifier.parse(nmsTag.getString("liquip:identifier"), LiquipProvider.DEFAULT_NAMESPACE);
-        if (identifierResult.isEmpty()) {
-            Liquip.getProvidingPlugin(Liquip.class).getSLF4JLogger().warn("A player has an item with an invalid identifier tag");
-            final NamespacedKey key = itemStack.getType().getKey();
-            return new Identifier(key.getNamespace(), key.getKey());
-        }
-        return identifierResult.get();
+        return Identifier.parse(identifierString).orElse(Identifier.from(itemStack.getType().getKey()));
     }
 
-    static @NotNull ItemStack setIdentifier(@NotNull ItemStack itemStack, @NotNull Identifier identifier) {
-        // TODO - version dependent
-        final org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack craftItemStack =
-                itemStack instanceof org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack it ? it :
-                        org.bukkit.craftbukkit.v1_19_R1.inventory.CraftItemStack.asCraftCopy(itemStack);
-        final net.minecraft.world.item.ItemStack nmsHandle = craftItemStack.handle;
-        final net.minecraft.nbt.CompoundTag nmsTag = nmsHandle.getOrCreateTag();
-        nmsTag.putString("liquip:identifier", identifier.toString());
-        return craftItemStack;
+    static @NotNull Optional<Identifier> getCustomIdentifier(@NotNull ItemStack itemStack) {
+        final ItemMeta itemMeta = itemStack.getItemMeta();
+        if (itemMeta == null) {
+            return Optional.empty();
+        }
+        final String identifierString = itemMeta.getPersistentDataContainer().get(IDENTIFIER_PDC, PersistentDataType.STRING);
+        if (identifierString == null) {
+            return Optional.empty();
+        }
+        return Identifier.parse(identifierString);
+    }
+
+    static @NotNull ItemStack setCustomIdentifier(@NotNull ItemStack itemStack, @NotNull Identifier identifier) {
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        if (itemMeta == null) {
+            itemMeta = Bukkit.getItemFactory().getItemMeta(itemStack.getType());
+        }
+        itemMeta.getPersistentDataContainer().set(IDENTIFIER_PDC, PersistentDataType.STRING, identifier.toString());
+        itemStack.setItemMeta(itemMeta);
+        return itemStack;
+    }
+
+    static boolean hasCustomIdentifier(@NotNull ItemStack itemStack) {
+        final ItemMeta itemMeta = itemStack.getItemMeta();
+        if (itemMeta == null) {
+            return false;
+        }
+        return itemMeta.getPersistentDataContainer().has(IDENTIFIER_PDC, PersistentDataType.STRING);
     }
 
     private static void invalidEnchantment(ComponentLogger componentLogger, Identifier id, String message) {
@@ -460,7 +467,9 @@ public interface LiquipItem {
 
     @NotNull Material getMaterial();
 
-    @NotNull Optional<Integer> getCustomModelData();
+    boolean hasCustomModelData();
+
+    int getCustomModelData();
 
     @NotNull List<@NotNull Component> getLore();
 
@@ -481,7 +490,7 @@ public interface LiquipItem {
         private Identifier key = null;
         private Component name = null;
         private Material material = null;
-        private Optional<Integer> customModelData = Optional.empty();
+        private Integer customModelData = null;
         private List<Component> lore = new ArrayList<>();
         private List<LeveledEnchantment> enchantments = new ArrayList<>();
         private List<Feature> features = new ArrayList<>();
@@ -517,12 +526,12 @@ public interface LiquipItem {
         }
 
         public @NotNull Builder customModelData(int customModelData) {
-            this.customModelData = Optional.of(customModelData);
+            this.customModelData = customModelData;
             return this;
         }
 
-        public @NotNull Builder noCustomModelData() {
-            customModelData = Optional.empty();
+        public @NotNull Builder customModelData() {
+            customModelData = null;
             return this;
         }
 
