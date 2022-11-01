@@ -1,6 +1,7 @@
 package com.github.sqyyy.liquip.core.util;
 
 import com.destroystokyo.paper.Namespaced;
+import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -11,14 +12,11 @@ public class Identifier implements Namespaced {
     private final String key;
 
     public Identifier(@NotNull String namespace, @NotNull String key) {
-        Objects.requireNonNull(namespace);
-        Objects.requireNonNull(key);
         this.namespace = namespace.toLowerCase();
         this.key = key.toLowerCase();
     }
 
     public static @NotNull Optional<@NotNull Identifier> parse(@NotNull String identifier) {
-        Objects.requireNonNull(identifier);
         final String[] tiles = identifier.split(":");
         if (tiles.length != 2) {
             return Optional.empty();
@@ -27,13 +25,16 @@ public class Identifier implements Namespaced {
     }
 
     public static @NotNull Optional<@NotNull Identifier> parse(@NotNull String identifier, @NotNull String defaultNamespace) {
-        Objects.requireNonNull(identifier);
         final String[] tiles = identifier.split(":");
         return switch (tiles.length) {
             case 1 -> Optional.of(new Identifier(defaultNamespace.toLowerCase(), tiles[0].toLowerCase()));
             case 2 -> Optional.of(new Identifier(tiles[0].toLowerCase(), tiles[1].toLowerCase()));
             default -> Optional.empty();
         };
+    }
+
+    public static @NotNull Identifier from(@NotNull NamespacedKey namespacedKey) {
+        return new Identifier(namespacedKey.getNamespace(), namespacedKey.getKey());
     }
 
     @Override
