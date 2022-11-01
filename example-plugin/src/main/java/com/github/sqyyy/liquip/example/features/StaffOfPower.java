@@ -121,7 +121,7 @@ public class StaffOfPower implements Feature {
         final Shot task = new Shot(eyeLocation, targetBlock.getLocation());
         plugin.getAsyncQueue().submit(task);
         shots.put(player.getUniqueId(), task);
-        playerData.cooldownStaffOfPower(1000 * 5);
+        playerData.cooldownStaffOfPower(1000 * 8);
     }
 
     public class Shot implements Task {
@@ -182,7 +182,7 @@ public class StaffOfPower implements Feature {
                     final LightningStrike lightning = spawnLocation.getWorld().spawn(spawnLocation, LightningStrike.class);
                     lightning.addScoreboardTag("liquip:staff_of_power_lightning");
                     lightning.setLifeTicks(10);
-                    lightning.setFlashCount(15);
+                    lightning.setFlashCount(3);
                     armorStands[i].remove();
                     armorStands[i] = null;
                 }
