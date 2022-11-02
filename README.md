@@ -5,9 +5,6 @@ The items are not really new materials but rather already existing items that ha
 ## Current state of the project
 Currently a lot of features are missing. If you got any suggestions you can share them on our [discord server](https://discord.gg/WfzeWjBpeY).
 Below you can see an overview over the features and their state.
-:construction:
-:x:
-:white_check_mark:
 
 ||Name|Description|Link|State|
 |-|---|-----------|----|-----|
