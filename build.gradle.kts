@@ -1,5 +1,5 @@
 allprojects {
-    group = "com.github.sqyyy"
+    group = "io.github.liquip"
 
     repositories {
         mavenCentral()
