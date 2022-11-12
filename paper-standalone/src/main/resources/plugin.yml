@@ -1,0 +1,4 @@
+name: liquip
+main: io.github.liquip.paper.standalone.LiquipPaperPlugin
+version: 0.0.1-alpha
+api-version: 19
