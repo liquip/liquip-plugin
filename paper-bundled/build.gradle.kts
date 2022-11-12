@@ -12,6 +12,9 @@ java {
 
 dependencies {
     paperDevBundle("1.19.2-R0.1-SNAPSHOT")
+    implementation(project(mapOf("path" to ":api")))
+    implementation(project(mapOf("path" to ":common")))
+    implementation(project(mapOf("path" to ":paper-core")))
 }
 
 tasks {
