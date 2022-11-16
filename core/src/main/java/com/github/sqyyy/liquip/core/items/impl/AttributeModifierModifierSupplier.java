@@ -25,7 +25,8 @@ public class AttributeModifierModifierSupplier implements ModifierSupplier {
             final List<AttributeModifiersModifier.Entry> entries = new ArrayList<>();
             for (Config attributeModifier : attributeModifiers) {
                 if (!attributeModifier.hasPath("attribute") || !attributeModifier.hasPath("name") ||
-                        !attributeModifier.hasPath("amount") || !attributeModifier.hasPath("operation")) {
+                    !attributeModifier.hasPath("amount") ||
+                    !attributeModifier.hasPath("operation")) {
                     continue;
                 }
                 final String attributeString = attributeModifier.getString("attribute");
@@ -41,7 +42,8 @@ public class AttributeModifierModifierSupplier implements ModifierSupplier {
                 }
                 final String name = attributeModifier.getString("name");
                 double amount = attributeModifier.getDouble("amount");
-                final String operationString = attributeModifier.getString("operation").toUpperCase();
+                final String operationString =
+                    attributeModifier.getString("operation").toUpperCase();
                 AttributeModifier.Operation operation = null;
                 switch (operationString.toLowerCase()) {
                     case "add" -> operation = AttributeModifier.Operation.ADD_NUMBER;
@@ -67,7 +69,7 @@ public class AttributeModifierModifierSupplier implements ModifierSupplier {
                     }
                 }
                 entries.add(new AttributeModifiersModifier.Entry(attribute,
-                        new AttributeModifier(UUID.randomUUID(), name, amount, operation, slot)));
+                    new AttributeModifier(UUID.randomUUID(), name, amount, operation, slot)));
             }
             return new AttributeModifiersModifier(entries);
         } catch (Exception ignored) {

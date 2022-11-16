@@ -2,6 +2,7 @@ package com.github.sqyyy.liquip.core;
 
 import com.github.sqyyy.liquip.core.dev.DevCommand;
 import com.github.sqyyy.liquip.core.event.BlockEventListener;
+import com.github.sqyyy.liquip.core.event.EntityEventListener;
 import com.github.sqyyy.liquip.core.event.PlayerEventListener;
 import com.github.sqyyy.liquip.core.event.SystemEventListener;
 import dev.jorel.commandapi.CommandAPI;
@@ -28,6 +29,7 @@ public class Liquip extends JavaPlugin {
         provider.load();
         Bukkit.getPluginManager().registerEvents(new BlockEventListener(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerEventListener(), this);
+        Bukkit.getPluginManager().registerEvents(new EntityEventListener(), this);
         Bukkit.getPluginManager().registerEvents(new SystemEventListener(), this);
         new DevCommand();
     }

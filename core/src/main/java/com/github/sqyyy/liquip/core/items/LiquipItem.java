@@ -31,8 +31,9 @@ import java.util.function.Consumer;
 public interface LiquipItem {
     NamespacedKey IDENTIFIER_PDC = new NamespacedKey("liquip", "identifier");
 
-    static @NotNull Optional<@NotNull LiquipItem> fromConfig(@NotNull ComponentLogger componentLogger, @NotNull Path path,
-                                                             @NotNull Config config, @NotNull LiquipProvider provider) {
+    static @NotNull Optional<@NotNull LiquipItem> fromConfig(
+        @NotNull ComponentLogger componentLogger, @NotNull Path path, @NotNull Config config,
+        @NotNull LiquipProvider provider) {
         final MiniMessage miniMessage = MiniMessage.miniMessage();
         Identifier id;
         Component name;
@@ -42,35 +43,44 @@ public interface LiquipItem {
         List<LeveledEnchantment> enchantments = List.of();
         List<Feature> features = List.of();
         List<Modifier> modifiers = List.of();
-        final Optional<Identifier> idResult = Identifier.parse(config.getString("id"), LiquipProvider.DEFAULT_NAMESPACE);
+        final Optional<Identifier> idResult =
+            Identifier.parse(config.getString("id"), LiquipProvider.DEFAULT_NAMESPACE);
         if (idResult.isEmpty()) {
-            warn(componentLogger, "Could not parse file for item <aqua>'{}'</aqua>", path.toAbsolutePath());
+            warn(componentLogger, "Could not parse file for item <aqua>'{}'</aqua>",
+                path.toAbsolutePath());
             warn(componentLogger, "  Config contains invalid identifier");
-            warn(componentLogger, "  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#identifier");
+            warn(componentLogger, "  For more information read https://github" +
+                ".com/sqyyy-jar/liquip/wiki/Custom-items#identifier");
             return Optional.empty();
         }
         id = idResult.get();
-        name = miniMessage.deserialize(config.getString("name")).decoration(TextDecoration.ITALIC, false);
+        name = miniMessage.deserialize(config.getString("name"))
+            .decoration(TextDecoration.ITALIC, false);
         final NamespacedKey materialKey = NamespacedKey.fromString(config.getString("material"));
         if (materialKey == null) {
             warn(componentLogger, "Could not parse file for item <aqua>'{}'</aqua>", id);
             warn(componentLogger, "  Config contains invalid material");
-            warn(componentLogger, "  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#material");
+            warn(componentLogger, "  For more information read https://github" +
+                ".com/sqyyy-jar/liquip/wiki/Custom-items#material");
             return Optional.empty();
         }
         material = org.bukkit.Registry.MATERIAL.get(materialKey);
         if (material == null) {
             warn(componentLogger, "Could not parse file for item <aqua>'{}'</aqua>", id);
             warn(componentLogger, "  Config contains unknown material");
-            warn(componentLogger, "  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#material");
+            warn(componentLogger, "  For more information read https://github" +
+                ".com/sqyyy-jar/liquip/wiki/Custom-items#material");
             return Optional.empty();
         }
         if (config.hasPath("customModelData")) {
-            final Optional<Integer> customModelDataResult = ConfigUtil.getInt(config, "customModelData");
+            final Optional<Integer> customModelDataResult =
+                ConfigUtil.getInt(config, "customModelData");
             if (customModelDataResult.isEmpty()) {
-                warn(componentLogger, "Could not parse custom model-data for item <aqua>'{}'</aqua>", id);
+                warn(componentLogger,
+                    "Could not parse custom model-data for item <aqua>'{}'</aqua>", id);
                 warn(componentLogger, "  Config contains invalid custom model-data");
-                warn(componentLogger, "  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#");
+                warn(componentLogger, "  For more information read https://github" +
+                    ".com/sqyyy-jar/liquip/wiki/Custom-items#");
             } else {
                 customModelData = customModelDataResult.get();
             }
@@ -81,55 +91,64 @@ public interface LiquipItem {
             if (loreResult.isEmpty()) {
                 warn(componentLogger, "Could not parse file for item <aqua>'{}'</aqua>", id);
                 warn(componentLogger, "  Config contains invalid lore-tag");
-                warn(componentLogger, "  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#lore");
+                warn(componentLogger, "  For more information read https://github" +
+                    ".com/sqyyy-jar/liquip/wiki/Custom-items#lore");
                 break lore;
             }
             final List<String> loreLines = loreResult.get();
             lore = new ArrayList<>();
             for (final String loreLine : loreLines) {
-                lore.add(miniMessage.deserialize(loreLine).decoration(TextDecoration.ITALIC, false));
+                lore.add(
+                    miniMessage.deserialize(loreLine).decoration(TextDecoration.ITALIC, false));
             }
         }
         enchantments:
         if (config.hasPath("enchantments")) {
-            final Optional<List<? extends Config>> enchantmentsResult = ConfigUtil.getConfigList(config, "enchantments");
+            final Optional<List<? extends Config>> enchantmentsResult =
+                ConfigUtil.getConfigList(config, "enchantments");
             if (enchantmentsResult.isEmpty()) {
-                warn(componentLogger, "Could not parse enchantments for item <aqua>'{}'</aqua>", id);
+                warn(componentLogger, "Could not parse enchantments for item <aqua>'{}'</aqua>",
+                    id);
                 warn(componentLogger, "  Config contains invalid enchantments-tag");
-                warn(componentLogger,
-                        "  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#enchantments");
+                warn(componentLogger, "  For more information read https://github" +
+                    ".com/sqyyy-jar/liquip/wiki/Custom-items#enchantments");
                 break enchantments;
             }
             final List<? extends Config> enchantmentsList = enchantmentsResult.get();
             enchantments = new ArrayList<>();
             for (final Config enchantment : enchantmentsList) {
                 if (!enchantment.hasPath("id") || !enchantment.hasPath("level")) {
-                    invalidEnchantment(componentLogger, id, "Enchantment does not contain id- and level-tag");
+                    invalidEnchantment(componentLogger, id,
+                        "Enchantment does not contain id- and level-tag");
                     continue;
                 }
-                final Optional<String> enchantmentIdResult = ConfigUtil.getString(enchantment, "id");
+                final Optional<String> enchantmentIdResult =
+                    ConfigUtil.getString(enchantment, "id");
                 if (enchantmentIdResult.isEmpty()) {
                     invalidEnchantment(componentLogger, id, "Enchantment contains invalid id-tag");
                     continue;
                 }
                 final String enchantmentIdString = enchantmentIdResult.get();
-                final Optional<Integer> enchantmentLevelResult = ConfigUtil.getInt(enchantment, "level");
+                final Optional<Integer> enchantmentLevelResult =
+                    ConfigUtil.getInt(enchantment, "level");
                 if (enchantmentLevelResult.isEmpty()) {
                     invalidEnchantment(componentLogger, id,
-                            "Enchantment '" + enchantmentIdString + "' contains invalid level-tag");
+                        "Enchantment '" + enchantmentIdString + "' contains invalid level-tag");
                     continue;
                 }
                 final int enchantmentLevel = enchantmentLevelResult.get();
                 final Optional<Identifier> enchantmentId =
-                        Identifier.parse(enchantmentIdString, LiquipProvider.DEFAULT_NAMESPACE);
+                    Identifier.parse(enchantmentIdString, LiquipProvider.DEFAULT_NAMESPACE);
                 if (enchantmentId.isEmpty()) {
-                    invalidEnchantment(componentLogger, id, "Enchantment '" + enchantmentIdString + "' contains invalid id");
+                    invalidEnchantment(componentLogger, id,
+                        "Enchantment '" + enchantmentIdString + "' contains invalid id");
                     continue;
                 }
                 final Optional<LeveledEnchantment> enchantmentResult =
-                        LeveledEnchantment.parse(enchantmentId.get(), enchantmentLevel, provider);
+                    LeveledEnchantment.parse(enchantmentId.get(), enchantmentLevel, provider);
                 if (enchantmentResult.isEmpty()) {
-                    invalidEnchantment(componentLogger, id, "Enchantment '" + enchantmentId.get() + "' could not be found");
+                    invalidEnchantment(componentLogger, id,
+                        "Enchantment '" + enchantmentId.get() + "' could not be found");
                     continue;
                 }
                 enchantments.add(enchantmentResult.get());
@@ -137,31 +156,33 @@ public interface LiquipItem {
         }
         features:
         if (config.hasPath("features")) {
-            final Optional<List<String>> featuresResult = ConfigUtil.getStringList(config, "features");
+            final Optional<List<String>> featuresResult =
+                ConfigUtil.getStringList(config, "features");
             if (featuresResult.isEmpty()) {
                 warn(componentLogger, "Could not parse features for item <aqua>'{}'</aqua>", id);
                 warn(componentLogger, "  Config contains invalid features-tag");
-                warn(componentLogger,
-                        "  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#features");
+                warn(componentLogger, "  For more information read https://github" +
+                    ".com/sqyyy-jar/liquip/wiki/Custom-items#features");
                 break features;
             }
             final List<String> featuresList = featuresResult.get();
             features = new ArrayList<>();
             for (final String featureString : featuresList) {
-                final Optional<Identifier> featureIdResult = Identifier.parse(featureString, LiquipProvider.DEFAULT_NAMESPACE);
+                final Optional<Identifier> featureIdResult =
+                    Identifier.parse(featureString, LiquipProvider.DEFAULT_NAMESPACE);
                 if (featureIdResult.isEmpty()) {
                     warn(componentLogger, "Could not parse feature for item <aqua>'{}'</aqua>", id);
                     warn(componentLogger, "  Config contains invalid feature '{}'", featureString);
-                    warn(componentLogger,
-                            "  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#features");
+                    warn(componentLogger, "  For more information read https://github" +
+                        ".com/sqyyy-jar/liquip/wiki/Custom-items#features");
                     continue;
                 }
                 final Identifier featureId = featureIdResult.get();
                 if (!provider.getFeatureRegistry().isRegistered(featureId)) {
                     warn(componentLogger, "Could not parse feature for item <aqua>'{}'</aqua>", id);
                     warn(componentLogger, "  Config contains unknown feature '{}'", featureId);
-                    warn(componentLogger,
-                            "  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#features");
+                    warn(componentLogger, "  For more information read https://github" +
+                        ".com/sqyyy-jar/liquip/wiki/Custom-items#features");
                     continue;
                 }
                 final Feature feature = provider.getFeatureRegistry().get(featureId);
@@ -174,8 +195,8 @@ public interface LiquipItem {
             if (modifiersResult.isEmpty()) {
                 warn(componentLogger, "Could not parse modifiers for item <aqua>'{}'</aqua>", id);
                 warn(componentLogger, "  Config contains invalid modifiers-tag");
-                warn(componentLogger,
-                        "  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#modifiers");
+                warn(componentLogger, "  For more information read https://github" +
+                    ".com/sqyyy-jar/liquip/wiki/Custom-items#modifiers");
                 break modifiers;
             }
             final Config modifiersMap = modifiersResult.get();
@@ -188,45 +209,56 @@ public interface LiquipItem {
                 }
                 modifierIdAccumulator.add(modifierIdString);
                 final Optional<Identifier> modifierIdResult =
-                        Identifier.parse(modifierIdString, LiquipProvider.DEFAULT_NAMESPACE);
+                    Identifier.parse(modifierIdString, LiquipProvider.DEFAULT_NAMESPACE);
                 if (modifierIdResult.isEmpty()) {
-                    warn(componentLogger, "Could not parse modifier '{}' for item <aqua>'{}'</aqua>", modifierIdString, id);
-                    warn(componentLogger, "  Config contains invalid id");
                     warn(componentLogger,
-                            "  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#modifiers");
+                        "Could not parse modifier '{}' for item <aqua>'{}'</aqua>",
+                        modifierIdString, id);
+                    warn(componentLogger, "  Config contains invalid id");
+                    warn(componentLogger, "  For more information read https://github" +
+                        ".com/sqyyy-jar/liquip/wiki/Custom-items#modifiers");
                     continue;
                 }
                 final Identifier modifierId = modifierIdResult.get();
-                final Optional<Config> modifierResult = ConfigUtil.getConfig(modifiersMap, modifierIdString);
+                final Optional<Config> modifierResult =
+                    ConfigUtil.getConfig(modifiersMap, modifierIdString);
                 if (modifierResult.isEmpty()) {
-                    warn(componentLogger, "Could not parse modifier '{}' for item <aqua>'{}'</aqua>", modifierId, id);
-                    warn(componentLogger, "  Config contains invalid modifier-value");
                     warn(componentLogger,
-                            "  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#modifiers");
+                        "Could not parse modifier '{}' for item <aqua>'{}'</aqua>", modifierId, id);
+                    warn(componentLogger, "  Config contains invalid modifier-value");
+                    warn(componentLogger, "  For more information read https://github" +
+                        ".com/sqyyy-jar/liquip/wiki/Custom-items#modifiers");
                     continue;
                 }
                 final Config modifierMap = modifierResult.get();
                 if (!provider.getModifierRegistry().isRegistered(modifierId)) {
-                    warn(componentLogger, "Could find modifier '{}' for item <aqua>'{}'</aqua>", modifierId, id);
+                    warn(componentLogger, "Could find modifier '{}' for item <aqua>'{}'</aqua>",
+                        modifierId, id);
                     warn(componentLogger, "  Config contains unknown id");
-                    warn(componentLogger,
-                            "  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#modifiers");
+                    warn(componentLogger, "  For more information read https://github" +
+                        ".com/sqyyy-jar/liquip/wiki/Custom-items#modifiers");
                     continue;
                 }
-                final Modifier modifier = provider.getModifierRegistry().get(modifierId).get(modifierMap);
+                final Modifier modifier =
+                    provider.getModifierRegistry().get(modifierId).get(modifierMap);
                 if (modifier != null) {
                     modifiers.add(modifier);
+                } else {
+                    warn(componentLogger,
+                        "Could not generate modifier '{}' for item <aqua>'{}'</aqua>", modifierId,
+                        id);
                 }
             }
         }
         recipes:
         if (config.hasPath("recipes")) {
-            final Optional<List<? extends Config>> recipesResult = ConfigUtil.getConfigList(config, "recipes");
+            final Optional<List<? extends Config>> recipesResult =
+                ConfigUtil.getConfigList(config, "recipes");
             if (recipesResult.isEmpty()) {
                 warn(componentLogger, "Could not parse recipes for item <aqua>'{}'</aqua>", id);
                 warn(componentLogger, "  Config contains invalid recipes-tag");
-                warn(componentLogger,
-                        "  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#recipes");
+                warn(componentLogger, "  For more information read https://github" +
+                    ".com/sqyyy-jar/liquip/wiki/Custom-items#recipes");
                 break recipes;
             }
             final List<? extends Config> recipesList = recipesResult.get();
@@ -237,42 +269,51 @@ public interface LiquipItem {
                     shapeless = ConfigUtil.getBoolean(recipe, "shapeless", false);
                 }
                 if (shapeless) {
-                    warn(componentLogger, "Shapeless recipes are not implemented yet: <aqua>'{}'</aqua>", id);
+                    warn(componentLogger,
+                        "Shapeless recipes are not implemented yet: <aqua>'{}'</aqua>", id);
                     continue;
                     /*
                     if (!recipe.hasPath("ingredients")) {
                         logger.warn("Could not parse shapeless recipe for item '{}'", id);
                         logger.warn("  Config does not contain ingredients-tag");
-                        logger.warn("  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#recipes");
+                        logger.warn("  For more information read https://github
+                        .com/sqyyy-jar/liquip/wiki/Custom-items#recipes");
                         continue;
                     }
                     final Identifier[] ingredientIds = new Identifier[9];
                     final Integer[] ingredientCounts = new Integer[9];
                     Arrays.fill(ingredientCounts, 0);
-                    final Optional<List<? extends Config>> ingredientsResult = ConfigUtil.getConfigList(config, "recipes");
+                    final Optional<List<? extends Config>> ingredientsResult = ConfigUtil
+                    .getConfigList(config, "recipes");
                     if (ingredientsResult.isEmpty()) {
                         logger.warn("Could not parse shapeless recipe for item '{}'", id);
                         logger.warn("  Config contains invalid ingredients");
-                        logger.warn("  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#recipes");
+                        logger.warn("  For more information read https://github
+                        .com/sqyyy-jar/liquip/wiki/Custom-items#recipes");
                         continue;
                     }
                     final List<? extends Config> ingredientsList = ingredientsResult.get();
                     int index = 0;
                     for (final Config ingredient : ingredientsList) {
                         if (!ingredient.hasPath("id")) {
-                            invalidShapelessRecipeIngredient(logger, id, "Config does not contain id-tag");
+                            invalidShapelessRecipeIngredient(logger, id, "Config does not contain
+                             id-tag");
                             continue recipe;
                         }
-                        final Optional<String> ingredientIdResult = ConfigUtil.getString(ingredient, "id");
+                        final Optional<String> ingredientIdResult = ConfigUtil.getString
+                        (ingredient, "id");
                         if (ingredientIdResult.isEmpty()) {
-                            invalidShapelessRecipeIngredient(logger, id, "Config contains invalid id");
+                            invalidShapelessRecipeIngredient(logger, id, "Config contains invalid
+                             id");
                             continue recipe;
                         }
                         final String ingredientIdString = ingredientIdResult.get();
                         final Optional<Identifier> ingredientId =
-                                Identifier.parse(ingredientIdString, LiquipProvider.DEFAULT_NAMESPACE);
+                                Identifier.parse(ingredientIdString, LiquipProvider
+                                .DEFAULT_NAMESPACE);
                         if (ingredientId.isEmpty()) {
-                            invalidShapelessRecipeIngredient(logger, id, "Config contains invalid id");
+                            invalidShapelessRecipeIngredient(logger, id, "Config contains invalid
+                             id");
                             continue recipe;
                         }
                         ingredientCounts[index] = 1;
@@ -285,9 +326,11 @@ public interface LiquipItem {
                             break;
                         }
                     }
-                    final CraftingHashObject craftingHashObject = new CraftingHashObject(ingredientIds, false);
+                    final CraftingHashObject craftingHashObject = new CraftingHashObject
+                    (ingredientIds, false);
                     provider.getCraftingRegistry().register(craftingHashObject,
-                            new ShapelessCraftingRecipe(Arrays.asList(ingredientCounts), Arrays.asList(ingredientIds), id));
+                            new ShapelessCraftingRecipe(Arrays.asList(ingredientCounts), Arrays
+                            .asList(ingredientIds), id));
                     continue;
                     */
                 }
@@ -299,20 +342,25 @@ public interface LiquipItem {
                     invalidRecipe(componentLogger, id, "Config does not contain placeholders-tag");
                     continue;
                 }
-                final Optional<List<String>> shapeStringsResult = ConfigUtil.getStringList(recipe, "shape");
+                final Optional<List<String>> shapeStringsResult =
+                    ConfigUtil.getStringList(recipe, "shape");
                 if (shapeStringsResult.isEmpty()) {
                     invalidRecipe(componentLogger, id, "Config contains invalid shape");
                     continue;
                 }
                 final List<String> shapeStrings = shapeStringsResult.get();
-                final Optional<List<? extends Config>> placeholdersResult = ConfigUtil.getConfigList(recipe, "placeholders");
+                final Optional<List<? extends Config>> placeholdersResult =
+                    ConfigUtil.getConfigList(recipe, "placeholders");
                 if (placeholdersResult.isEmpty()) {
                     invalidRecipe(componentLogger, id, "Config has invalid placeholders");
                     continue;
                 }
                 final List<? extends Config> placeholders = placeholdersResult.get();
-                final HashMap<Character, ShapedCraftingRecipe.Placeholder> placeholderMap = new HashMap<>();
-                placeholderMap.put(' ', new ShapedCraftingRecipe.Placeholder(' ', new Identifier("minecraft", "air"), 0));
+                final HashMap<Character, ShapedCraftingRecipe.Placeholder> placeholderMap =
+                    new HashMap<>();
+                placeholderMap.put(' ',
+                    new ShapedCraftingRecipe.Placeholder(' ', new Identifier("minecraft", "air"),
+                        0));
                 final char[] shape = new char[9];
                 for (int i = 0; i < shapeStrings.size(); i++) {
                     final String shapeString = shapeStrings.get(i);
@@ -333,63 +381,78 @@ public interface LiquipItem {
                 }
                 for (final Config placeholder : placeholders) {
                     if (!placeholder.hasPath("key")) {
-                        warn(componentLogger, "Could not parse placeholder for recipe for item <aqua>'{}'</aqua>", id);
-                        warn(componentLogger, "  Config does not contain key-tag");
                         warn(componentLogger,
-                                "  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#recipes");
+                            "Could not parse placeholder for recipe for item <aqua>'{}'</aqua>",
+                            id);
+                        warn(componentLogger, "  Config does not contain key-tag");
+                        warn(componentLogger, "  For more information read https://github" +
+                            ".com/sqyyy-jar/liquip/wiki/Custom-items#recipes");
                         continue recipe;
                     }
                     if (!placeholder.hasPath("type")) {
-                        warn(componentLogger, "Could not parse placeholder for recipe for item <aqua>'{}'</aqua>", id);
-                        warn(componentLogger, "  Config does not contain type-tag");
                         warn(componentLogger,
-                                "  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#recipes");
+                            "Could not parse placeholder for recipe for item <aqua>'{}'</aqua>",
+                            id);
+                        warn(componentLogger, "  Config does not contain type-tag");
+                        warn(componentLogger, "  For more information read https://github" +
+                            ".com/sqyyy-jar/liquip/wiki/Custom-items#recipes");
                         continue recipe;
                     }
                     final String keyString = placeholder.getString("key");
                     if (keyString.isEmpty()) {
-                        warn(componentLogger, "Could not parse placeholder for recipe for item <aqua>'{}'</aqua>", id);
-                        warn(componentLogger, "  Config contains invalid key");
                         warn(componentLogger,
-                                "  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#recipes");
+                            "Could not parse placeholder for recipe for item <aqua>'{}'</aqua>",
+                            id);
+                        warn(componentLogger, "  Config contains invalid key");
+                        warn(componentLogger, "  For more information read https://github" +
+                            ".com/sqyyy-jar/liquip/wiki/Custom-items#recipes");
                         continue recipe;
                     }
                     final char key = keyString.charAt(0);
                     final Optional<Identifier> typeResult =
-                            Identifier.parse(placeholder.getString("type"), LiquipProvider.DEFAULT_NAMESPACE);
+                        Identifier.parse(placeholder.getString("type"),
+                            LiquipProvider.DEFAULT_NAMESPACE);
                     if (typeResult.isEmpty()) {
-                        warn(componentLogger, "Could not parse placeholder for recipe for item <aqua>'{}'</aqua>", id);
-                        warn(componentLogger, "  Config contains invalid type");
                         warn(componentLogger,
-                                "  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#recipes");
+                            "Could not parse placeholder for recipe for item <aqua>'{}'</aqua>",
+                            id);
+                        warn(componentLogger, "  Config contains invalid type");
+                        warn(componentLogger, "  For more information read https://github" +
+                            ".com/sqyyy-jar/liquip/wiki/Custom-items#recipes");
                         continue recipe;
                     }
                     int count = 1;
                     if (placeholder.hasPath("count")) {
                         count = placeholder.getInt("count");
                     }
-                    placeholderMap.put(key, new ShapedCraftingRecipe.Placeholder(key, typeResult.get(), count));
+                    placeholderMap.put(key,
+                        new ShapedCraftingRecipe.Placeholder(key, typeResult.get(), count));
                 }
                 final Identifier[] ingredientIds = new Identifier[9];
                 final int[] ingredientCounts = new int[9];
                 for (int i = 0; i < shape.length; i++) {
                     if (!placeholderMap.containsKey(shape[i])) {
-                        warn(componentLogger, "Could not parse recipe for item <aqua>'{}'</aqua>", id);
-                        warn(componentLogger, "  Config does not contain '{}' placeholder", shape[i]);
-                        warn(componentLogger,
-                                "  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#recipes");
+                        warn(componentLogger, "Could not parse recipe for item <aqua>'{}'</aqua>",
+                            id);
+                        warn(componentLogger, "  Config does not contain '{}' placeholder",
+                            shape[i]);
+                        warn(componentLogger, "  For more information read https://github" +
+                            ".com/sqyyy-jar/liquip/wiki/Custom-items#recipes");
                         continue recipe;
                     }
-                    final ShapedCraftingRecipe.Placeholder placeholder = placeholderMap.get(shape[i]);
+                    final ShapedCraftingRecipe.Placeholder placeholder =
+                        placeholderMap.get(shape[i]);
                     ingredientIds[i] = placeholder.getType();
                     ingredientCounts[i] = placeholder.getCount();
                 }
                 final CraftingHashObject hash = new CraftingHashObject(ingredientIds, true);
-                provider.getCraftingRegistry().register(hash, new ShapedCraftingRecipe(ingredientCounts, ingredientIds, id));
+                provider.getCraftingRegistry()
+                    .register(hash, new ShapedCraftingRecipe(ingredientCounts, ingredientIds, id));
             }
         }
-        return Optional.of(new BasicLiquipItem(id, name, material, customModelData, lore, enchantments, features, modifiers,
-                HashMultimap.create()));
+        return Optional.of(
+            new BasicLiquipItem(id, name, material, customModelData, lore, enchantments, features,
+                modifiers, HashMultimap.create()));
     }
 
     static @NotNull Identifier getIdentifier(@NotNull ItemStack itemStack) {
@@ -397,11 +460,13 @@ public interface LiquipItem {
         if (itemMeta == null) {
             return Identifier.from(itemStack.getType().getKey());
         }
-        final String identifierString = itemMeta.getPersistentDataContainer().get(IDENTIFIER_PDC, PersistentDataType.STRING);
+        final String identifierString =
+            itemMeta.getPersistentDataContainer().get(IDENTIFIER_PDC, PersistentDataType.STRING);
         if (identifierString == null) {
             return Identifier.from(itemStack.getType().getKey());
         }
-        return Identifier.parse(identifierString).orElse(Identifier.from(itemStack.getType().getKey()));
+        return Identifier.parse(identifierString)
+            .orElse(Identifier.from(itemStack.getType().getKey()));
     }
 
     static @NotNull Optional<Identifier> getCustomIdentifier(@NotNull ItemStack itemStack) {
@@ -409,19 +474,22 @@ public interface LiquipItem {
         if (itemMeta == null) {
             return Optional.empty();
         }
-        final String identifierString = itemMeta.getPersistentDataContainer().get(IDENTIFIER_PDC, PersistentDataType.STRING);
+        final String identifierString =
+            itemMeta.getPersistentDataContainer().get(IDENTIFIER_PDC, PersistentDataType.STRING);
         if (identifierString == null) {
             return Optional.empty();
         }
         return Identifier.parse(identifierString);
     }
 
-    static @NotNull ItemStack setCustomIdentifier(@NotNull ItemStack itemStack, @NotNull Identifier identifier) {
+    static @NotNull ItemStack setCustomIdentifier(@NotNull ItemStack itemStack,
+        @NotNull Identifier identifier) {
         ItemMeta itemMeta = itemStack.getItemMeta();
         if (itemMeta == null) {
             itemMeta = Bukkit.getItemFactory().getItemMeta(itemStack.getType());
         }
-        itemMeta.getPersistentDataContainer().set(IDENTIFIER_PDC, PersistentDataType.STRING, identifier.toString());
+        itemMeta.getPersistentDataContainer()
+            .set(IDENTIFIER_PDC, PersistentDataType.STRING, identifier.toString());
         itemStack.setItemMeta(itemMeta);
         return itemStack;
     }
@@ -434,29 +502,37 @@ public interface LiquipItem {
         return itemMeta.getPersistentDataContainer().has(IDENTIFIER_PDC, PersistentDataType.STRING);
     }
 
-    private static void invalidEnchantment(ComponentLogger componentLogger, Identifier id, String message) {
+    private static void invalidEnchantment(ComponentLogger componentLogger, Identifier id,
+        String message) {
         warn(componentLogger, "Could not parse enchantment for item <aqua>'{}'</aqua>", id);
         warn(componentLogger, "  {}", message);
-        warn(componentLogger, "  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#enchantments");
+        warn(componentLogger, "  For more information read https://github" +
+            ".com/sqyyy-jar/liquip/wiki/Custom-items#enchantments");
     }
 
-    private static void invalidRecipe(ComponentLogger componentLogger, Identifier id, String message) {
+    private static void invalidRecipe(ComponentLogger componentLogger, Identifier id,
+        String message) {
         warn(componentLogger, "Could not parse recipe for item <aqua>'{}'</aqua>", id);
         warn(componentLogger, "  {}", message);
-        warn(componentLogger, "  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#recipes");
+        warn(componentLogger, "  For more information read https://github" +
+            ".com/sqyyy-jar/liquip/wiki/Custom-items#recipes");
     }
 
-    private static void invalidShapelessRecipeIngredient(ComponentLogger componentLogger, Identifier id, String message) {
-        warn(componentLogger, "Could not parse ingredient for shapeless recipe for item <aqua>'{}'</aqua>", id);
+    private static void invalidShapelessRecipeIngredient(ComponentLogger componentLogger,
+        Identifier id, String message) {
+        warn(componentLogger,
+            "Could not parse ingredient for shapeless recipe for item <aqua>'{}'</aqua>", id);
         warn(componentLogger, "  {}", message);
-        warn(componentLogger, "  For more information read https://github.com/sqyyy-jar/liquip/wiki/Custom-items#recipes");
+        warn(componentLogger, "  For more information read https://github" +
+            ".com/sqyyy-jar/liquip/wiki/Custom-items#recipes");
     }
 
     private static void warn(ComponentLogger componentLogger, String message, Object... args) {
         switch (args.length) {
             case 0 -> componentLogger.warn(MiniMessage.miniMessage().deserialize(message));
             case 1 -> componentLogger.warn(MiniMessage.miniMessage().deserialize(message), args[0]);
-            case 2 -> componentLogger.warn(MiniMessage.miniMessage().deserialize(message), args[0], args[1]);
+            case 2 -> componentLogger.warn(MiniMessage.miniMessage().deserialize(message), args[0],
+                args[1]);
             default -> componentLogger.warn(MiniMessage.miniMessage().deserialize(message), args);
         }
     }
@@ -483,10 +559,12 @@ public interface LiquipItem {
 
     <T extends Event> void callEvent(@NotNull Class<@NotNull T> eventClass, @NotNull T event);
 
-    <T extends Event> void registerEvent(@NotNull Class<@NotNull T> eventClass, @NotNull Consumer<@NotNull T> eventHandler);
+    <T extends Event> void registerEvent(@NotNull Class<@NotNull T> eventClass,
+        @NotNull Consumer<@NotNull T> eventHandler);
 
     class Builder {
-        private final Multimap<Class<? extends Event>, Consumer<? extends Event>> events = HashMultimap.create();
+        private final Multimap<Class<? extends Event>, Consumer<? extends Event>> events =
+            HashMultimap.create();
         private Identifier key = null;
         private Component name = null;
         private Material material = null;
@@ -501,7 +579,8 @@ public interface LiquipItem {
 
         public Builder(@NotNull Identifier key, @NotNull String name, @NotNull Material material) {
             this.key = key;
-            this.name = MiniMessage.miniMessage().deserialize(name);
+            this.name = MiniMessage.miniMessage().deserialize(name)
+                .decoration(TextDecoration.ITALIC, false);
             this.material = material;
         }
 
@@ -545,7 +624,8 @@ public interface LiquipItem {
             return this;
         }
 
-        public @NotNull Builder enchantments(@NotNull List<@NotNull LeveledEnchantment> enchantments) {
+        public @NotNull Builder enchantments(
+            @NotNull List<@NotNull LeveledEnchantment> enchantments) {
             this.enchantments = enchantments;
             return this;
         }
@@ -576,7 +656,7 @@ public interface LiquipItem {
         }
 
         public <T extends Event> @NotNull Builder event(@NotNull Class<@NotNull T> eventClass,
-                                                        @NotNull Consumer<@NotNull T> eventConsumer) {
+            @NotNull Consumer<@NotNull T> eventConsumer) {
             events.put(eventClass, eventConsumer);
             return this;
         }
@@ -591,7 +671,8 @@ public interface LiquipItem {
             if (material == null) {
                 return null;
             }
-            return new BasicLiquipItem(key, name, material, customModelData, lore, enchantments, features, modifiers, events);
+            return new BasicLiquipItem(key, name, material, customModelData, lore, enchantments,
+                features, modifiers, events);
         }
     }
 }

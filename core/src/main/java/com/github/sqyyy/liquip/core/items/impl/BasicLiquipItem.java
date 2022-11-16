@@ -29,9 +29,11 @@ public class BasicLiquipItem implements LiquipItem {
     private final List<Modifier> modifiers;
     private final Multimap<Class<? extends Event>, Consumer<? extends Event>> events;
 
-    public BasicLiquipItem(@NotNull Identifier id, @NotNull Component name, @NotNull Material material,
-                           @Nullable Integer customModelData, @NotNull List<@NotNull Component> lore,
-                           @NotNull List<@NotNull LeveledEnchantment> enchantments, @NotNull List<@NotNull Feature> features,
+    public BasicLiquipItem(@NotNull Identifier id, @NotNull Component name,
+                           @NotNull Material material, @Nullable Integer customModelData,
+                           @NotNull List<@NotNull Component> lore,
+                           @NotNull List<@NotNull LeveledEnchantment> enchantments,
+                           @NotNull List<@NotNull Feature> features,
                            @NotNull List<@NotNull Modifier> modifiers,
                            @NotNull Multimap<@NotNull Class<? extends Event>, @NotNull Consumer<? extends Event>> events) {
         this.id = id;
@@ -125,7 +127,8 @@ public class BasicLiquipItem implements LiquipItem {
     }
 
     @Override
-    public <T extends Event> void registerEvent(@NotNull Class<T> eventClass, @NotNull Consumer<@NotNull T> eventHandler) {
+    public <T extends Event> void registerEvent(@NotNull Class<T> eventClass,
+                                                @NotNull Consumer<@NotNull T> eventHandler) {
         events.put(eventClass, eventHandler);
     }
 }
