@@ -221,6 +221,7 @@ public class BasicMenu implements Menu {
             }
             case PICKUP_ALL, PICKUP_HALF, PICKUP_SOME, PICKUP_ONE, DROP_ALL_SLOT, DROP_ONE_SLOT -> {
                 if (clickedInventory == bottomInventory) {
+                    event.setCancelled(false);
                     break;
                 }
                 if (!takeSlots[rawSlot]) {
@@ -232,6 +233,7 @@ public class BasicMenu implements Menu {
             }
             case PLACE_ALL, PLACE_SOME, PLACE_ONE -> {
                 if (clickedInventory == bottomInventory) {
+                    event.setCancelled(false);
                     break;
                 }
                 if (!putSlots[rawSlot]) {
@@ -243,6 +245,7 @@ public class BasicMenu implements Menu {
             }
             case SWAP_WITH_CURSOR -> {
                 if (clickedInventory == bottomInventory) {
+                    event.setCancelled(false);
                     break;
                 }
                 if (!putSlots[rawSlot]) {
@@ -281,6 +284,7 @@ public class BasicMenu implements Menu {
             case COLLECT_TO_CURSOR -> event.setCancelled(true);
             case HOTBAR_SWAP -> {
                 if (clickedInventory == bottomInventory) {
+                    event.setCancelled(false);
                     break;
                 }
                 final ItemStack itemStack = event.getCurrentItem();
@@ -303,6 +307,7 @@ public class BasicMenu implements Menu {
             }
             case HOTBAR_MOVE_AND_READD -> {
                 if (clickedInventory == bottomInventory) {
+                    event.setCancelled(false);
                     break;
                 }
                 if (!takeSlots[rawSlot] || !putSlots[rawSlot]) {
