@@ -1,4 +1,4 @@
-package io.github.liquip.common.api;
+package io.github.liquip.paper.core.util.api;
 
 import io.github.liquip.api.Liquip;
 import io.github.liquip.api.LiquipProvider;

@@ -6,7 +6,7 @@ project(":core").name = "liquip-core"
 project(":gui").name = "liquip-gui"
 project(":example-plugin").name = "liquip-example-plugin"
 // new submodules
-include("api", "common", "paper-core", "paper-bundled", "paper-standalone")
+include("api", "paper-core", "paper-bundled", "paper-standalone")
 
 pluginManagement {
     repositories {

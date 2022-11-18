@@ -1,4 +1,4 @@
-package io.github.liquip.common;
+package io.github.liquip.paper.core.util;
 
 import org.bukkit.Keyed;
 import org.bukkit.NamespacedKey;
