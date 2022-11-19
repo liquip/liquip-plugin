@@ -1,11 +1,24 @@
 package io.github.liquip.paper.standalone;
 
-import io.github.liquip.common.api.ApiRegistrationUtil;
+import io.github.liquip.paper.core.util.api.ApiRegistrationUtil;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class LiquipPaperPlugin extends JavaPlugin {
+    private final StandaloneLiquipImpl api = new StandaloneLiquipImpl(this);
+
+    @Override
+    public void onLoad() {
+        ApiRegistrationUtil.registerProvider(api);
+        api.loadSystem();
+    }
+
     @Override
     public void onEnable() {
-        ApiRegistrationUtil.registerProvider(new StandaloneLiquipImpl(this));
+        api.enableSystem();
+    }
+
+    @Override
+    public void onDisable() {
+        api.disableSystem();
     }
 }

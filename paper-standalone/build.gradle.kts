@@ -14,10 +14,16 @@ dependencies {
     paperDevBundle("1.19.2-R0.1-SNAPSHOT")
     implementation(project(mapOf("path" to ":api")))
     implementation(project(mapOf("path" to ":paper-core")))
+    implementation(project(mapOf("path" to ":liquip-gui")))
+    implementation("dev.jorel:commandapi-shade:8.5.1")
 }
 
 tasks {
     assemble {
         dependsOn(reobfJar)
     }
+}
+
+tasks.shadowJar {
+    relocate("dev.jorel.commandapi", "io.github.liquip.commandapi")
 }
