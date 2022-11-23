@@ -1,6 +1,6 @@
 package io.github.liquip.api.item;
 
-import org.bukkit.Keyed;
+import net.kyori.adventure.key.Keyed;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;

@@ -8,9 +8,9 @@ import io.github.liquip.api.LiquipProvider;
 import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -21,7 +21,7 @@ import java.util.function.BiConsumer;
 
 public class ItemImpl implements Item {
     private final Liquip API;
-    private final NamespacedKey key;
+    private final Key key;
     private final Material material;
     private final Component displayName;
     private final List<Component> lore;
@@ -30,17 +30,17 @@ public class ItemImpl implements Item {
     private final Multimap<Class<? extends Event>, BiConsumer<? extends Event, ItemStack>>
         eventHandlers;
 
-    public ItemImpl(@NonNull NamespacedKey key, @NonNull Material material,
+    public ItemImpl(@NonNull Key key, @NonNull Material material,
                     @NonNull Component displayName, @NonNull List<Component> lore) {
         this(key, material, displayName, lore, List.of(), Map.of(), ImmutableMultimap.of());
     }
 
-    public ItemImpl(@NonNull Liquip api, @NonNull NamespacedKey key, @NonNull Material material,
+    public ItemImpl(@NonNull Liquip api, @NonNull Key key, @NonNull Material material,
                     @NonNull Component displayName, @NonNull List<Component> lore) {
         this(api, key, material, displayName, lore, List.of(), Map.of(), ImmutableMultimap.of());
     }
 
-    public ItemImpl(@NonNull NamespacedKey key, @NonNull Material material,
+    public ItemImpl(@NonNull Key key, @NonNull Material material,
                     @NonNull Component displayName, @NonNull List<Component> lore,
                     @NonNull List<Feature> features,
                     @NonNull Map<TaggedFeature<?>, Object> taggedFeatures,
@@ -49,7 +49,7 @@ public class ItemImpl implements Item {
             eventHandlers);
     }
 
-    public ItemImpl(@NonNull Liquip api, @NonNull NamespacedKey key, @NonNull Material material,
+    public ItemImpl(@NonNull Liquip api, @NonNull Key key, @NonNull Material material,
                     @NonNull Component displayName, @NonNull List<Component> lore,
                     @NonNull List<Feature> features,
                     @NonNull Map<TaggedFeature<?>, Object> taggedFeatures,
@@ -74,7 +74,7 @@ public class ItemImpl implements Item {
     }
 
     @Override
-    public @NotNull NamespacedKey getKey() {
+    public @NotNull Key key() {
         return key;
     }
 

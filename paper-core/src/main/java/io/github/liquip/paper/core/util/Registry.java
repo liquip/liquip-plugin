@@ -1,7 +1,7 @@
 package io.github.liquip.paper.core.util;
 
-import org.bukkit.Keyed;
-import org.bukkit.NamespacedKey;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.key.Keyed;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public class Registry<T extends Keyed> implements io.github.liquip.api.Registry<T> {
-    private final HashMap<NamespacedKey, T> map;
+    private final HashMap<Key, T> map;
 
     public Registry() {
         this(16);
@@ -21,7 +21,7 @@ public class Registry<T extends Keyed> implements io.github.liquip.api.Registry<
     }
 
     @Override
-    public @Nullable T get(@NotNull NamespacedKey key) {
+    public @Nullable T get(@NotNull Key key) {
         return map.get(key);
     }
 
@@ -32,7 +32,7 @@ public class Registry<T extends Keyed> implements io.github.liquip.api.Registry<
     }
 
     @Override
-    public void register(@NonNull NamespacedKey key, @NonNull T value) {
+    public void register(@NonNull Key key, @NonNull T value) {
         map.put(key, value);
     }
 }

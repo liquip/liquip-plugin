@@ -20,6 +20,7 @@ import io.github.liquip.api.item.TaggedFeature;
 import io.github.liquip.paper.standalone.item.crafting.CraftingOutputPane;
 import io.github.liquip.paper.standalone.item.crafting.CraftingPane;
 import io.github.liquip.paper.core.util.Registry;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -187,7 +188,7 @@ public class StandaloneLiquipImpl implements Liquip {
     }
 
     @Override
-    public void setKeyForItemStack(@NonNull ItemStack itemStack, @NonNull NamespacedKey key) {
+    public void setKeyForItemStack(@NonNull ItemStack itemStack, @NonNull Key key) {
         itemStack.editMeta(meta -> meta.getPersistentDataContainer()
             .set(PDC_KEY, PersistentDataType.STRING, key.asString()));
     }

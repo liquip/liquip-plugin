@@ -1,9 +1,11 @@
 package io.github.liquip.api.config;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
 
+@ApiStatus.Experimental
 public interface ConfigTable {
     boolean hasElement(@NonNull String key);
 

@@ -4,8 +4,8 @@ import io.github.liquip.api.item.Enchantment;
 import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
+import net.kyori.adventure.key.Key;
 import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -71,7 +71,7 @@ public interface Liquip {
      * @return the key of the provided item stack
      * @since 0.0.1-alpha
      */
-    @NonNull NamespacedKey getKeyFromItemStack(@NonNull ItemStack itemStack);
+    @NonNull Key getKeyFromItemStack(@NonNull ItemStack itemStack);
 
-    void setKeyForItemStack(@NonNull ItemStack itemStack, @NonNull NamespacedKey key);
+    void setKeyForItemStack(@NonNull ItemStack itemStack, @NonNull Key key);
 }
