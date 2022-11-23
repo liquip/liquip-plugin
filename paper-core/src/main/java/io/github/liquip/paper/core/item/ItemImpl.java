@@ -30,30 +30,28 @@ public class ItemImpl implements Item {
     private final Multimap<Class<? extends Event>, BiConsumer<? extends Event, ItemStack>>
         eventHandlers;
 
-    public ItemImpl(@NonNull Key key, @NonNull Material material,
-                    @NonNull Component displayName, @NonNull List<Component> lore) {
+    public ItemImpl(@NonNull Key key, @NonNull Material material, @NonNull Component displayName,
+        @NonNull List<Component> lore) {
         this(key, material, displayName, lore, List.of(), Map.of(), ImmutableMultimap.of());
     }
 
     public ItemImpl(@NonNull Liquip api, @NonNull Key key, @NonNull Material material,
-                    @NonNull Component displayName, @NonNull List<Component> lore) {
+        @NonNull Component displayName, @NonNull List<Component> lore) {
         this(api, key, material, displayName, lore, List.of(), Map.of(), ImmutableMultimap.of());
     }
 
-    public ItemImpl(@NonNull Key key, @NonNull Material material,
-                    @NonNull Component displayName, @NonNull List<Component> lore,
-                    @NonNull List<Feature> features,
-                    @NonNull Map<TaggedFeature<?>, Object> taggedFeatures,
-                    @NonNull Multimap<Class<? extends Event>, BiConsumer<? extends Event, ItemStack>> eventHandlers) {
+    public ItemImpl(@NonNull Key key, @NonNull Material material, @NonNull Component displayName,
+        @NonNull List<Component> lore, @NonNull List<Feature> features,
+        @NonNull Map<TaggedFeature<?>, Object> taggedFeatures,
+        @NonNull Multimap<Class<? extends Event>, BiConsumer<? extends Event, ItemStack>> eventHandlers) {
         this(LiquipProvider.get(), key, material, displayName, lore, features, taggedFeatures,
             eventHandlers);
     }
 
     public ItemImpl(@NonNull Liquip api, @NonNull Key key, @NonNull Material material,
-                    @NonNull Component displayName, @NonNull List<Component> lore,
-                    @NonNull List<Feature> features,
-                    @NonNull Map<TaggedFeature<?>, Object> taggedFeatures,
-                    @NonNull Multimap<Class<? extends Event>, BiConsumer<? extends Event, ItemStack>> eventHandlers) {
+        @NonNull Component displayName, @NonNull List<Component> lore,
+        @NonNull List<Feature> features, @NonNull Map<TaggedFeature<?>, Object> taggedFeatures,
+        @NonNull Multimap<Class<? extends Event>, BiConsumer<? extends Event, ItemStack>> eventHandlers) {
         this.API = api;
         this.key = key;
         this.material = material;
@@ -94,7 +92,7 @@ public class ItemImpl implements Item {
     @Override
     @SuppressWarnings("unchecked")
     public <T extends Event> void callEvent(@NonNull Class<T> eventClass, @NonNull T event,
-                                            @NonNull ItemStack itemStack) {
+        @NonNull ItemStack itemStack) {
         final Collection<BiConsumer<? extends Event, ItemStack>> handlers =
             eventHandlers.get(eventClass);
         for (BiConsumer<? extends Event, ItemStack> handler : handlers) {
@@ -104,7 +102,7 @@ public class ItemImpl implements Item {
 
     @Override
     public <T extends Event> void registerEvent(@NonNull Class<T> eventClass,
-                                                @NonNull BiConsumer<T, ItemStack> eventHandler) {
+        @NonNull BiConsumer<T, ItemStack> eventHandler) {
         eventHandlers.put(eventClass, eventHandler);
     }
 }
