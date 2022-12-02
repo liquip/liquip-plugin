@@ -2,27 +2,19 @@ package com.github.sqyyy.liquip.core.dev;
 
 import com.github.sqyyy.liquip.core.Liquip;
 import com.github.sqyyy.liquip.core.items.LiquipItem;
-import com.github.sqyyy.liquip.core.system.craft.CraftingOutputPane;
-import com.github.sqyyy.liquip.core.system.craft.CraftingPane;
+import com.github.sqyyy.liquip.core.system.Messages;
 import com.github.sqyyy.liquip.core.util.Identifier;
-import com.github.sqyyy.liquip.gui.Menu;
-import com.github.sqyyy.liquip.gui.MenuType;
-import com.github.sqyyy.liquip.gui.Slot;
-import com.github.sqyyy.liquip.gui.impl.BasicMenu;
-import com.github.sqyyy.liquip.gui.impl.FillItemPane;
-import com.github.sqyyy.liquip.gui.impl.FillPane;
-import com.github.sqyyy.liquip.gui.impl.StoragePane;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.SuggestionInfo;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
+import dev.jorel.commandapi.arguments.MultiLiteralArgument;
 import dev.jorel.commandapi.arguments.NamespacedKeyArgument;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Material;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,17 +26,19 @@ public class DevCommand {
 
     public DevCommand() {
         new CommandAPICommand("liquip").executes(DevCommand::liquip).withSubcommands(
-                new CommandAPICommand("craft").withPermission("liquip.command.craft")
-                    .executesPlayer(DevCommand::craft),
-                new CommandAPICommand("give").withPermission("liquip.command.give").withArguments(
-                        new NamespacedKeyArgument("identifier").replaceSuggestions(
-                            ArgumentSuggestions.strings(DevCommand::suggestGive)))
-                    .executesPlayer(DevCommand::give),
-                new CommandAPICommand("reload").withPermission("liquip.command.reload")
-                    .executes(DevCommand::reload),
-                new CommandAPICommand("loaded-features").withPermission(
-                    "liquip.command.loaded.features").executes(DevCommand::features))
-            .withPermission("liquip.command").register();
+            new CommandAPICommand("craft").withPermission("liquip.command.craft")
+                .executesPlayer(DevCommand::craft),
+            new CommandAPICommand("give").withPermission("liquip.command.give").withArguments(
+                    new NamespacedKeyArgument("identifier").replaceSuggestions(
+                        ArgumentSuggestions.strings(DevCommand::suggestGive)))
+                .executesPlayer(DevCommand::give),
+            new CommandAPICommand("reload").withPermission("liquip.command.reload")
+                .executes(DevCommand::reload),
+            new CommandAPICommand("loaded-features").withPermission(
+                "liquip.command.loaded.features").executes(DevCommand::features),
+            new CommandAPICommand("help").withPermission("liquip.command.help")
+                .withArguments(new MultiLiteralArgument("commands", "items", "features"))
+                .executes(DevCommand::help)).withPermission("liquip.command").register();
         reloadGiveSuggestions();
     }
 
