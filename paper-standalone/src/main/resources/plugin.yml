@@ -3,3 +3,5 @@ main: io.github.liquip.paper.standalone.LiquipPaperPlugin
 version: 0.0.1-alpha
 api-version: 19
 author: sqyyy
+libraries:
+  - com.fasterxml.jackson.core:jackson-databind:2.14.0
