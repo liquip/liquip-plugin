@@ -1,15 +1,15 @@
-package io.github.liquip.paper.standalone.config;
+package io.github.liquip.paper.standalone.config.structure;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public class ConfigFile {
-    private List<String> items;
+public class ConfigStructure {
+    private final List<String> items;
 
     @JsonCreator
-    public ConfigFile(@JsonProperty(value = "items", required = true) List<String> items) {
+    public ConfigStructure(@JsonProperty(value = "items", required = true) List<String> items) {
         this.items = items;
     }
 
