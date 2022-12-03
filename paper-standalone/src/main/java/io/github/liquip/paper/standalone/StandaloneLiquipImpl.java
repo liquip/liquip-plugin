@@ -29,6 +29,8 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -40,6 +42,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.List;
 
 public class StandaloneLiquipImpl implements Liquip {
+    public static final MiniMessage MM = MiniMessage.miniMessage();
     public static final String NAMESPACE = "liquip";
     private static final NamespacedKey PDC_KEY = new NamespacedKey(NAMESPACE, "key");
     private final Plugin plugin;
@@ -52,8 +55,7 @@ public class StandaloneLiquipImpl implements Liquip {
 
     public StandaloneLiquipImpl(Plugin plugin) {
         this.plugin = plugin;
-        this.mapper = new JsonMapper()
-            .enable(JsonParser.Feature.ALLOW_COMMENTS)
+        this.mapper = new JsonMapper().enable(JsonParser.Feature.ALLOW_COMMENTS)
             .enable(JsonParser.Feature.ALLOW_SINGLE_QUOTES)
             .enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES)
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -62,6 +64,10 @@ public class StandaloneLiquipImpl implements Liquip {
         this.featureRegistry = new Registry<>();
         this.taggedFeatureRegistry = new Registry<>();
         this.enchantmentRegistry = new Registry<>();
+    }
+
+    public static Component MM(String input) {
+        return MM.deserialize(input);
     }
 
     protected void loadSystem() {
@@ -113,10 +119,14 @@ public class StandaloneLiquipImpl implements Liquip {
     protected void enableSystem() {
         CommandAPI.onEnable(plugin);
         Menu.initialize(plugin);
+        if (!configLoader.loadConfig()) {
+            plugin.getSLF4JLogger().error("Could not load config, disabling...");
+            Bukkit.getPluginManager().disablePlugin(plugin);
+        }
     }
 
     protected boolean reloadSystem() {
-        return true;
+        return configLoader.loadConfig();
     }
 
     protected void disableSystem() {
