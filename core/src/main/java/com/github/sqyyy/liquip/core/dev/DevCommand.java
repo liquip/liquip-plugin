@@ -121,4 +121,27 @@ public class DevCommand {
             suggestions.add(identifier.toString());
         }
     }
+
+    public static void help(CommandSender sender, Object[] args) {
+        final String arg = (String) args[0];
+        sender.sendMessage(Messages.HELP_MESSAGE);
+        switch (arg) {
+            case "commands" -> sender.sendMessage(MiniMessage.miniMessage().deserialize("""
+                <gradient:aqua:green>LIQUIP HELP - COMMANDS</gradient>
+                <gray>-----------------------
+
+                Liquip has following commands:
+                   -> /liquip give <item> //
+                   -> /liquip craft
+                   -> /liquip loaded-features
+                   -> /liquip reload
+                """));
+            case "items" -> {
+
+            }
+            case "features" -> {
+
+            }
+        }
+    }
 }
