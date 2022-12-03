@@ -1,5 +1,4 @@
 package com.github.sqyyy.liquip.core.system;
-
 public final class Messages {
     public static final String UNEXPECTED_ERROR = "<red>An unexpected error occurred.</red>";
     public static final String ATRRIBUTE_ERROR_STRING = "<red>You have to use letters!</red>";
@@ -33,4 +32,5 @@ public final class Messages {
         """;
     private Messages() {
     }
+
 }
