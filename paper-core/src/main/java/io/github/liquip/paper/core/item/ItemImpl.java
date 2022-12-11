@@ -36,11 +36,10 @@ public class ItemImpl implements Item {
         eventHandlers;
 
     public ItemImpl(@NonNull Liquip api, @NonNull Key key, @NonNull Material material,
-                    @NonNull Component displayName, @NonNull List<Component> lore,
-                    @NonNull Object2IntMap<Enchantment> enchantments,
-                    @NonNull List<Feature> features,
-                    @NonNull Map<TaggedFeature<?>, ConfigElement> taggedFeatures,
-                    @NonNull Multimap<Class<? extends Event>, BiConsumer<? extends Event, ItemStack>> eventHandlers) {
+        @NonNull Component displayName, @NonNull List<Component> lore,
+        @NonNull Object2IntMap<Enchantment> enchantments, @NonNull List<Feature> features,
+        @NonNull Map<TaggedFeature<?>, ConfigElement> taggedFeatures,
+        @NonNull Multimap<Class<? extends Event>, BiConsumer<? extends Event, ItemStack>> eventHandlers) {
         this.api = api;
         this.key = key;
         this.material = material;
@@ -64,28 +63,30 @@ public class ItemImpl implements Item {
 
     @Override
     public @NotNull Key key() {
-        return key;
+        return this.key;
     }
 
     @Override
     public @NonNull ItemStack newItemStack() {
-        final ItemStack itemStack = new ItemStack(material);
+        final ItemStack itemStack = new ItemStack(this.material);
         itemStack.editMeta(meta -> {
             meta.displayName(this.displayName);
             meta.lore(this.lore);
-            api.setKeyForItemStack(itemStack, this.key);
         });
-        enchantments.forEach((enchantment, level) -> enchantment.apply(this, itemStack, level));
-        features.forEach(feature -> feature.apply(this, itemStack));
-        taggedFeatures.forEach((key, value) -> this.applyToTaggedFeature(key, itemStack, value));
+        this.enchantments.forEach(
+            (enchantment, level) -> enchantment.apply(this, itemStack, level));
+        this.features.forEach(feature -> feature.apply(this, itemStack));
+        this.taggedFeatures.forEach(
+            (key, value) -> this.applyToTaggedFeature(key, itemStack, value));
+        this.api.setKeyForItemStack(itemStack, this.key);
         return itemStack;
     }
 
     @Override
     public <T extends Event> void callEvent(@NonNull Class<T> eventClass, @NonNull T event,
-                                            @NonNull ItemStack itemStack) {
+        @NonNull ItemStack itemStack) {
         final Collection<BiConsumer<? extends Event, ItemStack>> handlers =
-            eventHandlers.get(eventClass);
+            this.eventHandlers.get(eventClass);
         for (BiConsumer<? extends Event, ItemStack> handler : handlers) {
             ((BiConsumer<Event, ItemStack>) handler).accept(event, itemStack);
         }
@@ -93,7 +94,7 @@ public class ItemImpl implements Item {
 
     @Override
     public <T extends Event> void registerEvent(@NonNull Class<T> eventClass,
-                                                @NonNull BiConsumer<T, ItemStack> eventHandler) {
-        eventHandlers.put(eventClass, eventHandler);
+        @NonNull BiConsumer<T, ItemStack> eventHandler) {
+        this.eventHandlers.put(eventClass, eventHandler);
     }
 }
