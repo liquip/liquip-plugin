@@ -22,6 +22,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -37,22 +38,52 @@ public class ConfigLoader {
     }
 
     public boolean loadConfig() {
-        final Path path = api.getPlugin().getDataFolder().toPath().resolve("config.json");
+        final Path dataDirectory = this.api.getPlugin().getDataFolder().toPath();
+        if (!Files.exists(dataDirectory)) {
+            try {
+                Files.createDirectories(dataDirectory);
+            } catch (IOException e) {
+                this.config = null;
+                this.api.getPlugin().getSLF4JLogger()
+                    .error("Exception whilst creating plugin directory", e);
+                return false;
+            }
+        }
+        if (!Files.isDirectory(dataDirectory)) {
+            this.config = null;
+            this.api.getPlugin().getSLF4JLogger()
+                .error("Plugin path is a file, should instead be a directory");
+            return false;
+        }
+        final Path path = dataDirectory.resolve("config.json");
+        if (!Files.exists(path)) {
+            try {
+                Files.writeString(path, """
+                    {
+                        items: []
+                    }""");
+            } catch (IOException e) {
+                this.config = null;
+                this.api.getPlugin().getSLF4JLogger()
+                    .error("Exception whilst creating config file", e);
+                return false;
+            }
+        }
         try {
             this.config = this.api.getMapper().readValue(path.toFile(), ConfigStructure.class);
         } catch (Exception e) {
             this.config = null;
-            this.api.getPlugin().getSLF4JLogger().trace("Exception whilst loading config file", e);
+            this.api.getPlugin().getSLF4JLogger().error("Exception whilst loading config file", e);
             return false;
         }
-        items = new ArrayList<>(config.getItems().size());
-        for (String item : config.getItems()) {
+        this.items = new ArrayList<>(this.config.getItems().size());
+        for (String item : this.config.getItems()) {
             if (item.contains("..")) {
                 this.api.getPlugin().getSLF4JLogger()
                     .warn("Path '{}' for item is backwards relative, skipping...", item);
                 continue;
             }
-            final Path file = api.getPlugin().getDataFolder().toPath().resolve(item);
+            final Path file = dataDirectory.resolve(item);
             if (!Files.exists(file)) {
                 this.api.getPlugin().getSLF4JLogger()
                     .warn("Path '{}' for item does not exist, skipping...", item);
@@ -67,7 +98,7 @@ public class ConfigLoader {
                 this.items.add(this.api.getMapper().readValue(file.toFile(), ItemStructure.class));
             } catch (Exception e) {
                 this.api.getPlugin().getSLF4JLogger()
-                    .trace("Exception whilst loading item file", e);
+                    .error("Exception whilst loading item file", e);
             }
         }
         for (final ItemStructure item : this.items) {
@@ -81,22 +112,23 @@ public class ConfigLoader {
                         .warn("Could not get material for item '{}', skipping...", key.asString());
                     continue;
                 }
-                final Component displayName = StandaloneLiquipImpl.MM(item.getDisplayName())
-                    .decoration(TextDecoration.ITALIC, false);
+                final Component displayName =
+                    Component.text().decoration(TextDecoration.ITALIC, false)
+                        .append(StandaloneLiquipImpl.MM(item.getDisplayName())).build();
                 final List<Component> lore = new ArrayList<>(0);
                 if (item.getLore() != null) {
                     for (final String loreLine : item.getLore()) {
-                        lore.add(StandaloneLiquipImpl.MM(loreLine)
-                            .decoration(TextDecoration.ITALIC, false));
+                        lore.add(Component.text().decoration(TextDecoration.ITALIC, false)
+                            .append(StandaloneLiquipImpl.MM(loreLine)).build());
                     }
                 }
                 final Object2IntMap<Enchantment> enchantments = new Object2IntOpenHashMap<>();
                 if (item.getEnchantments() != null) {
                     for (final EnchantmentStructure enchantment : item.getEnchantments()) {
-                        resolveEnchantment(enchantment.getId()).ifPresentOrElse(
-                            it -> enchantments.put(it, enchantment.getLevel()),
-                            () -> this.api.getPlugin().getSLF4JLogger()
-                                .warn("Could not get enchantment '{}' for item '{}', skipping...",
+                        this.resolveEnchantment(enchantment.getId())
+                            .ifPresentOrElse(it -> enchantments.put(it, enchantment.getLevel()),
+                                () -> this.api.getPlugin().getSLF4JLogger().warn(
+                                    "Could not get enchantment '{}' for item '{}', skipping...",
                                     enchantment.getId(), key.asString()));
                     }
                 }
@@ -105,12 +137,12 @@ public class ConfigLoader {
                 if (item.getFeatures() != null) {
                     for (Map.Entry<String, JsonNode> feature : item.getFeatures().entrySet()) {
                         if (feature.getValue() == null || feature.getValue().isNull()) {
-                            resolveFeature(feature.getKey()).ifPresentOrElse(features::add,
+                            this.resolveFeature(feature.getKey()).ifPresentOrElse(features::add,
                                 () -> this.api.getPlugin().getSLF4JLogger()
                                     .warn("Could not get feature '{}' for item '{}', skipping...",
                                         feature.getKey(), key.asString()));
                         } else {
-                            resolveTaggedFeature(feature.getKey()).ifPresentOrElse(
+                            this.resolveTaggedFeature(feature.getKey()).ifPresentOrElse(
                                 it -> taggedFeatures.put(it,
                                     new JsonConfigElement(feature.getValue())),
                                 () -> this.api.getPlugin().getSLF4JLogger().warn(
@@ -119,11 +151,12 @@ public class ConfigLoader {
                         }
                     }
                 }
+                this.api.getPlugin().getSLF4JLogger().info("Registering...");
                 this.api.getItemRegistry().register(key,
                     new ItemImpl(this.api, key, material, displayName, lore, enchantments, features,
                         taggedFeatures, ArrayListMultimap.create()));
             } catch (InvalidKeyException e) {
-                this.api.getPlugin().getSLF4JLogger().trace("Exception whilst parsing key", e);
+                this.api.getPlugin().getSLF4JLogger().error("Exception whilst parsing key", e);
             }
         }
         return true;
@@ -133,7 +166,7 @@ public class ConfigLoader {
         try {
             return Optional.ofNullable(this.api.getEnchantmentRegistry().get(Key.key(key)));
         } catch (InvalidKeyException e) {
-            this.api.getPlugin().getSLF4JLogger().trace("Exception whilst parsing key", e);
+            this.api.getPlugin().getSLF4JLogger().error("Exception whilst parsing key", e);
             return Optional.empty();
         }
     }
@@ -142,7 +175,7 @@ public class ConfigLoader {
         try {
             return Optional.ofNullable(this.api.getFeatureRegistry().get(Key.key(key)));
         } catch (InvalidKeyException e) {
-            this.api.getPlugin().getSLF4JLogger().trace("Exception whilst parsing key", e);
+            this.api.getPlugin().getSLF4JLogger().error("Exception whilst parsing key", e);
             return Optional.empty();
         }
     }
@@ -151,16 +184,16 @@ public class ConfigLoader {
         try {
             return Optional.ofNullable(this.api.getTaggedFeatureRegistry().get(Key.key(key)));
         } catch (InvalidKeyException e) {
-            this.api.getPlugin().getSLF4JLogger().trace("Exception whilst parsing key", e);
+            this.api.getPlugin().getSLF4JLogger().error("Exception whilst parsing key", e);
             return Optional.empty();
         }
     }
 
     public ConfigStructure getConfig() {
-        return config;
+        return this.config;
     }
 
     public List<ItemStructure> getItems() {
-        return items;
+        return this.items;
     }
 }
