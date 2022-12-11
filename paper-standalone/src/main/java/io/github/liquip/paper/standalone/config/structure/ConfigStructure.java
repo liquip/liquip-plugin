@@ -14,6 +14,6 @@ public class ConfigStructure {
     }
 
     public List<String> getItems() {
-        return items;
+        return this.items;
     }
 }
