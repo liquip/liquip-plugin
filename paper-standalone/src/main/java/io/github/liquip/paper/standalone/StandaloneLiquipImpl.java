@@ -23,8 +23,6 @@ import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
 import io.github.liquip.paper.core.util.Registry;
 import io.github.liquip.paper.standalone.config.ConfigLoader;
-import io.github.liquip.paper.standalone.item.crafting.CraftingOutputPane;
-import io.github.liquip.paper.standalone.item.crafting.CraftingPane;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -45,6 +43,8 @@ public class StandaloneLiquipImpl implements Liquip {
     public static final MiniMessage MM = MiniMessage.miniMessage();
     public static final String NAMESPACE = "liquip";
     private static final NamespacedKey PDC_KEY = new NamespacedKey(NAMESPACE, "key");
+    private static final int COLOR_OK = 0x32cd32;
+    private static final int COLOR_ERROR = 0xe32636;
     private final Plugin plugin;
     private final ObjectMapper mapper;
     private final ConfigLoader configLoader;
@@ -72,23 +72,24 @@ public class StandaloneLiquipImpl implements Liquip {
 
     protected void loadSystem() {
         CommandAPI.onLoad(new CommandAPIConfig().silentLogs(true));
-        final Menu craftMenu = createCraftMenu();
+        final Menu craftMenu = this.createCraftMenu();
         final CommandAPICommand liquipCommand =
             new CommandAPICommand("liquip").withPermission("liquip.command");
         final CommandAPICommand liquipGiveCommand =
             new CommandAPICommand("give").withPermission("liquip.command.give")
                 .withArguments(new NamespacedKeyArgument("key")).executesPlayer((player, args) -> {
-                    final NamespacedKey key = (NamespacedKey) args[0];
-                    final Item item = itemRegistry.get(key);
+                    final NamespacedKey namespacedKey = (NamespacedKey) args[0];
+                    final Key key = Key.key(namespacedKey.getNamespace(), namespacedKey.getKey());
+                    final Item item = this.itemRegistry.get(key);
                     if (item == null) {
-                        player.sendMessage(
-                            Component.text("Item could not be found").color(TextColor.color(0xe32636)));
+                        player.sendMessage(Component.text("Item could not be found")
+                            .color(TextColor.color(COLOR_ERROR)));
                         return;
                     }
                     player.getInventory().addItem(item.newItemStack());
                     player.sendMessage(
                         Component.text("Gave [" + key.asString() + "] to " + player.getName())
-                            .color(TextColor.color(0x32cd32)));
+                            .color(TextColor.color(COLOR_OK)));
                 });
         final CommandAPICommand liquipCraftCommand =
             new CommandAPICommand("craft").withPermission("liquip.command.craft")
@@ -98,35 +99,60 @@ public class StandaloneLiquipImpl implements Liquip {
         final CommandAPICommand liquipReloadCommand =
             new CommandAPICommand("reload").withPermission("liquip.command.reload")
                 .executes((sender, args) -> {
-                    if (reloadSystem()) {
-                        sender.sendMessage(Component.text("Successfully reloaded Liquip")
-                            .color(TextColor.color(0x32cd32)));
+                    if (this.reloadSystem()) {
+                        sender.sendMessage(Component.text("Successfully reloaded config")
+                            .color(TextColor.color(COLOR_OK)));
                     } else {
-                        sender.sendMessage(Component.text("Could not reload Liquip")
-                            .color(TextColor.color(0xe32636)));
+                        sender.sendMessage(Component.text("Could not reload config")
+                            .color(TextColor.color(COLOR_ERROR)));
                     }
                 });
         final CommandAPICommand liquipDumpCommand =
-            new CommandAPICommand("dump").withPermission("liquip.command.dump")
-                .withArguments(new MultiLiteralArgument("test"/* dump-able things */))
+            new CommandAPICommand("dump").withPermission("liquip.command.dump").withArguments(
+                    new MultiLiteralArgument("items", "features", "tagged_features",
+                        "enchantments"))
                 .executes((sender, args) -> {
-                    sender.sendMessage("test");
+                    switch ((String) args[0]) {
+                        case "items" -> {
+                            for (final Item item : this.itemRegistry) {
+                                sender.sendMessage(Component.text(item.key().asString()));
+                            }
+                        }
+                        case "features" -> {
+                            for (final Feature feature : this.featureRegistry) {
+                                sender.sendMessage(Component.text(feature.key().asString()));
+                            }
+                        }
+                        case "tagged_features" -> {
+                            for (final TaggedFeature<?> taggedFeature :
+                                this.taggedFeatureRegistry) {
+                                sender.sendMessage(Component.text(taggedFeature.key().asString()));
+                            }
+                        }
+                        case "enchantments" -> {
+                            for (final Enchantment enchantment : this.enchantmentRegistry) {
+                                sender.sendMessage(Component.text(enchantment.key().asString()));
+                            }
+                        }
+                    }
                 });
         liquipCommand.withSubcommands(liquipGiveCommand, liquipCraftCommand, liquipReloadCommand,
             liquipDumpCommand).register();
     }
 
     protected void enableSystem() {
-        CommandAPI.onEnable(plugin);
-        Menu.initialize(plugin);
-        if (!configLoader.loadConfig()) {
-            plugin.getSLF4JLogger().error("Could not load config, disabling...");
-            Bukkit.getPluginManager().disablePlugin(plugin);
+        CommandAPI.onEnable(this.plugin);
+        Menu.initialize(this.plugin);
+        if (!this.configLoader.loadConfig()) {
+            this.plugin.getSLF4JLogger().error("Could not load config, disabling...");
+            Bukkit.getPluginManager().disablePlugin(this.plugin);
+            return;
         }
+        this.plugin.getSLF4JLogger().info("Successfully loaded config");
     }
 
     protected boolean reloadSystem() {
-        return configLoader.loadConfig();
+        return this.configLoader.loadConfig();
     }
 
     protected void disableSystem() {
@@ -143,45 +169,45 @@ public class StandaloneLiquipImpl implements Liquip {
             Component.text("Recipe Book").decoration(TextDecoration.ITALIC, false)));
         return new BasicMenu(Component.text("Advanced Crafting"), 5, MenuType.CHEST,
             List.of(new FillPane(0, Slot.ROW_ONE_SLOT_ONE, Slot.ROW_FIVE_SLOT_NINE, blackGlass),
-                new CraftingPane(this, 0),
+                //new CraftingPane(this, 0),
                 new FillPane(1, Slot.ROW_TWO_SLOT_SIX, Slot.ROW_FOUR_SLOT_EIGHT, greenGlass),
                 new FillItemPane(1, Slot.ROW_THREE_SLOT_NINE, recipeBook),
                 new StoragePane(2, Slot.ROW_TWO_SLOT_TWO, Slot.ROW_FOUR_SLOT_FOUR,
                     (storagePane, inventory) -> {
                     }, (storagePane, inventoryCloseEvent) -> {
-                }), new CraftingOutputPane(this, 2)));
+                })/*, new CraftingOutputPane(this, 2) */));
     }
 
     public Plugin getPlugin() {
-        return plugin;
+        return this.plugin;
     }
 
     public ObjectMapper getMapper() {
-        return mapper;
+        return this.mapper;
     }
 
     public ConfigLoader getConfigLoader() {
-        return configLoader;
+        return this.configLoader;
     }
 
     @Override
     public @NonNull Registry<Item> getItemRegistry() {
-        return itemRegistry;
+        return this.itemRegistry;
     }
 
     @Override
     public @NonNull Registry<Feature> getFeatureRegistry() {
-        return featureRegistry;
+        return this.featureRegistry;
     }
 
     @Override
     public @NonNull Registry<TaggedFeature<?>> getTaggedFeatureRegistry() {
-        return taggedFeatureRegistry;
+        return this.taggedFeatureRegistry;
     }
 
     @Override
     public @NonNull Registry<Enchantment> getEnchantmentRegistry() {
-        return enchantmentRegistry;
+        return this.enchantmentRegistry;
     }
 
     @Override
