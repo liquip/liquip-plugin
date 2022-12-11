@@ -22,17 +22,17 @@ public class Registry<T extends Keyed> implements io.github.liquip.api.Registry<
 
     @Override
     public @Nullable T get(@NotNull Key key) {
-        return map.get(key);
+        return this.map.get(key);
     }
 
     @NotNull
     @Override
     public Iterator<T> iterator() {
-        return map.values().iterator();
+        return this.map.values().iterator();
     }
 
     @Override
     public void register(@NonNull Key key, @NonNull T value) {
-        map.put(key, value);
+        this.map.put(key, value);
     }
 }

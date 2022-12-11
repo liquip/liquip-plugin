@@ -31,26 +31,26 @@ public class ItemStructure {
     }
 
     public String getKey() {
-        return key;
+        return this.key;
     }
 
     public String getMaterial() {
-        return material;
+        return this.material;
     }
 
     public String getDisplayName() {
-        return displayName;
+        return this.displayName;
     }
 
     public List<String> getLore() {
-        return lore;
+        return this.lore;
     }
 
     public List<EnchantmentStructure> getEnchantments() {
-        return enchantments;
+        return this.enchantments;
     }
 
     public Map<String, JsonNode> getFeatures() {
-        return features;
+        return this.features;
     }
 }

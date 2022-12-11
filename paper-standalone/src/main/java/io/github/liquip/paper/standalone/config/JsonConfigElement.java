@@ -18,21 +18,21 @@ public class JsonConfigElement implements ConfigElement {
 
     @Override
     public boolean isObject() {
-        return node.isObject();
+        return this.node.isObject();
     }
 
     @Override
     public boolean isArray() {
-        return node.isArray();
+        return this.node.isArray();
     }
 
     @Override
     public @Nullable ConfigObject asObject() {
-        return node.isObject() ? new JsonConfigObject((ObjectNode) node) : null;
+        return this.node.isObject() ? new JsonConfigObject((ObjectNode) this.node) : null;
     }
 
     @Override
     public @Nullable ConfigArray asArray() {
-        return node.isArray() ? new JsonConfigArray((ArrayNode) node) : null;
+        return this.node.isArray() ? new JsonConfigArray((ArrayNode) this.node) : null;
     }
 }

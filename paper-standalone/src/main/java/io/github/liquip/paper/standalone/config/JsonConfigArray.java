@@ -15,66 +15,66 @@ public class JsonConfigArray implements ConfigArray {
 
     @Override
     public int size() {
-        return node.size();
+        return this.node.size();
     }
 
     @Override
     public boolean isBoolean(int index) {
-        return node.get(index).isBoolean();
+        return this.node.get(index).isBoolean();
     }
 
     @Override
     public boolean isInt(int index) {
-        return node.get(index).isInt();
+        return this.node.get(index).isInt();
     }
 
     @Override
     public boolean isDouble(int index) {
-        return node.get(index).isDouble();
+        return this.node.get(index).isDouble();
     }
 
     @Override
     public boolean isString(int index) {
-        return node.get(index).isTextual();
+        return this.node.get(index).isTextual();
     }
 
     @Override
     public boolean isArray(int index) {
-        return node.get(index).isArray();
+        return this.node.get(index).isArray();
     }
 
     @Override
     public boolean isObject(int index) {
-        return node.get(index).isObject();
+        return this.node.get(index).isObject();
     }
 
     @Override
     public boolean getBoolean(int index) {
-        return node.get(index).booleanValue();
+        return this.node.get(index).booleanValue();
     }
 
     @Override
     public int getInt(int index) {
-        return node.get(index).intValue();
+        return this.node.get(index).intValue();
     }
 
     @Override
     public double getDouble(int index) {
-        return node.get(index).doubleValue();
+        return this.node.get(index).doubleValue();
     }
 
     @Override
     public @NonNull String getString(int index) {
-        return node.get(index).textValue();
+        return this.node.get(index).textValue();
     }
 
     @Override
     public @NonNull ConfigArray getArray(int index) {
-        return new JsonConfigArray((ArrayNode) node.get(index));
+        return new JsonConfigArray((ArrayNode) this.node.get(index));
     }
 
     @Override
     public @NonNull ConfigObject getObject(int index) {
-        return new JsonConfigObject((ObjectNode) node.get(index));
+        return new JsonConfigObject((ObjectNode) this.node.get(index));
     }
 }

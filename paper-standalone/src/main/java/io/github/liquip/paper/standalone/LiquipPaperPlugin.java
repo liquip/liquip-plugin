@@ -8,17 +8,17 @@ public class LiquipPaperPlugin extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        ApiRegistrationUtil.registerProvider(api);
-        api.loadSystem();
+        ApiRegistrationUtil.registerProvider(this.api);
+        this.api.loadSystem();
     }
 
     @Override
     public void onEnable() {
-        api.enableSystem();
+        this.api.enableSystem();
     }
 
     @Override
     public void onDisable() {
-        api.disableSystem();
+        this.api.disableSystem();
     }
 }

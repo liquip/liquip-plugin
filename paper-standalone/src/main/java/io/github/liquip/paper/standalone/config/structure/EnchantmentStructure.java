@@ -15,10 +15,10 @@ public class EnchantmentStructure {
     }
 
     public int getLevel() {
-        return level;
+        return this.level;
     }
 
     public String getId() {
-        return id;
+        return this.id;
     }
 }
