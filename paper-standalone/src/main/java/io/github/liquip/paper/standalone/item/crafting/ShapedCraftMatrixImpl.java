@@ -1,4 +1,4 @@
-package io.github.liquip.paper.standalone.item.craftingnew;
+package io.github.liquip.paper.standalone.item.crafting;
 
 import io.github.liquip.api.item.crafting.CraftMatrix;
 import io.github.liquip.api.item.crafting.ShapedCraftMatrix;
@@ -22,7 +22,7 @@ public class ShapedCraftMatrixImpl implements ShapedCraftMatrix {
     @Nullable
     @Override
     public KeyedValue<Integer> @NonNull [] getIngredients() {
-        return ingredients.clone();
+        return this.ingredients.clone();
     }
 
     public boolean matches(@NonNull CraftMatrix that) {
@@ -31,7 +31,7 @@ public class ShapedCraftMatrixImpl implements ShapedCraftMatrix {
         }
         final KeyedValue<Integer>[] otherIngredients = other.getIngredients();
         for (int i = 0; i < 9; i++) {
-            final KeyedValue<Integer> ingredient = ingredients[i];
+            final KeyedValue<Integer> ingredient = this.ingredients[i];
             final KeyedValue<Integer> otherIngredient = otherIngredients[i];
             if (!ingredient.key().equals(otherIngredient.key()) ||
                 ingredient.value() < otherIngredient.value()) {
@@ -43,7 +43,7 @@ public class ShapedCraftMatrixImpl implements ShapedCraftMatrix {
 
     @Override
     public int hashCode() {
-        return hashCode;
+        return this.hashCode;
     }
 
     @Override
@@ -52,6 +52,6 @@ public class ShapedCraftMatrixImpl implements ShapedCraftMatrix {
             return true;
         if (!(o instanceof CraftMatrix that))
             return false;
-        return matches(that);
+        return this.matches(that);
     }
 }

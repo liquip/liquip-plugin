@@ -1,4 +1,4 @@
-package io.github.liquip.paper.standalone.item.craftingnew;
+package io.github.liquip.paper.standalone.item.crafting;
 
 import io.github.liquip.api.item.crafting.CraftMatrix;
 import io.github.liquip.api.item.crafting.ShapelessCraftMatrix;
