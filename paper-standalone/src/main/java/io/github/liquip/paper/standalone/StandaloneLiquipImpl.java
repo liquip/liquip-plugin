@@ -31,6 +31,8 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -73,69 +75,25 @@ public class StandaloneLiquipImpl implements Liquip {
     protected void loadSystem() {
         CommandAPI.onLoad(new CommandAPIConfig().silentLogs(true));
         final Menu craftMenu = this.createCraftMenu();
-        final CommandAPICommand liquipCommand =
-            new CommandAPICommand("liquip").withPermission("liquip.command");
-        final CommandAPICommand liquipGiveCommand =
-            new CommandAPICommand("give").withPermission("liquip.command.give")
-                .withArguments(new NamespacedKeyArgument("key")).executesPlayer((player, args) -> {
-                    final NamespacedKey namespacedKey = (NamespacedKey) args[0];
-                    final Key key = Key.key(namespacedKey.getNamespace(), namespacedKey.getKey());
-                    final Item item = this.itemRegistry.get(key);
-                    if (item == null) {
-                        player.sendMessage(Component.text("Item could not be found")
-                            .color(TextColor.color(COLOR_ERROR)));
-                        return;
-                    }
-                    player.getInventory().addItem(item.newItemStack());
-                    player.sendMessage(
-                        Component.text("Gave [" + key.asString() + "] to " + player.getName())
-                            .color(TextColor.color(COLOR_OK)));
-                });
-        final CommandAPICommand liquipCraftCommand =
-            new CommandAPICommand("craft").withPermission("liquip.command.craft")
-                .executesPlayer((player, args) -> {
-                    craftMenu.open(player);
-                });
-        final CommandAPICommand liquipReloadCommand =
-            new CommandAPICommand("reload").withPermission("liquip.command.reload")
-                .executes((sender, args) -> {
-                    if (this.reloadSystem()) {
-                        sender.sendMessage(Component.text("Successfully reloaded config")
-                            .color(TextColor.color(COLOR_OK)));
-                    } else {
-                        sender.sendMessage(Component.text("Could not reload config")
-                            .color(TextColor.color(COLOR_ERROR)));
-                    }
-                });
-        final CommandAPICommand liquipDumpCommand =
-            new CommandAPICommand("dump").withPermission("liquip.command.dump").withArguments(
-                    new MultiLiteralArgument("items", "features", "tagged_features",
-                        "enchantments"))
-                .executes((sender, args) -> {
-                    switch ((String) args[0]) {
-                        case "items" -> {
-                            for (final Item item : this.itemRegistry) {
-                                sender.sendMessage(Component.text(item.key().asString()));
-                            }
-                        }
-                        case "features" -> {
-                            for (final Feature feature : this.featureRegistry) {
-                                sender.sendMessage(Component.text(feature.key().asString()));
-                            }
-                        }
-                        case "tagged_features" -> {
-                            for (final TaggedFeature<?> taggedFeature :
-                                this.taggedFeatureRegistry) {
-                                sender.sendMessage(Component.text(taggedFeature.key().asString()));
-                            }
-                        }
-                        case "enchantments" -> {
-                            for (final Enchantment enchantment : this.enchantmentRegistry) {
-                                sender.sendMessage(Component.text(enchantment.key().asString()));
-                            }
-                        }
-                    }
-                });
+        final CommandAPICommand liquipCommand = new CommandAPICommand("liquip")
+            .withPermission("liquip.command");
+        final CommandAPICommand liquipGiveCommand = new CommandAPICommand("give")
+            .withPermission("liquip.command.give")
+            .withArguments(new NamespacedKeyArgument("key"))
+            .executesPlayer(this::giveSubcommand);
+        final CommandAPICommand liquipCraftCommand = new CommandAPICommand("craft")
+            .withPermission("liquip.command.craft")
+            .executesPlayer((player, args) -> {
+                craftMenu.open(player);
+            });
+        final CommandAPICommand liquipReloadCommand = new CommandAPICommand("reload")
+            .withPermission("liquip.command.reload")
+            .executes(this::reloadSubcommand);
+        final CommandAPICommand liquipDumpCommand = new CommandAPICommand("dump")
+            .withPermission("liquip.command.dump")
+            .withArguments(
+                new MultiLiteralArgument("items", "features", "tagged_features", "enchantments"))
+            .executes(this::dumpSubcommand);
         liquipCommand.withSubcommands(liquipGiveCommand, liquipCraftCommand, liquipReloadCommand,
             liquipDumpCommand).register();
     }
@@ -248,5 +206,54 @@ public class StandaloneLiquipImpl implements Liquip {
     public void setKeyForItemStack(@NonNull ItemStack itemStack, @NonNull Key key) {
         itemStack.editMeta(meta -> meta.getPersistentDataContainer()
             .set(PDC_KEY, PersistentDataType.STRING, key.asString()));
+    }
+
+    private void giveSubcommand(Player player, Object[] args) {
+        final NamespacedKey namespacedKey = (NamespacedKey) args[0];
+        final Key key = Key.key(namespacedKey.getNamespace(), namespacedKey.getKey());
+        final Item item = this.itemRegistry.get(key);
+        if (item == null) {
+            player.sendMessage(
+                Component.text("Item could not be found").color(TextColor.color(COLOR_ERROR)));
+            return;
+        }
+        player.getInventory().addItem(item.newItemStack());
+        player.sendMessage(Component.text("Gave [" + key.asString() + "] to " + player.getName())
+            .color(TextColor.color(COLOR_OK)));
+    }
+
+    private void reloadSubcommand(CommandSender sender, Object[] args) {
+        if (this.reloadSystem()) {
+            sender.sendMessage(
+                Component.text("Successfully reloaded config").color(TextColor.color(COLOR_OK)));
+        } else {
+            sender.sendMessage(
+                Component.text("Could not reload config").color(TextColor.color(COLOR_ERROR)));
+        }
+    }
+
+    private void dumpSubcommand(CommandSender sender, Object[] args) {
+        switch ((String) args[0]) {
+            case "items" -> {
+                for (final Item item : this.itemRegistry) {
+                    sender.sendMessage(Component.text(item.key().asString()));
+                }
+            }
+            case "features" -> {
+                for (final Feature feature : this.featureRegistry) {
+                    sender.sendMessage(Component.text(feature.key().asString()));
+                }
+            }
+            case "tagged_features" -> {
+                for (final TaggedFeature<?> taggedFeature : this.taggedFeatureRegistry) {
+                    sender.sendMessage(Component.text(taggedFeature.key().asString()));
+                }
+            }
+            case "enchantments" -> {
+                for (final Enchantment enchantment : this.enchantmentRegistry) {
+                    sender.sendMessage(Component.text(enchantment.key().asString()));
+                }
+            }
+        }
     }
 }
