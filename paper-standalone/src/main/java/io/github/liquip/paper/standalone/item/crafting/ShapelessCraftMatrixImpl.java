@@ -6,6 +6,7 @@ import net.kyori.adventure.key.KeyedValue;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.util.Collections;
 import java.util.Set;
 
 @ApiStatus.Experimental
@@ -19,5 +20,10 @@ public class ShapelessCraftMatrixImpl implements ShapelessCraftMatrix {
     @Override
     public boolean matches(@NonNull CraftMatrix that) {
         return false;
+    }
+
+    @Override
+    public @NonNull Set<KeyedValue<Integer>> getIngredients() {
+        return Collections.unmodifiableSet(keys);
     }
 }
