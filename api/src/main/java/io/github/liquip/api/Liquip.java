@@ -4,8 +4,9 @@ import io.github.liquip.api.item.Enchantment;
 import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
+import io.github.liquip.api.item.crafting.CraftingSystem;
+import io.github.liquip.api.item.crafting.Recipe;
 import net.kyori.adventure.key.Key;
-import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
@@ -57,6 +58,23 @@ public interface Liquip {
     @NonNull Registry<Enchantment> getEnchantmentRegistry();
 
     /**
+     * Return whether the {@link CraftingSystem}, responsible for managing {@link Recipe}
+     * instances is available on this instance of the API.
+     *
+     * @return whether the crafting system is supported by this API
+     * @since 0.2.0-alpha
+     */
+    boolean supportsCraftingSystem();
+
+    /**
+     * Gets the {@link CraftingSystem}, responsible for managing {@link Recipe} instances.
+     *
+     * @return the crafting system
+     * @since 0.2.0-alpha
+     */
+    @NonNull CraftingSystem getCraftingSystem();
+
+    /**
      * Checks if the provided {@link ItemStack} is a custom item.
      *
      * @return whether the item is custom or not
@@ -65,13 +83,17 @@ public interface Liquip {
     boolean isCustomItemStack(@NonNull ItemStack itemStack);
 
     /**
-     * Gets the {@link NamespacedKey} from the {@link ItemStack}, representing the material of the
-     * item.
+     * Gets the {@link Key} from the {@link ItemStack}, representing the material of the item.
      *
      * @return the key of the provided item stack
      * @since 0.0.1-alpha
      */
     @NonNull Key getKeyFromItemStack(@NonNull ItemStack itemStack);
 
+    /**
+     * Sets the {@link Key} from the {@link ItemStack}, representing the material of the item.
+     *
+     * @since 0.2.0-alpha
+     */
     void setKeyForItemStack(@NonNull ItemStack itemStack, @NonNull Key key);
 }
