@@ -1,44 +1,55 @@
 package io.github.liquip.paper.standalone.item.crafting;
 
 import io.github.liquip.api.item.crafting.CraftMatrix;
-import io.github.liquip.api.item.crafting.ShapedCraftMatrix;
 import net.kyori.adventure.key.KeyedValue;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.Collections;
+import java.util.List;
 
-public class ShapedCraftMatrixImpl implements ShapedCraftMatrix {
-    private final KeyedValue<Integer>[] ingredients;
+public class ShapedCraftMatrixImpl implements CraftMatrix {
+    private final List<KeyedValue<Integer>> ingredients;
     private final int hashCode;
 
-    public ShapedCraftMatrixImpl(@Nullable KeyedValue<Integer> @NonNull [] ingredients) {
-        this.ingredients = ingredients.clone();
-        this.hashCode = Arrays.hashCode(
-            Arrays.stream(ingredients).filter(Objects::nonNull).map(KeyedValue::key).toArray());
+    public ShapedCraftMatrixImpl(@NonNull List<KeyedValue<Integer>> ingredients) {
+        this.ingredients = Collections.unmodifiableList(ingredients);
+        this.hashCode = ingredients.hashCode();
     }
 
-    @Nullable
+    public @NonNull List<KeyedValue<Integer>> getIngredients() {
+        return this.ingredients;
+    }
+
     @Override
-    public KeyedValue<Integer> @NonNull [] getIngredients() {
-        return this.ingredients.clone();
+    public boolean isRecipeBound() {
+        return true;
     }
 
+    @Override
+    public boolean isShaped() {
+        return true;
+    }
+
+    @Override
     public boolean matches(@NonNull CraftMatrix that) {
-        if (!(that instanceof ShapedCraftMatrix other)) {
+        if (that.isRecipeBound() || !that.isShaped()) {
             return false;
         }
-        final KeyedValue<Integer>[] otherIngredients = other.getIngredients();
+        final List<KeyedValue<Integer>> otherIngredients = that.getStacks();
         for (int i = 0; i < 9; i++) {
-            final KeyedValue<Integer> ingredient = this.ingredients[i];
-            final KeyedValue<Integer> otherIngredient = otherIngredients[i];
+            final KeyedValue<Integer> ingredient = this.ingredients.get(i);
+            final KeyedValue<Integer> otherIngredient = otherIngredients.get(i);
             if (!ingredient.key().equals(otherIngredient.key()) ||
-                ingredient.value() < otherIngredient.value()) {
+                ingredient.value() > otherIngredient.value()) {
                 return false;
             }
         }
         return true;
+    }
+
+    @Override
+    public @NonNull List<KeyedValue<Integer>> getStacks() throws IllegalStateException {
+        throw new IllegalStateException();
     }
 
     @Override
@@ -48,10 +59,9 @@ public class ShapedCraftMatrixImpl implements ShapedCraftMatrix {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof CraftMatrix that))
+        if (!(o instanceof CraftMatrix that)) {
             return false;
+        }
         return this.matches(that);
     }
 }
