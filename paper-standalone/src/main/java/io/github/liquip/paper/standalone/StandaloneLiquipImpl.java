@@ -21,8 +21,11 @@ import io.github.liquip.api.item.Enchantment;
 import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
+import io.github.liquip.api.item.crafting.CraftingSystem;
 import io.github.liquip.paper.core.util.Registry;
 import io.github.liquip.paper.standalone.config.ConfigLoader;
+import io.github.liquip.paper.standalone.item.crafting.CraftingPane;
+import io.github.liquip.paper.standalone.item.crafting.CraftingSystemImpl;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -54,6 +57,7 @@ public class StandaloneLiquipImpl implements Liquip {
     private final Registry<Feature> featureRegistry;
     private final Registry<TaggedFeature<?>> taggedFeatureRegistry;
     private final Registry<Enchantment> enchantmentRegistry;
+    private final CraftingSystem craftingSystem;
 
     public StandaloneLiquipImpl(Plugin plugin) {
         this.plugin = plugin;
@@ -66,6 +70,7 @@ public class StandaloneLiquipImpl implements Liquip {
         this.featureRegistry = new Registry<>();
         this.taggedFeatureRegistry = new Registry<>();
         this.enchantmentRegistry = new Registry<>();
+        this.craftingSystem = new CraftingSystemImpl();
     }
 
     public static Component MM(String input) {
@@ -75,25 +80,25 @@ public class StandaloneLiquipImpl implements Liquip {
     protected void loadSystem() {
         CommandAPI.onLoad(new CommandAPIConfig().silentLogs(true));
         final Menu craftMenu = this.createCraftMenu();
-        final CommandAPICommand liquipCommand = new CommandAPICommand("liquip")
-            .withPermission("liquip.command");
-        final CommandAPICommand liquipGiveCommand = new CommandAPICommand("give")
-            .withPermission("liquip.command.give")
-            .withArguments(new NamespacedKeyArgument("key"))
-            .executesPlayer(this::giveSubcommand);
-        final CommandAPICommand liquipCraftCommand = new CommandAPICommand("craft")
-            .withPermission("liquip.command.craft")
-            .executesPlayer((player, args) -> {
-                craftMenu.open(player);
-            });
-        final CommandAPICommand liquipReloadCommand = new CommandAPICommand("reload")
-            .withPermission("liquip.command.reload")
-            .executes(this::reloadSubcommand);
-        final CommandAPICommand liquipDumpCommand = new CommandAPICommand("dump")
-            .withPermission("liquip.command.dump")
-            .withArguments(
-                new MultiLiteralArgument("items", "features", "tagged_features", "enchantments"))
-            .executes(this::dumpSubcommand);
+        final CommandAPICommand liquipCommand =
+            new CommandAPICommand("liquip").withPermission("liquip.command");
+        final CommandAPICommand liquipGiveCommand =
+            new CommandAPICommand("give").withPermission("liquip.command.give")
+                .withArguments(new NamespacedKeyArgument("key"))
+                .executesPlayer(this::giveSubcommand);
+        final CommandAPICommand liquipCraftCommand =
+            new CommandAPICommand("craft").withPermission("liquip.command.craft")
+                .executesPlayer((player, args) -> {
+                    craftMenu.open(player);
+                });
+        final CommandAPICommand liquipReloadCommand =
+            new CommandAPICommand("reload").withPermission("liquip.command.reload")
+                .executes(this::reloadSubcommand);
+        final CommandAPICommand liquipDumpCommand =
+            new CommandAPICommand("dump").withPermission("liquip.command.dump").withArguments(
+                    new MultiLiteralArgument("items", "features", "tagged_features",
+                        "enchantments"))
+                .executes(this::dumpSubcommand);
         liquipCommand.withSubcommands(liquipGiveCommand, liquipCraftCommand, liquipReloadCommand,
             liquipDumpCommand).register();
     }
@@ -127,7 +132,7 @@ public class StandaloneLiquipImpl implements Liquip {
             Component.text("Recipe Book").decoration(TextDecoration.ITALIC, false)));
         return new BasicMenu(Component.text("Advanced Crafting"), 5, MenuType.CHEST,
             List.of(new FillPane(0, Slot.ROW_ONE_SLOT_ONE, Slot.ROW_FIVE_SLOT_NINE, blackGlass),
-                //new CraftingPane(this, 0),
+                new CraftingPane(this, 0),
                 new FillPane(1, Slot.ROW_TWO_SLOT_SIX, Slot.ROW_FOUR_SLOT_EIGHT, greenGlass),
                 new FillItemPane(1, Slot.ROW_THREE_SLOT_NINE, recipeBook),
                 new StoragePane(2, Slot.ROW_TWO_SLOT_TWO, Slot.ROW_FOUR_SLOT_FOUR,
@@ -166,6 +171,16 @@ public class StandaloneLiquipImpl implements Liquip {
     @Override
     public @NonNull Registry<Enchantment> getEnchantmentRegistry() {
         return this.enchantmentRegistry;
+    }
+
+    @Override
+    public boolean supportsCraftingSystem() {
+        return true;
+    }
+
+    @Override
+    public @NonNull CraftingSystem getCraftingSystem() {
+        return this.craftingSystem;
     }
 
     @Override
