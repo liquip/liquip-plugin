@@ -22,12 +22,12 @@ public class CraftingPane extends ListenerPane {
 
     @Override
     public void onPutItem(@NotNull InventoryClickEvent event) {
-        new CraftingUpdateScheduler(event.getView()).runTaskLater(this.api.getPlugin(), 0);
+        new CraftingScheduler(this.api, event.getView()).runTask(this.api.getPlugin());
     }
 
     @Override
     public void onTakeItem(@NotNull InventoryClickEvent event) {
-        new CraftingUpdateScheduler(event.getView()).runTaskLater(this.api.getPlugin(), 0);
+        new CraftingScheduler(this.api, event.getView()).runTask(this.api.getPlugin());
     }
 
     @Override
@@ -36,7 +36,7 @@ public class CraftingPane extends ListenerPane {
 
     @Override
     public void onDragItems(@NotNull InventoryDragEvent event) {
-        new CraftingUpdateScheduler(event.getView()).runTaskLater(this.api.getPlugin(), 0);
+        new CraftingScheduler(this.api, event.getView()).runTask(this.api.getPlugin());
     }
 
     @Override
