@@ -12,3 +12,6 @@ trim_trailing_whitespace = true
 
 [{*.yaml,*.yml}]
 indent_size = 2
+
+[*.java]
+max_line_length = 130
