@@ -58,8 +58,8 @@ public interface Liquip {
     @NonNull Registry<Enchantment> getEnchantmentRegistry();
 
     /**
-     * Return whether the {@link CraftingSystem}, responsible for managing {@link Recipe}
-     * instances is available on this instance of the API.
+     * Return whether the {@link CraftingSystem}, responsible for managing {@link Recipe} instances is available on this instance
+     * of the API.
      *
      * @return whether the crafting system is supported by this API
      * @since 0.2.0-alpha
