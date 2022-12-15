@@ -10,9 +10,7 @@ import java.util.function.BiConsumer;
 public interface Item extends Keyed {
     @NonNull ItemStack newItemStack();
 
-    <T extends Event> void callEvent(@NonNull Class<T> eventClass, @NonNull T event,
-                                     @NonNull ItemStack itemStack);
+    <T extends Event> void callEvent(@NonNull Class<T> eventClass, @NonNull T event, @NonNull ItemStack itemStack);
 
-    <T extends Event> void registerEvent(@NonNull Class<T> eventClass,
-                                         @NonNull BiConsumer<T, ItemStack> eventHandler);
+    <T extends Event> void registerEvent(@NonNull Class<T> eventClass, @NonNull BiConsumer<T, ItemStack> eventHandler);
 }
