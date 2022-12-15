@@ -164,7 +164,7 @@ public class ConfigLoader {
                             }
                             final Char2ObjectMap<IngredientStructure> ingredientMap = new Char2ObjectOpenHashMap<>();
                             for (final IngredientStructure ingredient : recipe.getIngredients()) {
-                                if (ingredient.getC().length() != 0 || ingredient.getCount() < 1 || ingredient.getCount() > 64) {
+                                if (ingredient.getC().length() != 1 || ingredient.getCount() < 1 || ingredient.getCount() > 64) {
                                     this.logger
                                         .warn("Could not load recipe with invalid ingredient for item '{}', skipping...",
                                             key.asString());
