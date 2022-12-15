@@ -8,7 +8,7 @@ public interface CraftingSystem {
 
     void registerShapelessRecipe(@NonNull ShapelessRecipe recipe);
 
-    @Nullable Recipe getShapedRecipe(@NonNull CraftMatrix craftMatrix);
+    @Nullable ShapedRecipe getShapedRecipe(@NonNull CraftMatrix craftMatrix);
 
-    @Nullable Recipe getShapelessRecipe(@NonNull CraftMatrix craftMatrix);
+    @Nullable ShapelessRecipe getShapelessRecipe(@NonNull CraftMatrix craftMatrix);
 }

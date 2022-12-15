@@ -1,6 +1,9 @@
 package io.github.liquip.paper.standalone.item.crafting;
 
-import io.github.liquip.api.item.crafting.*;
+import io.github.liquip.api.item.crafting.CraftMatrix;
+import io.github.liquip.api.item.crafting.CraftingSystem;
+import io.github.liquip.api.item.crafting.ShapedRecipe;
+import io.github.liquip.api.item.crafting.ShapelessRecipe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
@@ -31,7 +34,7 @@ public class CraftingSystemImpl implements CraftingSystem {
     }
 
     @Override
-    public @Nullable Recipe getShapedRecipe(@NonNull CraftMatrix craftMatrix) {
+    public @Nullable ShapedRecipe getShapedRecipe(@NonNull CraftMatrix craftMatrix) {
         if (!craftMatrix.isShaped()) {
             return null;
         }
@@ -39,7 +42,7 @@ public class CraftingSystemImpl implements CraftingSystem {
     }
 
     @Override
-    public @Nullable Recipe getShapelessRecipe(@NonNull CraftMatrix craftMatrix) {
+    public @Nullable ShapelessRecipe getShapelessRecipe(@NonNull CraftMatrix craftMatrix) {
         if (craftMatrix.isShaped()) {
             return null;
         }
