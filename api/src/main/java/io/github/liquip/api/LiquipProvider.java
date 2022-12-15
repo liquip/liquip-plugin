@@ -9,9 +9,13 @@ import org.jetbrains.annotations.ApiStatus.Internal;
 public final class LiquipProvider {
     private static Liquip instance = null;
 
+    @Internal
+    private LiquipProvider() {
+        throw new UnsupportedOperationException("This class cannot be instantiated.");
+    }
+
     /**
-     * Gets an instance of the {@link Liquip} API,
-     * throwing {@link IllegalStateException} if the API is not loaded yet.
+     * Gets an instance of the {@link Liquip} API, throwing {@link IllegalStateException} if the API is not loaded yet.
      *
      * <p>This method will never return null.</p>
      *
@@ -28,16 +32,11 @@ public final class LiquipProvider {
 
     @Internal
     static void register(Liquip instance) {
-        LiquipProvider.instance =  instance;
+        LiquipProvider.instance = instance;
     }
 
     @Internal
     static void unregister() {
         LiquipProvider.instance = null;
-    }
-
-    @Internal
-    private LiquipProvider() {
-        throw new UnsupportedOperationException("This class cannot be instantiated.");
     }
 }
