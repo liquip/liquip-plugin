@@ -8,16 +8,16 @@ import java.util.Collections;
 import java.util.List;
 
 public class ShapedCraftMatrixImpl implements CraftMatrix {
-    private final List<KeyedValue<Integer>> ingredients;
+    private final List<KeyedValue<Integer>> shape;
     private final int hashCode;
 
-    public ShapedCraftMatrixImpl(@NonNull List<KeyedValue<Integer>> ingredients) {
-        this.ingredients = Collections.unmodifiableList(ingredients);
-        this.hashCode = ingredients.hashCode();
+    public ShapedCraftMatrixImpl(@NonNull List<KeyedValue<Integer>> shape) {
+        this.shape = Collections.unmodifiableList(shape);
+        this.hashCode = shape.hashCode();
     }
 
-    public @NonNull List<KeyedValue<Integer>> getIngredients() {
-        return this.ingredients;
+    public @NonNull List<KeyedValue<Integer>> getShape() {
+        return this.shape;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class ShapedCraftMatrixImpl implements CraftMatrix {
         }
         final List<KeyedValue<Integer>> otherIngredients = that.getStacks();
         for (int i = 0; i < 9; i++) {
-            final KeyedValue<Integer> ingredient = this.ingredients.get(i);
+            final KeyedValue<Integer> ingredient = this.shape.get(i);
             final KeyedValue<Integer> otherIngredient = otherIngredients.get(i);
             if (!ingredient.key().equals(otherIngredient.key()) ||
                 ingredient.value() > otherIngredient.value()) {

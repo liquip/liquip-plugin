@@ -11,16 +11,16 @@ import java.util.Set;
 
 @ApiStatus.Experimental
 public class ShapelessCraftMatrixImpl implements CraftMatrix {
-    private final Set<KeyedValue<Integer>> keys;
+    private final Set<KeyedValue<Integer>> ingredients;
     private final int hashCode;
 
-    public ShapelessCraftMatrixImpl(Set<KeyedValue<Integer>> keys) {
-        this.keys = keys;
-        this.hashCode = keys.hashCode();
+    public ShapelessCraftMatrixImpl(@NonNull Set<KeyedValue<Integer>> ingredients) {
+        this.ingredients = ingredients;
+        this.hashCode = ingredients.hashCode();
     }
 
     public @NonNull Set<KeyedValue<Integer>> getIngredients() {
-        return Collections.unmodifiableSet(this.keys);
+        return Collections.unmodifiableSet(this.ingredients);
     }
 
     @Override
