@@ -11,5 +11,5 @@ public interface Recipe {
 
     void apply(@NonNull ItemStack @NonNull [] stacks);
 
-    @NonNull ItemStack getResult(List<KeyedValue<Integer>> stacks);
+    @NonNull ItemStack getResult(@NonNull List<KeyedValue<Integer>> stacks);
 }
