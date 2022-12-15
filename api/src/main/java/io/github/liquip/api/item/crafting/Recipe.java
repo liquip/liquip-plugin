@@ -9,8 +9,6 @@ import java.util.List;
 public interface Recipe {
     @NonNull CraftMatrix getMatrix();
 
-    boolean matches(@NonNull ItemStack @NonNull [] craftingMatrix);
-
     void apply(@NonNull ItemStack @NonNull [] stacks);
 
     @NonNull ItemStack getResult(List<KeyedValue<Integer>> stacks);
