@@ -16,7 +16,7 @@ dependencies {
     implementation(project(mapOf("path" to ":paper-core")))
     implementation(project(mapOf("path" to ":liquip-gui")))
     implementation("dev.jorel:commandapi-shade:8.5.1")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0")
+    compileOnly("com.fasterxml.jackson.core:jackson-databind:2.14.0")
 }
 
 tasks {
