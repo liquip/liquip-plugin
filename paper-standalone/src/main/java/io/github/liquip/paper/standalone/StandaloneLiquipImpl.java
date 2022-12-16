@@ -187,7 +187,7 @@ public class StandaloneLiquipImpl implements Liquip {
 
     @Override
     @SuppressWarnings("DataFlowIssue")
-    public @NonNull NamespacedKey getKeyFromItemStack(@NonNull ItemStack itemStack) {
+    public @NonNull Key getKeyFromItemStack(@NonNull ItemStack itemStack) {
         if (itemStack.getItemMeta() == null) {
             return itemStack.getType().getKey();
         }
@@ -195,12 +195,7 @@ public class StandaloneLiquipImpl implements Liquip {
         if (!persistentDataContainer.has(PDC_KEY, PersistentDataType.STRING)) {
             return itemStack.getType().getKey();
         }
-        final NamespacedKey namespacedKey =
-            NamespacedKey.fromString(persistentDataContainer.get(PDC_KEY, PersistentDataType.STRING));
-        if (namespacedKey == null) {
-            return itemStack.getType().getKey();
-        }
-        return namespacedKey;
+        return NamespacedKey.fromString(persistentDataContainer.get(PDC_KEY, PersistentDataType.STRING));
     }
 
     @Override
@@ -209,8 +204,7 @@ public class StandaloneLiquipImpl implements Liquip {
     }
 
     private void giveSubcommand(Player player, Object[] args) {
-        final NamespacedKey namespacedKey = (NamespacedKey) args[0];
-        final Key key = Key.key(namespacedKey.getNamespace(), namespacedKey.getKey());
+        final NamespacedKey key = (NamespacedKey) args[0];
         final Item item = this.itemRegistry.get(key);
         if (item == null) {
             player.sendMessage(Component.text("Item could not be found").color(TextColor.color(COLOR_ERROR)));
