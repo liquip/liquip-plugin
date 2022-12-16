@@ -1,7 +1,6 @@
 package io.github.liquip.paper.standalone.item.crafting;
 
 import com.github.sqyyy.liquip.gui.Slot;
-import com.google.common.collect.Lists;
 import io.github.liquip.api.item.crafting.Recipe;
 import io.github.liquip.paper.standalone.StandaloneLiquipImpl;
 import net.kyori.adventure.key.KeyedValue;
@@ -12,6 +11,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class CraftingScheduler extends BukkitRunnable {
@@ -29,7 +30,7 @@ public class CraftingScheduler extends BukkitRunnable {
             return;
         }
         final Inventory topInventory = this.view.getTopInventory();
-        final List<KeyedValue<Integer>> stacks = Lists.newArrayList(null, null, null, null, null, null, null, null, null);
+        final List<KeyedValue<Integer>> stacks = new ArrayList<>(Collections.nCopies(9, null));
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 3; column++) {
                 final ItemStack item = topInventory.getItem((row + 1) * 9 + column + 1);
