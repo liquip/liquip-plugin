@@ -14,7 +14,7 @@ import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-Reformat codeimport net.kyori.adventure.key.Key;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.KeyedValue;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
