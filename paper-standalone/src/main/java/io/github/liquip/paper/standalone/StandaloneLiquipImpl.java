@@ -59,6 +59,7 @@ public class StandaloneLiquipImpl implements Liquip {
     private final Registry<TaggedFeature<?>> taggedFeatureRegistry;
     private final Registry<Enchantment> enchantmentRegistry;
     private final CraftingSystem craftingSystem;
+    private Menu craftMenu = null;
 
     public StandaloneLiquipImpl(@NonNull Plugin plugin) {
         this.plugin = plugin;
@@ -78,14 +79,14 @@ public class StandaloneLiquipImpl implements Liquip {
 
     protected void loadSystem() {
         CommandAPI.onLoad(new CommandAPIConfig().silentLogs(true));
-        final Menu craftMenu = this.createCraftMenu();
+        this.craftMenu = this.createCraftMenu();
         final CommandAPICommand liquipCommand = new CommandAPICommand("liquip").withPermission("liquip.command");
         final CommandAPICommand liquipGiveCommand =
             new CommandAPICommand("give").withPermission("liquip.command.give").withArguments(new NamespacedKeyArgument("key"))
                 .executesPlayer(this::giveSubcommand);
         final CommandAPICommand liquipCraftCommand =
             new CommandAPICommand("craft").withPermission("liquip.command.craft").executesPlayer((player, args) -> {
-                craftMenu.open(player);
+                this.craftMenu.open(player);
             });
         final CommandAPICommand liquipReloadCommand =
             new CommandAPICommand("reload").withPermission("liquip.command.reload").executes(this::reloadSubcommand);
@@ -130,16 +131,23 @@ public class StandaloneLiquipImpl implements Liquip {
                 }), new CraftingOutputPane(this, 2)));
     }
 
-    public Plugin getPlugin() {
+    public @NonNull Plugin getPlugin() {
         return this.plugin;
     }
 
-    public ObjectMapper getMapper() {
+    public @NonNull ObjectMapper getMapper() {
         return this.mapper;
     }
 
-    public ConfigLoader getConfigLoader() {
+    public @NonNull ConfigLoader getConfigLoader() {
         return this.configLoader;
+    }
+
+    public @NonNull Menu getCraftMenu() {
+        if (this.craftMenu == null) {
+            throw new IllegalStateException("Liquip uninitialized");
+        }
+        return this.craftMenu;
     }
 
     @Override
