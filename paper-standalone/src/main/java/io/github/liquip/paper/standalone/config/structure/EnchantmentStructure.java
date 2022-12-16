@@ -9,7 +9,7 @@ public class EnchantmentStructure {
 
     @JsonCreator
     public EnchantmentStructure(@JsonProperty(value = "level", required = true) int level,
-                                @JsonProperty(value = "id", required = true) String id) {
+        @JsonProperty(value = "id", required = true) String id) {
         this.level = level;
         this.id = id;
     }
