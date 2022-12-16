@@ -27,6 +27,7 @@ import io.github.liquip.paper.standalone.config.ConfigLoader;
 import io.github.liquip.paper.standalone.item.crafting.CraftingOutputPane;
 import io.github.liquip.paper.standalone.item.crafting.CraftingPane;
 import io.github.liquip.paper.standalone.item.crafting.CraftingSystemImpl;
+import io.github.liquip.paper.standalone.listener.SystemEventListener;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -41,6 +42,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.List;
@@ -99,6 +101,8 @@ public class StandaloneLiquipImpl implements Liquip {
     protected void enableSystem() {
         CommandAPI.onEnable(this.plugin);
         Menu.initialize(this.plugin);
+        final PluginManager pluginManager = Bukkit.getPluginManager();
+        pluginManager.registerEvents(new SystemEventListener(this), this.plugin);
         if (!this.configLoader.loadConfig()) {
             this.plugin.getSLF4JLogger().error("Could not load config, disabling...");
             Bukkit.getPluginManager().disablePlugin(this.plugin);
