@@ -2,9 +2,11 @@ package io.github.liquip.paper.standalone.config;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableMultimap;
 import io.github.liquip.api.config.ConfigElement;
 import io.github.liquip.api.item.Enchantment;
 import io.github.liquip.api.item.Feature;
+import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
 import io.github.liquip.paper.core.item.ItemImpl;
 import io.github.liquip.paper.standalone.StandaloneLiquipImpl;
@@ -13,6 +15,7 @@ import io.github.liquip.paper.standalone.item.crafting.ShapedRecipeImpl;
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMaps;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.KeyedValue;
@@ -21,6 +24,8 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
@@ -210,6 +215,24 @@ public class ConfigLoader {
                 }
             }
         }
+        Key craftingTableKey = NamespacedKey.fromString(this.config.getCraftingTable());
+        if (craftingTableKey == null) {
+            this.config = null;
+            this.logger.error("Invalid key for crafting table item");
+            return false;
+        }
+        if (!this.config.hasCustomCraftingTable()) {
+            final Item defaultCraftingTableItem = this.getDefaultCraftingTable();
+            this.api.getItemRegistry().register(defaultCraftingTableItem.key(), defaultCraftingTableItem);
+            craftingTableKey = defaultCraftingTableItem.key();
+        }
+        final Item craftingTableItem = this.api.getItemRegistry().get(craftingTableKey);
+        if (craftingTableItem == null) {
+            this.config = null;
+            this.logger.error("Invalid crafting table item");
+            return false;
+        }
+        craftingTableItem.registerEvent(PlayerInteractEvent.class, this::craftingTableOnInteract);
         return true;
     }
 
@@ -255,5 +278,16 @@ public class ConfigLoader {
 
     public @Nullable List<ItemStructure> getItems() {
         return this.items;
+    }
+
+    private Item getDefaultCraftingTable() {
+        return new ItemImpl(this.api, new NamespacedKey("liquip", "crafting_table"), Material.CRAFTING_TABLE,
+            Component.text("Advanced Crafting Table").decoration(TextDecoration.ITALIC, false), List.of(),
+            Object2IntMaps.emptyMap(), List.of(), Map.of(), ImmutableMultimap.of());
+    }
+
+    private void craftingTableOnInteract(@NonNull PlayerInteractEvent event, @Nullable ItemStack item) {
+        event.setCancelled(true);
+        this.api.getCraftMenu().open(event.getPlayer());
     }
 }
