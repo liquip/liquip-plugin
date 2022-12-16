@@ -46,6 +46,7 @@ import org.bukkit.plugin.PluginManager;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.util.List;
+import java.util.Objects;
 
 public class StandaloneLiquipImpl implements Liquip {
     public static final MiniMessage MM = MiniMessage.miniMessage();
@@ -207,7 +208,7 @@ public class StandaloneLiquipImpl implements Liquip {
         if (!persistentDataContainer.has(PDC_KEY, PersistentDataType.STRING)) {
             return itemStack.getType().getKey();
         }
-        return NamespacedKey.fromString(persistentDataContainer.get(PDC_KEY, PersistentDataType.STRING));
+        return Objects.requireNonNull(NamespacedKey.fromString(persistentDataContainer.get(PDC_KEY, PersistentDataType.STRING)));
     }
 
     @Override
