@@ -14,8 +14,7 @@ import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.kyori.adventure.key.InvalidKeyException;
-import net.kyori.adventure.key.Key;
+Reformat codeimport net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.KeyedValue;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -100,135 +99,126 @@ public class ConfigLoader {
             }
         }
         for (final ItemStructure item : this.items) {
-            try {
-                final Key key = NamespacedKey.fromString(item.getKey());
-                if (key == null) {
-                    this.logger.warn("Could not get key for item '{}', skipping...", item.getKey());
-                    continue;
+            final Key key = NamespacedKey.fromString(item.getKey());
+            if (key == null) {
+                this.logger.warn("Could not get key for item '{}', skipping...", item.getKey());
+                continue;
+            }
+            final Key materialKey = NamespacedKey.fromString(item.getMaterial());
+            if (materialKey == null) {
+                this.logger.warn("Could not get material key for item '{}', skipping...", key.asString());
+                continue;
+            }
+            final Material material = Registry.MATERIAL.get(new NamespacedKey(materialKey.namespace(), materialKey.value()));
+            if (material == null) {
+                this.logger.warn("Could not get material for item '{}', skipping...", key.asString());
+                continue;
+            }
+            final Component displayName =
+                Component.text().decoration(TextDecoration.ITALIC, false).append(StandaloneLiquipImpl.MM(item.getDisplayName()))
+                    .build();
+            final List<Component> lore = new ArrayList<>(0);
+            if (item.getLore() != null) {
+                for (final String loreLine : item.getLore()) {
+                    lore.add(Component.text().decoration(TextDecoration.ITALIC, false).append(StandaloneLiquipImpl.MM(loreLine))
+                        .build());
                 }
-                final Key materialKey = NamespacedKey.fromString(item.getMaterial());
-                if (materialKey == null) {
-                    this.logger.warn("Could not get material key for item '{}', skipping...", key.asString());
-                    continue;
+            }
+            final Object2IntMap<Enchantment> enchantments = new Object2IntOpenHashMap<>();
+            if (item.getEnchantments() != null) {
+                for (final EnchantmentStructure enchantment : item.getEnchantments()) {
+                    this.resolveEnchantment(enchantment.getId())
+                        .ifPresentOrElse(it -> enchantments.put(it, enchantment.getLevel()),
+                            () -> this.logger.warn("Could not get enchantment '{}' for item '{}', skipping...",
+                                enchantment.getId(), key.asString()));
                 }
-                final Material material = Registry.MATERIAL.get(new NamespacedKey(materialKey.namespace(), materialKey.value()));
-                if (material == null) {
-                    this.logger.warn("Could not get material for item '{}', skipping...", key.asString());
-                    continue;
-                }
-                final Component displayName = Component.text().decoration(TextDecoration.ITALIC, false)
-                    .append(StandaloneLiquipImpl.MM(item.getDisplayName())).build();
-                final List<Component> lore = new ArrayList<>(0);
-                if (item.getLore() != null) {
-                    for (final String loreLine : item.getLore()) {
-                        lore.add(
-                            Component.text().decoration(TextDecoration.ITALIC, false).append(StandaloneLiquipImpl.MM(loreLine))
-                                .build());
+            }
+            final List<Feature> features = new ArrayList<>(0);
+            final Map<TaggedFeature<?>, ConfigElement> taggedFeatures = new HashMap<>(0);
+            if (item.getFeatures() != null) {
+                for (Map.Entry<String, JsonNode> feature : item.getFeatures().entrySet()) {
+                    if (feature.getValue() == null || feature.getValue().isNull()) {
+                        this.resolveFeature(feature.getKey()).ifPresentOrElse(features::add,
+                            () -> this.logger.warn("Could not get feature '{}' for item '{}', skipping...", feature.getKey(),
+                                key.asString()));
+                    } else {
+                        this.resolveTaggedFeature(feature.getKey())
+                            .ifPresentOrElse(it -> taggedFeatures.put(it, new JsonConfigElement(feature.getValue())),
+                                () -> this.logger.warn("Could not get tagged feature '{}' for item '{}', skipping...",
+                                    feature.getKey(), key.asString()));
                     }
                 }
-                final Object2IntMap<Enchantment> enchantments = new Object2IntOpenHashMap<>();
-                if (item.getEnchantments() != null) {
-                    for (final EnchantmentStructure enchantment : item.getEnchantments()) {
-                        this.resolveEnchantment(enchantment.getId())
-                            .ifPresentOrElse(it -> enchantments.put(it, enchantment.getLevel()),
-                                () -> this.logger.warn("Could not get enchantment '{}' for item '{}', skipping...",
-                                    enchantment.getId(), key.asString()));
-                    }
-                }
-                final List<Feature> features = new ArrayList<>(0);
-                final Map<TaggedFeature<?>, ConfigElement> taggedFeatures = new HashMap<>(0);
-                if (item.getFeatures() != null) {
-                    for (Map.Entry<String, JsonNode> feature : item.getFeatures().entrySet()) {
-                        if (feature.getValue() == null || feature.getValue().isNull()) {
-                            this.resolveFeature(feature.getKey()).ifPresentOrElse(features::add,
-                                () -> this.logger.warn("Could not get feature '{}' for item '{}', skipping...", feature.getKey(),
-                                    key.asString()));
-                        } else {
-                            this.resolveTaggedFeature(feature.getKey())
-                                .ifPresentOrElse(it -> taggedFeatures.put(it, new JsonConfigElement(feature.getValue())),
-                                    () -> this.logger.warn("Could not get tagged feature '{}' for item '{}', skipping...",
-                                        feature.getKey(), key.asString()));
+            }
+            final ItemImpl itemInstance =
+                new ItemImpl(this.api, key, material, displayName, lore, enchantments, features, taggedFeatures,
+                    ArrayListMultimap.create());
+            this.logger.info("Registering...");
+            this.api.getItemRegistry().register(key, itemInstance);
+            if (item.getRecipes() != null) {
+                recipe:
+                for (final RecipeStructure recipe : item.getRecipes()) {
+                    final List<String> recipeShapeList = recipe.getShape();
+                    if (recipeShapeList != null) {
+                        if (!this.verifyShape(recipeShapeList)) {
+                            this.logger.warn("Could not load recipe with invalid shape for item '{}', skipping...",
+                                key.asString());
+                            continue;
                         }
-                    }
-                }
-                final ItemImpl itemInstance =
-                    new ItemImpl(this.api, key, material, displayName, lore, enchantments, features, taggedFeatures,
-                        ArrayListMultimap.create());
-                this.logger.info("Registering...");
-                this.api.getItemRegistry().register(key, itemInstance);
-                if (item.getRecipes() != null) {
-                    recipe:
-                    for (final RecipeStructure recipe : item.getRecipes()) {
-                        final List<String> recipeShapeList = recipe.getShape();
-                        if (recipeShapeList != null) {
-                            if (!this.verifyShape(recipeShapeList)) {
-                                this.logger.warn("Could not load recipe with invalid shape for item '{}', skipping...",
+                        final Char2ObjectMap<IngredientStructure> ingredientMap = new Char2ObjectOpenHashMap<>();
+                        for (final IngredientStructure ingredient : recipe.getIngredients()) {
+                            if (ingredient.getC().length() != 1 || ingredient.getCount() < 1 || ingredient.getCount() > 64) {
+                                this.logger.warn("Could not load recipe with invalid ingredient for item '{}', skipping...",
                                     key.asString());
-                                continue;
+                                continue recipe;
                             }
-                            final Char2ObjectMap<IngredientStructure> ingredientMap = new Char2ObjectOpenHashMap<>();
-                            for (final IngredientStructure ingredient : recipe.getIngredients()) {
-                                if (ingredient.getC().length() != 1 || ingredient.getCount() < 1 || ingredient.getCount() > 64) {
-                                    this.logger.warn("Could not load recipe with invalid ingredient for item '{}', skipping...",
+                            ingredientMap.put(ingredient.getC().charAt(0), ingredient);
+                        }
+                        final List<KeyedValue<Integer>> shape = new ArrayList<>(Collections.nCopies(9, null));
+                        for (int i = 0; i < 3; i++) {
+                            for (int j = 0; j < 3; j++) {
+                                final char c = recipeShapeList.get(i).charAt(j);
+                                if (c == ' ') {
+                                    shape.set(i * 3 + j, null);
+                                    continue;
+                                }
+                                final IngredientStructure ingredientStructure = ingredientMap.get(c);
+                                if (ingredientStructure == null) {
+                                    this.logger.warn("Could not load recipe with invalid shape for item '{}', skipping...",
                                         key.asString());
                                     continue recipe;
                                 }
-                                ingredientMap.put(ingredient.getC().charAt(0), ingredient);
-                            }
-                            final List<KeyedValue<Integer>> shape = new ArrayList<>(Collections.nCopies(9, null));
-                            for (int i = 0; i < 3; i++) {
-                                for (int j = 0; j < 3; j++) {
-                                    final char c = recipeShapeList.get(i).charAt(j);
-                                    if (c == ' ') {
-                                        shape.set(i * 3 + j, null);
-                                        continue;
-                                    }
-                                    final IngredientStructure ingredientStructure = ingredientMap.get(c);
-                                    if (ingredientStructure == null) {
-                                        this.logger.warn("Could not load recipe with invalid shape for item '{}', skipping...",
-                                            key.asString());
-                                        continue recipe;
-                                    }
-                                    final Key ingredientKey = NamespacedKey.fromString(ingredientStructure.getKey());
-                                    if (ingredientKey == null) {
-                                        this.logger.warn(
-                                            "Could not load recipe with invalid ingredient key for item '{}', skipping...",
-                                            key.asString());
-                                        continue recipe;
-                                    }
-                                    shape.set(i * 3 + j, KeyedValue.keyedValue(ingredientKey, ingredientStructure.getCount()));
+                                final Key ingredientKey = NamespacedKey.fromString(ingredientStructure.getKey());
+                                if (ingredientKey == null) {
+                                    this.logger.warn(
+                                        "Could not load recipe with invalid ingredient key for item '{}', skipping...",
+                                        key.asString());
+                                    continue recipe;
                                 }
+                                shape.set(i * 3 + j, KeyedValue.keyedValue(ingredientKey, ingredientStructure.getCount()));
                             }
-                            this.api.getCraftingSystem()
-                                .registerShapedRecipe(new ShapedRecipeImpl(itemInstance, recipe.getCount(), shape));
-                            continue;
                         }
-                        this.logger.warn("Shapeless crafting is not implemented yet");
-                        // TODO - implement
-                        //final Set<KeyedValue<Integer>> ingredients = new HashSet<>();
-                        //this.api.getCraftingSystem()
-                        //    .registerShapelessRecipe(new ShapelessRecipeImpl(itemInstance,
-                        //    ingredients));
+                        this.api.getCraftingSystem()
+                            .registerShapedRecipe(new ShapedRecipeImpl(itemInstance, recipe.getCount(), shape));
+                        continue;
                     }
+                    this.logger.warn("Shapeless crafting is not implemented yet");
+                    // TODO - implement
+                    //final Set<KeyedValue<Integer>> ingredients = new HashSet<>();
+                    //this.api.getCraftingSystem()
+                    //    .registerShapelessRecipe(new ShapelessRecipeImpl(itemInstance,
+                    //    ingredients));
                 }
-            } catch (InvalidKeyException e) {
-                this.logger.error("Exception whilst parsing key", e);
             }
         }
         return true;
     }
 
     private @NonNull Optional<Enchantment> resolveEnchantment(@NonNull String key) {
-        try {
-            final Key namespacedKey = NamespacedKey.fromString(key);
-            if (namespacedKey == null) {
-                return Optional.empty();
-            }
-            return Optional.ofNullable(this.api.getEnchantmentRegistry().get(namespacedKey));
-        } catch (InvalidKeyException e) {
-            this.logger.error("Exception whilst parsing key", e);
+        final Key namespacedKey = NamespacedKey.fromString(key);
+        if (namespacedKey == null) {
             return Optional.empty();
         }
+        return Optional.ofNullable(this.api.getEnchantmentRegistry().get(namespacedKey));
     }
 
     private @NonNull Optional<Feature> resolveFeature(@NonNull String key) {
