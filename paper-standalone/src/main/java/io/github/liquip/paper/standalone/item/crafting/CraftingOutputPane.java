@@ -4,8 +4,8 @@ import com.github.sqyyy.liquip.gui.Slot;
 import com.github.sqyyy.liquip.gui.impl.OutputSlotPane;
 import io.github.liquip.api.item.crafting.Recipe;
 import io.github.liquip.paper.standalone.StandaloneLiquipImpl;
-import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.KeyedValue;
+import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -13,10 +13,10 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class CraftingOutputPane extends OutputSlotPane {
-    private final Key AIR_ID = Key.key("minecraft", "air");
     private final StandaloneLiquipImpl api;
 
     public CraftingOutputPane(@NonNull StandaloneLiquipImpl api, int priority) {
@@ -25,17 +25,8 @@ public class CraftingOutputPane extends OutputSlotPane {
     }
 
     private @Nullable ItemStack @NonNull [] collectItemStacks(@NonNull Inventory inventory) {
-        return new ItemStack[]{
-            inventory.getItem(10),
-            inventory.getItem(11),
-            inventory.getItem(12),
-            inventory.getItem(19),
-            inventory.getItem(20),
-            inventory.getItem(21),
-            inventory.getItem(28),
-            inventory.getItem(30),
-            inventory.getItem(31)
-        };
+        return new ItemStack[]{inventory.getItem(10), inventory.getItem(11), inventory.getItem(12), inventory.getItem(19),
+            inventory.getItem(20), inventory.getItem(21), inventory.getItem(28), inventory.getItem(30), inventory.getItem(31)};
     }
 
     private void applyItemStacks(@NonNull Inventory inventory, @NonNull ItemStack @NonNull [] stacks) {
@@ -57,13 +48,15 @@ public class CraftingOutputPane extends OutputSlotPane {
         }
         event.setCancelled(false);
         final Inventory topInventory = event.getView().getTopInventory();
-        final List<KeyedValue<Integer>> stacks = new ArrayList<>(9);
+        final List<KeyedValue<Integer>> stacks = new ArrayList<>(Collections.nCopies(9, null));
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 3; column++) {
                 final ItemStack item = topInventory.getItem((row + 1) * 9 + column + 1);
-                stacks.add(KeyedValue.keyedValue(
-                    item != null ? this.api.getKeyFromItemStack(item) : this.AIR_ID,
-                    item != null ? item.getAmount() : 0));
+                if (item == null || item.getType() == Material.AIR) {
+                    stacks.set(row * 3 + column, null);
+                    continue;
+                }
+                stacks.set(row * 3 + column, KeyedValue.keyedValue(this.api.getKeyFromItemStack(item), item.getAmount()));
             }
         }
         final UnboundCraftMatrixImpl craftMatrix = new UnboundCraftMatrixImpl(true, stacks);
