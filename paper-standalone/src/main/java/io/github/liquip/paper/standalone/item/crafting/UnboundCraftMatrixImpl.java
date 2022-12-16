@@ -36,6 +36,15 @@ public class UnboundCraftMatrixImpl implements CraftMatrix {
     }
 
     @Override
+    public int hashCode() {
+        int result = 1;
+        for (KeyedValue<Integer> element : this.stacks) {
+            result = 31 * result + (element == null ? 0 : element.key().hashCode());
+        }
+        return result;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (!(o instanceof CraftMatrix that)) {
             return false;
