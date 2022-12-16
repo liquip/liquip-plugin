@@ -101,12 +101,19 @@ public class ConfigLoader {
         }
         for (final ItemStructure item : this.items) {
             try {
-                final Key key = Key.key(item.getKey());
-                final Key materialKey = Key.key(item.getMaterial());
+                final Key key = NamespacedKey.fromString(item.getKey());
+                if (key == null) {
+                    this.logger.warn("Could not get key for item '{}', skipping...", item.getKey());
+                    continue;
+                }
+                final Key materialKey = NamespacedKey.fromString(item.getMaterial());
+                if (materialKey == null) {
+                    this.logger.warn("Could not get material key for item '{}', skipping...", key.asString());
+                    continue;
+                }
                 final Material material = Registry.MATERIAL.get(new NamespacedKey(materialKey.namespace(), materialKey.value()));
                 if (material == null) {
-                    this.logger
-                        .warn("Could not get material for item '{}', skipping...", key.asString());
+                    this.logger.warn("Could not get material for item '{}', skipping...", key.asString());
                     continue;
                 }
                 final Component displayName = Component.text().decoration(TextDecoration.ITALIC, false)
@@ -124,9 +131,8 @@ public class ConfigLoader {
                     for (final EnchantmentStructure enchantment : item.getEnchantments()) {
                         this.resolveEnchantment(enchantment.getId())
                             .ifPresentOrElse(it -> enchantments.put(it, enchantment.getLevel()),
-                                () -> this.logger
-                                    .warn("Could not get enchantment '{}' for item '{}', skipping...", enchantment.getId(),
-                                        key.asString()));
+                                () -> this.logger.warn("Could not get enchantment '{}' for item '{}', skipping...",
+                                    enchantment.getId(), key.asString()));
                     }
                 }
                 final List<Feature> features = new ArrayList<>(0);
@@ -135,15 +141,13 @@ public class ConfigLoader {
                     for (Map.Entry<String, JsonNode> feature : item.getFeatures().entrySet()) {
                         if (feature.getValue() == null || feature.getValue().isNull()) {
                             this.resolveFeature(feature.getKey()).ifPresentOrElse(features::add,
-                                () -> this.logger
-                                    .warn("Could not get feature '{}' for item '{}', skipping...", feature.getKey(),
-                                        key.asString()));
+                                () -> this.logger.warn("Could not get feature '{}' for item '{}', skipping...", feature.getKey(),
+                                    key.asString()));
                         } else {
                             this.resolveTaggedFeature(feature.getKey())
                                 .ifPresentOrElse(it -> taggedFeatures.put(it, new JsonConfigElement(feature.getValue())),
-                                    () -> this.logger
-                                        .warn("Could not get tagged feature '{}' for item '{}', skipping...", feature.getKey(),
-                                            key.asString()));
+                                    () -> this.logger.warn("Could not get tagged feature '{}' for item '{}', skipping...",
+                                        feature.getKey(), key.asString()));
                         }
                     }
                 }
@@ -158,16 +162,15 @@ public class ConfigLoader {
                         final List<String> recipeShapeList = recipe.getShape();
                         if (recipeShapeList != null) {
                             if (!this.verifyShape(recipeShapeList)) {
-                                this.logger
-                                    .warn("Could not load recipe with invalid shape for item '{}', skipping...", key.asString());
+                                this.logger.warn("Could not load recipe with invalid shape for item '{}', skipping...",
+                                    key.asString());
                                 continue;
                             }
                             final Char2ObjectMap<IngredientStructure> ingredientMap = new Char2ObjectOpenHashMap<>();
                             for (final IngredientStructure ingredient : recipe.getIngredients()) {
                                 if (ingredient.getC().length() != 1 || ingredient.getCount() < 1 || ingredient.getCount() > 64) {
-                                    this.logger
-                                        .warn("Could not load recipe with invalid ingredient for item '{}', skipping...",
-                                            key.asString());
+                                    this.logger.warn("Could not load recipe with invalid ingredient for item '{}', skipping...",
+                                        key.asString());
                                     continue recipe;
                                 }
                                 ingredientMap.put(ingredient.getC().charAt(0), ingredient);
@@ -177,18 +180,23 @@ public class ConfigLoader {
                                 for (int j = 0; j < 3; j++) {
                                     final char c = recipeShapeList.get(i).charAt(j);
                                     if (c == ' ') {
-                                        shape.set(i * 3 + j, KeyedValue.keyedValue(Material.AIR.key(), 0));
+                                        shape.set(i * 3 + j, null);
                                         continue;
                                     }
                                     final IngredientStructure ingredientStructure = ingredientMap.get(c);
                                     if (ingredientStructure == null) {
-                                        this.logger
-                                            .warn("Could not load recipe with invalid shape for item '{}', skipping...",
-                                                key.asString());
+                                        this.logger.warn("Could not load recipe with invalid shape for item '{}', skipping...",
+                                            key.asString());
                                         continue recipe;
                                     }
-                                    shape.set(i * 3 + j, KeyedValue.keyedValue(Key.key(ingredientStructure.getKey()),
-                                        ingredientStructure.getCount()));
+                                    final Key ingredientKey = NamespacedKey.fromString(ingredientStructure.getKey());
+                                    if (ingredientKey == null) {
+                                        this.logger.warn(
+                                            "Could not load recipe with invalid ingredient key for item '{}', skipping...",
+                                            key.asString());
+                                        continue recipe;
+                                    }
+                                    shape.set(i * 3 + j, KeyedValue.keyedValue(ingredientKey, ingredientStructure.getCount()));
                                 }
                             }
                             this.api.getCraftingSystem().registerShapedRecipe(new ShapedRecipeImpl(itemInstance, shape));
@@ -211,7 +219,11 @@ public class ConfigLoader {
 
     private @NonNull Optional<Enchantment> resolveEnchantment(@NonNull String key) {
         try {
-            return Optional.ofNullable(this.api.getEnchantmentRegistry().get(Key.key(key)));
+            final Key namespacedKey = NamespacedKey.fromString(key);
+            if (namespacedKey == null) {
+                return Optional.empty();
+            }
+            return Optional.ofNullable(this.api.getEnchantmentRegistry().get(namespacedKey));
         } catch (InvalidKeyException e) {
             this.logger.error("Exception whilst parsing key", e);
             return Optional.empty();
@@ -219,21 +231,19 @@ public class ConfigLoader {
     }
 
     private @NonNull Optional<Feature> resolveFeature(@NonNull String key) {
-        try {
-            return Optional.ofNullable(this.api.getFeatureRegistry().get(Key.key(key)));
-        } catch (InvalidKeyException e) {
-            this.logger.error("Exception whilst parsing key", e);
+        final Key namespacedKey = NamespacedKey.fromString(key);
+        if (namespacedKey == null) {
             return Optional.empty();
         }
+        return Optional.ofNullable(this.api.getFeatureRegistry().get(namespacedKey));
     }
 
     private @NonNull Optional<TaggedFeature<?>> resolveTaggedFeature(@NonNull String key) {
-        try {
-            return Optional.ofNullable(this.api.getTaggedFeatureRegistry().get(Key.key(key)));
-        } catch (InvalidKeyException e) {
-            this.logger.error("Exception whilst parsing key", e);
+        final Key namespacedKey = NamespacedKey.fromString(key);
+        if (namespacedKey == null) {
             return Optional.empty();
         }
+        return Optional.ofNullable(this.api.getTaggedFeatureRegistry().get(namespacedKey));
     }
 
     private boolean verifyShape(@NonNull List<String> shape) {
