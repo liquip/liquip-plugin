@@ -37,8 +37,8 @@ public class CraftingOutputPane extends OutputSlotPane {
         inventory.setItem(20, stacks[4]);
         inventory.setItem(21, stacks[5]);
         inventory.setItem(28, stacks[6]);
-        inventory.setItem(30, stacks[7]);
-        inventory.setItem(31, stacks[8]);
+        inventory.setItem(29, stacks[7]);
+        inventory.setItem(30, stacks[8]);
     }
 
     @Override
