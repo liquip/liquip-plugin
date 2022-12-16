@@ -13,11 +13,13 @@ import java.util.List;
 
 public class ShapedRecipeImpl implements ShapedRecipe {
     private final Item item;
+    private final int count;
     private final List<KeyedValue<Integer>> shape;
     private final CraftMatrix matrix;
 
-    public ShapedRecipeImpl(@NonNull Item item, @NonNull List<KeyedValue<Integer>> shape) {
+    public ShapedRecipeImpl(@NonNull Item item, int count, @NonNull List<KeyedValue<Integer>> shape) {
         this.item = item;
+        this.count = count;
         this.shape = shape;
         this.matrix = new ShapedCraftMatrixImpl(shape);
     }
@@ -46,6 +48,8 @@ public class ShapedRecipeImpl implements ShapedRecipe {
 
     @Override
     public @NonNull ItemStack getResult(@NonNull List<KeyedValue<Integer>> stacks) {
-        return this.item.newItemStack();
+        final ItemStack item = this.item.newItemStack();
+        item.setAmount(this.count);
+        return item;
     }
 }

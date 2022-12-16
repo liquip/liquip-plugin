@@ -199,7 +199,8 @@ public class ConfigLoader {
                                     shape.set(i * 3 + j, KeyedValue.keyedValue(ingredientKey, ingredientStructure.getCount()));
                                 }
                             }
-                            this.api.getCraftingSystem().registerShapedRecipe(new ShapedRecipeImpl(itemInstance, shape));
+                            this.api.getCraftingSystem()
+                                .registerShapedRecipe(new ShapedRecipeImpl(itemInstance, recipe.getCount(), shape));
                             continue;
                         }
                         this.logger.warn("Shapeless crafting is not implemented yet");
