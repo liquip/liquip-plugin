@@ -83,7 +83,7 @@ public class ConfigLoader {
             return false;
         }
         this.items = new ArrayList<>(this.config.getItems().size());
-        for (String item : this.config.getItems()) {
+        for (final String item : this.config.getItems()) {
             if (item.contains("..")) {
                 this.logger.warn("Path '{}' for item is backwards relative, skipping...", item);
                 continue;
@@ -154,7 +154,7 @@ public class ConfigLoader {
                     }
                 }
             }
-            final ItemImpl itemInstance =
+            final Item itemInstance =
                 new ItemImpl(this.api, key, material, displayName, lore, enchantments, features, taggedFeatures,
                     ArrayListMultimap.create());
             this.logger.info("Registering...");
