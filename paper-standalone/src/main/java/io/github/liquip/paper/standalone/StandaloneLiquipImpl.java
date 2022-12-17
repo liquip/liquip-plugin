@@ -17,6 +17,7 @@ import dev.jorel.commandapi.CommandAPIConfig;
 import dev.jorel.commandapi.arguments.MultiLiteralArgument;
 import dev.jorel.commandapi.arguments.NamespacedKeyArgument;
 import io.github.liquip.api.Liquip;
+import io.github.liquip.api.Registry;
 import io.github.liquip.api.item.Enchantment;
 import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
@@ -29,15 +30,15 @@ import io.github.liquip.paper.core.item.feature.minecraft.HidePotionEffectsFeatu
 import io.github.liquip.paper.core.item.feature.minecraft.HideUnbreakableFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.LeatherDyeFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.UnbreakableFeature;
-import io.github.liquip.paper.core.util.Registry;
+import io.github.liquip.paper.core.util.RegistryImpl;
 import io.github.liquip.paper.standalone.config.ConfigLoader;
 import io.github.liquip.paper.standalone.item.crafting.CraftingOutputPane;
 import io.github.liquip.paper.standalone.item.crafting.CraftingPane;
 import io.github.liquip.paper.standalone.item.crafting.CraftingSystemImpl;
-import io.github.liquip.paper.standalone.listener.BlockEventListener;
-import io.github.liquip.paper.standalone.listener.EntityEventListener;
-import io.github.liquip.paper.standalone.listener.PlayerEventListener;
-import io.github.liquip.paper.standalone.listener.SystemEventListener;
+import io.github.liquip.paper.core.listener.BlockEventListener;
+import io.github.liquip.paper.core.listener.EntityEventListener;
+import io.github.liquip.paper.core.listener.PlayerEventListener;
+import io.github.liquip.paper.core.listener.SystemEventListener;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -79,10 +80,10 @@ public final class StandaloneLiquipImpl implements Liquip {
         this.mapper = new JsonMapper().enable(JsonParser.Feature.ALLOW_COMMENTS).enable(JsonParser.Feature.ALLOW_SINGLE_QUOTES)
             .enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES).disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         this.configLoader = new ConfigLoader(this);
-        this.itemRegistry = new Registry<>();
-        this.featureRegistry = new Registry<>();
-        this.taggedFeatureRegistry = new Registry<>();
-        this.enchantmentRegistry = new Registry<>();
+        this.itemRegistry = new RegistryImpl<>();
+        this.featureRegistry = new RegistryImpl<>();
+        this.taggedFeatureRegistry = new RegistryImpl<>();
+        this.enchantmentRegistry = new RegistryImpl<>();
         this.craftingSystem = new CraftingSystemImpl();
     }
 
