@@ -37,6 +37,10 @@ public class LeatherDyeFeature implements TaggedFeature<Integer> {
 
     @Override
     public void apply(@NonNull Item item, @NonNull ItemStack itemStack, @NonNull Integer object) {
-        itemStack.editMeta(it -> ((LeatherArmorMeta) it).setColor(Color.fromRGB(object)));
+        itemStack.editMeta(it -> {
+            if (it instanceof LeatherArmorMeta) {
+                ((LeatherArmorMeta) it).setColor(Color.fromRGB(object));
+            }
+        });
     }
 }
