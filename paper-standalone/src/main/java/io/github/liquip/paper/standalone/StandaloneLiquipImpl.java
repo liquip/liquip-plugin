@@ -126,22 +126,6 @@ public class StandaloneLiquipImpl implements Liquip {
         CommandAPI.onDisable();
     }
 
-    private @NonNull Menu createCraftMenu() {
-        final ItemStack blackGlass = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
-        blackGlass.editMeta(meta -> meta.displayName(Component.empty()));
-        final ItemStack greenGlass = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
-        greenGlass.editMeta(meta -> meta.displayName(Component.empty()));
-        final ItemStack recipeBook = new ItemStack(Material.KNOWLEDGE_BOOK);
-        recipeBook.editMeta(meta -> meta.displayName(Component.text("Recipe Book").decoration(TextDecoration.ITALIC, false)));
-        return new BasicMenu(Component.text("Advanced Crafting"), 5, MenuType.CHEST,
-            List.of(new FillPane(0, Slot.ROW_ONE_SLOT_ONE, Slot.ROW_FIVE_SLOT_NINE, blackGlass), new CraftingPane(this, 0),
-                new FillPane(1, Slot.ROW_TWO_SLOT_SIX, Slot.ROW_FOUR_SLOT_EIGHT, greenGlass),
-                new FillItemPane(1, Slot.ROW_THREE_SLOT_NINE, recipeBook),
-                new StoragePane(2, Slot.ROW_TWO_SLOT_TWO, Slot.ROW_FOUR_SLOT_FOUR, (storagePane, inventory) -> {
-                }, (storagePane, inventoryCloseEvent) -> {
-                }), new CraftingOutputPane(this, 2)));
-    }
-
     public @NonNull Plugin getPlugin() {
         return this.plugin;
     }
@@ -220,6 +204,22 @@ public class StandaloneLiquipImpl implements Liquip {
     @Override
     public void setKeyForItemStack(@NonNull ItemStack itemStack, @NonNull Key key) {
         itemStack.editMeta(meta -> meta.getPersistentDataContainer().set(PDC_KEY, PersistentDataType.STRING, key.asString()));
+    }
+
+    private @NonNull Menu createCraftMenu() {
+        final ItemStack blackGlass = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+        blackGlass.editMeta(meta -> meta.displayName(Component.empty()));
+        final ItemStack greenGlass = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
+        greenGlass.editMeta(meta -> meta.displayName(Component.empty()));
+        final ItemStack recipeBook = new ItemStack(Material.KNOWLEDGE_BOOK);
+        recipeBook.editMeta(meta -> meta.displayName(Component.text("Recipe Book").decoration(TextDecoration.ITALIC, false)));
+        return new BasicMenu(Component.text("Advanced Crafting"), 5, MenuType.CHEST,
+            List.of(new FillPane(0, Slot.ROW_ONE_SLOT_ONE, Slot.ROW_FIVE_SLOT_NINE, blackGlass), new CraftingPane(this, 0),
+                new FillPane(1, Slot.ROW_TWO_SLOT_SIX, Slot.ROW_FOUR_SLOT_EIGHT, greenGlass),
+                new FillItemPane(1, Slot.ROW_THREE_SLOT_NINE, recipeBook),
+                new StoragePane(2, Slot.ROW_TWO_SLOT_TWO, Slot.ROW_FOUR_SLOT_FOUR, (storagePane, inventory) -> {
+                }, (storagePane, inventoryCloseEvent) -> {
+                }), new CraftingOutputPane(this, 2)));
     }
 
     private void giveSubcommand(Player player, Object[] args) {
