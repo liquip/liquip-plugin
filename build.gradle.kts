@@ -1,6 +1,6 @@
 allprojects {
     group = "io.github.liquip"
-    version = "1.0.0-beta"
+    version = "1.1.0-beta"
 
     repositories {
         mavenCentral()

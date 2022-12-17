@@ -1,12 +1,17 @@
-package io.github.liquip.paper.standalone.listener;
+package io.github.liquip.paper.core.listener;
 
+import io.github.liquip.api.Liquip;
 import io.github.liquip.api.item.Item;
-import io.github.liquip.paper.standalone.StandaloneLiquipImpl;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerBucketEmptyEvent;
+import org.bukkit.event.player.PlayerEvent;
+import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -14,9 +19,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 public class PlayerEventListener implements Listener {
-    private final StandaloneLiquipImpl api;
+    private final Liquip api;
 
-    public PlayerEventListener(StandaloneLiquipImpl api) {
+    public PlayerEventListener(Liquip api) {
         this.api = api;
     }
 
