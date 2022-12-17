@@ -52,7 +52,6 @@ public class ConfigLoader {
     private final StandaloneLiquipImpl api;
     private final Logger logger;
     private ConfigStructure config = null;
-    private List<ItemStructure> items = null;
 
     public ConfigLoader(@NonNull StandaloneLiquipImpl api) {
         this.api = api;
@@ -95,7 +94,7 @@ public class ConfigLoader {
             this.logger.error("Exception whilst loading config file", e);
             return false;
         }
-        this.items = new ArrayList<>(this.config.getItems().size());
+        final List<ItemStructure> items = new ArrayList<>(this.config.getItems().size());
         for (final String item : this.config.getItems()) {
             if (item.contains("..")) {
                 this.logger.warn("Path '{}' for item is backwards relative, skipping...", item);
@@ -111,12 +110,12 @@ public class ConfigLoader {
                 continue;
             }
             try {
-                this.items.add(this.api.getMapper().readValue(file.toFile(), ItemStructure.class));
+                items.add(this.api.getMapper().readValue(file.toFile(), ItemStructure.class));
             } catch (Exception e) {
                 this.logger.error("Exception whilst loading item file", e);
             }
         }
-        for (final ItemStructure item : this.items) {
+        for (final ItemStructure item : items) {
             final Key key = NamespacedKey.fromString(item.getKey());
             if (key == null) {
                 this.logger.warn("Could not get key for item '{}', skipping...", item.getKey());
@@ -303,10 +302,6 @@ public class ConfigLoader {
 
     public @Nullable ConfigStructure getConfig() {
         return this.config;
-    }
-
-    public @Nullable List<ItemStructure> getItems() {
-        return this.items;
     }
 
     private Item getDefaultCraftingTable() {
