@@ -32,6 +32,7 @@ public class BundledLiquipImpl implements Liquip {
     private final Registry<Feature> featureRegistry;
     private final Registry<TaggedFeature<?>> taggedFeatureRegistry;
     private final Registry<Enchantment> enchantmentRegistry;
+    private boolean enabled;
 
     public BundledLiquipImpl(@NonNull String namespace, @NonNull Plugin plugin, boolean register) {
         this.pdcKey = new NamespacedKey(namespace.toLowerCase(), "key");
@@ -40,12 +41,17 @@ public class BundledLiquipImpl implements Liquip {
         this.featureRegistry = new RegistryImpl<>();
         this.taggedFeatureRegistry = new RegistryImpl<>();
         this.enchantmentRegistry = new RegistryImpl<>();
+        this.enabled = false;
         if (register) {
             ApiRegistrationUtil.registerProvider(this);
         }
     }
 
     public void enableSystem() {
+        if (this.enabled) {
+            throw new IllegalStateException("System already enabled");
+        }
+        this.enabled = true;
         final PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new SystemEventListener(this), this.plugin);
         pluginManager.registerEvents(new BlockEventListener(this), this.plugin);

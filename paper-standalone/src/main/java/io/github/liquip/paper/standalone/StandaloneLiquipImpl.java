@@ -30,15 +30,15 @@ import io.github.liquip.paper.core.item.feature.minecraft.HidePotionEffectsFeatu
 import io.github.liquip.paper.core.item.feature.minecraft.HideUnbreakableFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.LeatherDyeFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.UnbreakableFeature;
+import io.github.liquip.paper.core.listener.BlockEventListener;
+import io.github.liquip.paper.core.listener.EntityEventListener;
+import io.github.liquip.paper.core.listener.PlayerEventListener;
+import io.github.liquip.paper.core.listener.SystemEventListener;
 import io.github.liquip.paper.core.util.RegistryImpl;
 import io.github.liquip.paper.standalone.config.ConfigLoader;
 import io.github.liquip.paper.standalone.item.crafting.CraftingOutputPane;
 import io.github.liquip.paper.standalone.item.crafting.CraftingPane;
 import io.github.liquip.paper.standalone.item.crafting.CraftingSystemImpl;
-import io.github.liquip.paper.core.listener.BlockEventListener;
-import io.github.liquip.paper.core.listener.EntityEventListener;
-import io.github.liquip.paper.core.listener.PlayerEventListener;
-import io.github.liquip.paper.core.listener.SystemEventListener;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -73,7 +73,9 @@ public final class StandaloneLiquipImpl implements Liquip {
     private final Registry<TaggedFeature<?>> taggedFeatureRegistry;
     private final Registry<Enchantment> enchantmentRegistry;
     private final CraftingSystem craftingSystem;
-    private Menu craftMenu = null;
+    private Menu craftMenu;
+    private boolean loaded;
+    private boolean enabled;
 
     public StandaloneLiquipImpl(@NonNull Plugin plugin) {
         this.plugin = plugin;
@@ -85,6 +87,9 @@ public final class StandaloneLiquipImpl implements Liquip {
         this.taggedFeatureRegistry = new RegistryImpl<>();
         this.enchantmentRegistry = new RegistryImpl<>();
         this.craftingSystem = new CraftingSystemImpl();
+        this.craftMenu = null;
+        this.loaded = false;
+        this.enabled = false;
     }
 
     public static @NonNull Component MM(@NonNull String input) {
@@ -92,6 +97,10 @@ public final class StandaloneLiquipImpl implements Liquip {
     }
 
     void loadSystem() {
+        if (this.loaded) {
+            throw new IllegalStateException("System already loaded");
+        }
+        this.loaded = true;
         this.registerMinecraftFeatures();
         this.craftMenu = this.createCraftMenu();
         CommandAPI.onLoad(new CommandAPIConfig().silentLogs(true));
@@ -112,6 +121,10 @@ public final class StandaloneLiquipImpl implements Liquip {
     }
 
     void enableSystem() {
+        if (this.enabled) {
+            throw new IllegalStateException("System already enabled");
+        }
+        this.enabled = true;
         CommandAPI.onEnable(this.plugin);
         Menu.initialize(this.plugin);
         final PluginManager pluginManager = Bukkit.getPluginManager();
