@@ -25,11 +25,15 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.KeyedValue;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
+import org.bukkit.Tag;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.RecipeChoice;
+import org.bukkit.inventory.ShapedRecipe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.slf4j.Logger;
@@ -244,6 +248,12 @@ public class ConfigLoader {
             final Item defaultCraftingTableItem = this.getDefaultCraftingTable();
             this.api.getItemRegistry().register(defaultCraftingTableItem.key(), defaultCraftingTableItem);
             craftingTableKey = defaultCraftingTableItem.key();
+            final ShapedRecipe craftingTableRecipe =
+                new ShapedRecipe((NamespacedKey) defaultCraftingTableItem.key(), defaultCraftingTableItem.newItemStack());
+            craftingTableRecipe.shape("aaa", "bbb", "bbb");
+            craftingTableRecipe.setIngredient('a', Material.IRON_INGOT);
+            craftingTableRecipe.setIngredient('b', new RecipeChoice.MaterialChoice(Tag.PLANKS));
+            Bukkit.addRecipe(craftingTableRecipe);
         }
         final Item craftingTableItem = this.api.getItemRegistry().get(craftingTableKey);
         if (craftingTableItem == null) {
