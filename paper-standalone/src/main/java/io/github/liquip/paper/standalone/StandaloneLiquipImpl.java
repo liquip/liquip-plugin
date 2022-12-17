@@ -51,7 +51,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.List;
 import java.util.Objects;
 
-public class StandaloneLiquipImpl implements Liquip {
+public final class StandaloneLiquipImpl implements Liquip {
     public static final MiniMessage MM = MiniMessage.miniMessage();
     public static final String NAMESPACE = "liquip";
     private static final NamespacedKey PDC_KEY = new NamespacedKey(NAMESPACE, "key");
@@ -83,7 +83,7 @@ public class StandaloneLiquipImpl implements Liquip {
         return MM.deserialize(input);
     }
 
-    protected void loadSystem() {
+    void loadSystem() {
         CommandAPI.onLoad(new CommandAPIConfig().silentLogs(true));
         this.craftMenu = this.createCraftMenu();
         final CommandAPICommand liquipCommand = new CommandAPICommand("liquip").withPermission("liquip.command");
@@ -102,7 +102,7 @@ public class StandaloneLiquipImpl implements Liquip {
         liquipCommand.withSubcommands(liquipGiveCommand, liquipCraftCommand, liquipReloadCommand, liquipDumpCommand).register();
     }
 
-    protected void enableSystem() {
+    void enableSystem() {
         CommandAPI.onEnable(this.plugin);
         Menu.initialize(this.plugin);
         final PluginManager pluginManager = Bukkit.getPluginManager();
@@ -118,11 +118,11 @@ public class StandaloneLiquipImpl implements Liquip {
         this.plugin.getSLF4JLogger().info("Successfully loaded config");
     }
 
-    protected boolean reloadSystem() {
+    boolean reloadSystem() {
         return this.configLoader.loadConfig();
     }
 
-    protected void disableSystem() {
+    void disableSystem() {
         CommandAPI.onDisable();
     }
 
