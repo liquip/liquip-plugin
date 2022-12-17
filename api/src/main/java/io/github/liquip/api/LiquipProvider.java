@@ -21,6 +21,7 @@ public final class LiquipProvider {
      *
      * @return an instance of the Liquip API
      * @throws IllegalStateException if the API is not loaded yet
+     * @since 0.0.1-alpha
      */
     public static @NonNull Liquip get() throws IllegalStateException {
         Liquip instance = LiquipProvider.instance;
