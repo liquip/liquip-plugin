@@ -23,6 +23,7 @@ import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
 import io.github.liquip.api.item.crafting.CraftingSystem;
+import io.github.liquip.paper.core.item.feature.minecraft.CustomModelDataFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.HideAttributesFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.HideDyeFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.HideEnchantmentsFeature;
@@ -241,6 +242,8 @@ public final class StandaloneLiquipImpl implements Liquip {
         this.featureRegistry.register(hideUnbreakableFeature.getKey(), hideUnbreakableFeature);
         final UnbreakableFeature unbreakableFeature = new UnbreakableFeature();
         this.featureRegistry.register(unbreakableFeature.getKey(), unbreakableFeature);
+        final CustomModelDataFeature customModelDataFeature = new CustomModelDataFeature();
+        this.taggedFeatureRegistry.register(customModelDataFeature.getKey(), customModelDataFeature);
         final LeatherDyeFeature leatherDyeFeature = new LeatherDyeFeature();
         this.taggedFeatureRegistry.register(leatherDyeFeature.getKey(), leatherDyeFeature);
     }
