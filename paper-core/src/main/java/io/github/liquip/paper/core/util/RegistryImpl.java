@@ -1,5 +1,6 @@
 package io.github.liquip.paper.core.util;
 
+import io.github.liquip.api.Registry;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -9,14 +10,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class Registry<T extends Keyed> implements io.github.liquip.api.Registry<T> {
+public class RegistryImpl<T extends Keyed> implements Registry<T> {
     private final HashMap<Key, T> map;
 
-    public Registry() {
+    public RegistryImpl() {
         this(16);
     }
 
-    public Registry(int initialCapacity) {
+    public RegistryImpl(int initialCapacity) {
         this.map = new HashMap<>(initialCapacity);
     }
 
