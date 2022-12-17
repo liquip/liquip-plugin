@@ -15,7 +15,7 @@ dependencies {
     implementation(project(":api"))
     implementation(project(":paper-core"))
     implementation(project(":liquip-gui"))
-    implementation("dev.jorel:commandapi-shade:8.5.1")
+    implementation("dev.jorel:commandapi-shade:8.7.0")
     compileOnly("com.fasterxml.jackson.core:jackson-databind:2.14.0")
 }
 
