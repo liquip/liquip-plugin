@@ -7,10 +7,10 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface TaggedFeature<T> extends Keyed {
-    default @Nullable T initialize(@NonNull Item item, @NonNull ConfigElement configTable) {
+    default @Nullable T initialize(@NonNull Item item, @NonNull ConfigElement element) {
         return null;
     }
 
-    default void apply(@NonNull Item item, @NonNull ItemStack itemStack, @Nullable T object) {
+    default void apply(@NonNull Item item, @NonNull ItemStack itemStack, @NonNull T object) {
     }
 }

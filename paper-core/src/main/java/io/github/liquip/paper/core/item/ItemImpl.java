@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.function.BiConsumer;
 
-@SuppressWarnings("unchecked")
 public class ItemImpl implements Item {
     private final Liquip api;
     private final Key key;
@@ -32,12 +31,10 @@ public class ItemImpl implements Item {
     private final Object2IntMap<Enchantment> enchantments;
     private final List<Feature> features;
     private final Map<TaggedFeature<?>, Object> taggedFeatures;
-    private final Multimap<Class<? extends Event>, BiConsumer<? extends Event, ItemStack>>
-        eventHandlers;
+    private final Multimap<Class<? extends Event>, BiConsumer<? extends Event, ItemStack>> eventHandlers;
 
-    public ItemImpl(@NonNull Liquip api, @NonNull Key key, @NonNull Material material,
-        @NonNull Component displayName, @NonNull List<Component> lore,
-        @NonNull Object2IntMap<Enchantment> enchantments, @NonNull List<Feature> features,
+    public ItemImpl(@NonNull Liquip api, @NonNull Key key, @NonNull Material material, @NonNull Component displayName,
+        @NonNull List<Component> lore, @NonNull Object2IntMap<Enchantment> enchantments, @NonNull List<Feature> features,
         @NonNull Map<TaggedFeature<?>, ConfigElement> taggedFeatures,
         @NonNull Multimap<Class<? extends Event>, BiConsumer<? extends Event, ItemStack>> eventHandlers) {
         this.api = api;
@@ -51,12 +48,14 @@ public class ItemImpl implements Item {
         this.features = new ArrayList<>(features.size());
         this.features.addAll(features);
         this.taggedFeatures = new LinkedHashMap<>(taggedFeatures.size());
-        this.taggedFeatures.putAll(Maps.transformEntries(taggedFeatures,
-            (taggedFeature, config) -> taggedFeature.initialize(this, config)));
+        this.taggedFeatures.putAll(Maps.filterValues(
+            Maps.transformEntries(taggedFeatures, (taggedFeature, config) -> taggedFeature.initialize(this, config)),
+            Objects::nonNull));
         this.eventHandlers = ArrayListMultimap.create();
         this.eventHandlers.putAll(eventHandlers);
     }
 
+    @SuppressWarnings("unchecked")
     private <T> void applyToTaggedFeature(TaggedFeature<T> key, ItemStack itemStack, Object value) {
         key.apply(this, itemStack, (T) value);
     }
@@ -73,28 +72,24 @@ public class ItemImpl implements Item {
             meta.displayName(this.displayName);
             meta.lore(this.lore);
         });
-        this.enchantments.forEach(
-            (enchantment, level) -> enchantment.apply(this, itemStack, level));
+        this.enchantments.forEach((enchantment, level) -> enchantment.apply(this, itemStack, level));
         this.features.forEach(feature -> feature.apply(this, itemStack));
-        this.taggedFeatures.forEach(
-            (key, value) -> this.applyToTaggedFeature(key, itemStack, value));
+        this.taggedFeatures.forEach((key, value) -> this.applyToTaggedFeature(key, itemStack, value));
         this.api.setKeyForItemStack(itemStack, this.key);
         return itemStack;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public <T extends Event> void callEvent(@NonNull Class<T> eventClass, @NonNull T event,
-        @NonNull ItemStack itemStack) {
-        final Collection<BiConsumer<? extends Event, ItemStack>> handlers =
-            this.eventHandlers.get(eventClass);
+    public <T extends Event> void callEvent(@NonNull Class<T> eventClass, @NonNull T event, @NonNull ItemStack itemStack) {
+        final Collection<BiConsumer<? extends Event, ItemStack>> handlers = this.eventHandlers.get(eventClass);
         for (BiConsumer<? extends Event, ItemStack> handler : handlers) {
             ((BiConsumer<Event, ItemStack>) handler).accept(event, itemStack);
         }
     }
 
     @Override
-    public <T extends Event> void registerEvent(@NonNull Class<T> eventClass,
-        @NonNull BiConsumer<T, ItemStack> eventHandler) {
+    public <T extends Event> void registerEvent(@NonNull Class<T> eventClass, @NonNull BiConsumer<T, ItemStack> eventHandler) {
         this.eventHandlers.put(eventClass, eventHandler);
     }
 }

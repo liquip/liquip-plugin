@@ -22,6 +22,13 @@ import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
 import io.github.liquip.api.item.crafting.CraftingSystem;
+import io.github.liquip.paper.core.item.feature.minecraft.HideAttributesFeature;
+import io.github.liquip.paper.core.item.feature.minecraft.HideDyeFeature;
+import io.github.liquip.paper.core.item.feature.minecraft.HideEnchantmentsFeature;
+import io.github.liquip.paper.core.item.feature.minecraft.HidePotionEffectsFeature;
+import io.github.liquip.paper.core.item.feature.minecraft.HideUnbreakableFeature;
+import io.github.liquip.paper.core.item.feature.minecraft.LeatherDyeFeature;
+import io.github.liquip.paper.core.item.feature.minecraft.UnbreakableFeature;
 import io.github.liquip.paper.core.util.Registry;
 import io.github.liquip.paper.standalone.config.ConfigLoader;
 import io.github.liquip.paper.standalone.item.crafting.CraftingOutputPane;
@@ -51,7 +58,7 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import java.util.List;
 import java.util.Objects;
 
-public class StandaloneLiquipImpl implements Liquip {
+public final class StandaloneLiquipImpl implements Liquip {
     public static final MiniMessage MM = MiniMessage.miniMessage();
     public static final String NAMESPACE = "liquip";
     private static final NamespacedKey PDC_KEY = new NamespacedKey(NAMESPACE, "key");
@@ -83,9 +90,10 @@ public class StandaloneLiquipImpl implements Liquip {
         return MM.deserialize(input);
     }
 
-    protected void loadSystem() {
-        CommandAPI.onLoad(new CommandAPIConfig().silentLogs(true));
+    void loadSystem() {
+        this.registerMinecraftFeatures();
         this.craftMenu = this.createCraftMenu();
+        CommandAPI.onLoad(new CommandAPIConfig().silentLogs(true));
         final CommandAPICommand liquipCommand = new CommandAPICommand("liquip").withPermission("liquip.command");
         final CommandAPICommand liquipGiveCommand =
             new CommandAPICommand("give").withPermission("liquip.command.give").withArguments(new NamespacedKeyArgument("key"))
@@ -102,7 +110,7 @@ public class StandaloneLiquipImpl implements Liquip {
         liquipCommand.withSubcommands(liquipGiveCommand, liquipCraftCommand, liquipReloadCommand, liquipDumpCommand).register();
     }
 
-    protected void enableSystem() {
+    void enableSystem() {
         CommandAPI.onEnable(this.plugin);
         Menu.initialize(this.plugin);
         final PluginManager pluginManager = Bukkit.getPluginManager();
@@ -118,28 +126,12 @@ public class StandaloneLiquipImpl implements Liquip {
         this.plugin.getSLF4JLogger().info("Successfully loaded config");
     }
 
-    protected boolean reloadSystem() {
+    boolean reloadSystem() {
         return this.configLoader.loadConfig();
     }
 
-    protected void disableSystem() {
+    void disableSystem() {
         CommandAPI.onDisable();
-    }
-
-    private @NonNull Menu createCraftMenu() {
-        final ItemStack blackGlass = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
-        blackGlass.editMeta(meta -> meta.displayName(Component.empty()));
-        final ItemStack greenGlass = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
-        greenGlass.editMeta(meta -> meta.displayName(Component.empty()));
-        final ItemStack recipeBook = new ItemStack(Material.KNOWLEDGE_BOOK);
-        recipeBook.editMeta(meta -> meta.displayName(Component.text("Recipe Book").decoration(TextDecoration.ITALIC, false)));
-        return new BasicMenu(Component.text("Advanced Crafting"), 5, MenuType.CHEST,
-            List.of(new FillPane(0, Slot.ROW_ONE_SLOT_ONE, Slot.ROW_FIVE_SLOT_NINE, blackGlass), new CraftingPane(this, 0),
-                new FillPane(1, Slot.ROW_TWO_SLOT_SIX, Slot.ROW_FOUR_SLOT_EIGHT, greenGlass),
-                new FillItemPane(1, Slot.ROW_THREE_SLOT_NINE, recipeBook),
-                new StoragePane(2, Slot.ROW_TWO_SLOT_TWO, Slot.ROW_FOUR_SLOT_FOUR, (storagePane, inventory) -> {
-                }, (storagePane, inventoryCloseEvent) -> {
-                }), new CraftingOutputPane(this, 2)));
     }
 
     public @NonNull Plugin getPlugin() {
@@ -220,6 +212,39 @@ public class StandaloneLiquipImpl implements Liquip {
     @Override
     public void setKeyForItemStack(@NonNull ItemStack itemStack, @NonNull Key key) {
         itemStack.editMeta(meta -> meta.getPersistentDataContainer().set(PDC_KEY, PersistentDataType.STRING, key.asString()));
+    }
+
+    private void registerMinecraftFeatures() {
+        final HideAttributesFeature hideAttributesFeature = new HideAttributesFeature();
+        this.featureRegistry.register(hideAttributesFeature.getKey(), hideAttributesFeature);
+        final HideDyeFeature hideDyeFeature = new HideDyeFeature();
+        this.featureRegistry.register(hideDyeFeature.getKey(), hideDyeFeature);
+        final HideEnchantmentsFeature hideEnchantmentsFeature = new HideEnchantmentsFeature();
+        this.featureRegistry.register(hideEnchantmentsFeature.getKey(), hideEnchantmentsFeature);
+        final HidePotionEffectsFeature hidePotionEffectsFeature = new HidePotionEffectsFeature();
+        this.featureRegistry.register(hidePotionEffectsFeature.getKey(), hidePotionEffectsFeature);
+        final HideUnbreakableFeature hideUnbreakableFeature = new HideUnbreakableFeature();
+        this.featureRegistry.register(hideUnbreakableFeature.getKey(), hideUnbreakableFeature);
+        final UnbreakableFeature unbreakableFeature = new UnbreakableFeature();
+        this.featureRegistry.register(unbreakableFeature.getKey(), unbreakableFeature);
+        final LeatherDyeFeature leatherDyeFeature = new LeatherDyeFeature();
+        this.taggedFeatureRegistry.register(leatherDyeFeature.getKey(), leatherDyeFeature);
+    }
+
+    private @NonNull Menu createCraftMenu() {
+        final ItemStack blackGlass = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+        blackGlass.editMeta(meta -> meta.displayName(Component.empty()));
+        final ItemStack greenGlass = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
+        greenGlass.editMeta(meta -> meta.displayName(Component.empty()));
+        final ItemStack recipeBook = new ItemStack(Material.KNOWLEDGE_BOOK);
+        recipeBook.editMeta(meta -> meta.displayName(Component.text("Recipe Book").decoration(TextDecoration.ITALIC, false)));
+        return new BasicMenu(Component.text("Advanced Crafting"), 5, MenuType.CHEST,
+            List.of(new FillPane(0, Slot.ROW_ONE_SLOT_ONE, Slot.ROW_FIVE_SLOT_NINE, blackGlass), new CraftingPane(this, 0),
+                new FillPane(1, Slot.ROW_TWO_SLOT_SIX, Slot.ROW_FOUR_SLOT_EIGHT, greenGlass),
+                new FillItemPane(1, Slot.ROW_THREE_SLOT_NINE, recipeBook),
+                new StoragePane(2, Slot.ROW_TWO_SLOT_TWO, Slot.ROW_FOUR_SLOT_FOUR, (storagePane, inventory) -> {
+                }, (storagePane, inventoryCloseEvent) -> {
+                }), new CraftingOutputPane(this, 2)));
     }
 
     private void giveSubcommand(Player player, Object[] args) {

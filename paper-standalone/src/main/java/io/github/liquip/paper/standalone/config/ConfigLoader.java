@@ -10,7 +10,11 @@ import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
 import io.github.liquip.paper.core.item.ItemImpl;
 import io.github.liquip.paper.standalone.StandaloneLiquipImpl;
-import io.github.liquip.paper.standalone.config.structure.*;
+import io.github.liquip.paper.standalone.config.structure.ConfigStructure;
+import io.github.liquip.paper.standalone.config.structure.EnchantmentStructure;
+import io.github.liquip.paper.standalone.config.structure.IngredientStructure;
+import io.github.liquip.paper.standalone.config.structure.ItemStructure;
+import io.github.liquip.paper.standalone.config.structure.RecipeStructure;
 import io.github.liquip.paper.standalone.item.crafting.ShapedRecipeImpl;
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
@@ -33,7 +37,12 @@ import org.slf4j.Logger;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class ConfigLoader {
     private final StandaloneLiquipImpl api;
@@ -83,7 +92,7 @@ public class ConfigLoader {
             return false;
         }
         this.items = new ArrayList<>(this.config.getItems().size());
-        for (String item : this.config.getItems()) {
+        for (final String item : this.config.getItems()) {
             if (item.contains("..")) {
                 this.logger.warn("Path '{}' for item is backwards relative, skipping...", item);
                 continue;
@@ -141,20 +150,30 @@ public class ConfigLoader {
             final List<Feature> features = new ArrayList<>(0);
             final Map<TaggedFeature<?>, ConfigElement> taggedFeatures = new HashMap<>(0);
             if (item.getFeatures() != null) {
-                for (Map.Entry<String, JsonNode> feature : item.getFeatures().entrySet()) {
-                    if (feature.getValue() == null || feature.getValue().isNull()) {
-                        this.resolveFeature(feature.getKey()).ifPresentOrElse(features::add,
-                            () -> this.logger.warn("Could not get feature '{}' for item '{}', skipping...", feature.getKey(),
+                for (Map.Entry<String, JsonNode> featureEntry : item.getFeatures().entrySet()) {
+                    final JsonNode value = featureEntry.getValue();
+                    if (value.isNull()) {
+                        this.resolveFeature(featureEntry.getKey()).ifPresentOrElse(features::add,
+                            () -> this.logger.warn("Could not get feature '{}' for item '{}', skipping...", featureEntry.getKey(),
                                 key.asString()));
-                    } else {
-                        this.resolveTaggedFeature(feature.getKey())
-                            .ifPresentOrElse(it -> taggedFeatures.put(it, new JsonConfigElement(feature.getValue())),
-                                () -> this.logger.warn("Could not get tagged feature '{}' for item '{}', skipping...",
-                                    feature.getKey(), key.asString()));
+                        continue;
                     }
+                    if (value.isBoolean()) {
+                        final Optional<Feature> feature = this.resolveFeature(featureEntry.getKey());
+                        if (feature.isPresent()) {
+                            if (value.asBoolean()) {
+                                features.add(feature.get());
+                            }
+                            continue;
+                        }
+                    }
+                    this.resolveTaggedFeature(featureEntry.getKey())
+                        .ifPresentOrElse(it -> taggedFeatures.put(it, new JsonConfigElement(featureEntry.getValue())),
+                            () -> this.logger.warn("Could not get tagged feature '{}' for item '{}', skipping...",
+                                featureEntry.getKey(), key.asString()));
                 }
             }
-            final ItemImpl itemInstance =
+            final Item itemInstance =
                 new ItemImpl(this.api, key, material, displayName, lore, enchantments, features, taggedFeatures,
                     ArrayListMultimap.create());
             this.logger.info("Registering...");

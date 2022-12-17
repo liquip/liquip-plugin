@@ -17,8 +17,23 @@ public class JsonConfigElement implements ConfigElement {
     }
 
     @Override
-    public boolean isObject() {
-        return this.node.isObject();
+    public boolean isBoolean() {
+        return this.node.isBoolean();
+    }
+
+    @Override
+    public boolean isInt() {
+        return this.node.isInt();
+    }
+
+    @Override
+    public boolean isDouble() {
+        return this.node.isDouble();
+    }
+
+    @Override
+    public boolean isString() {
+        return this.node.isTextual();
     }
 
     @Override
@@ -27,12 +42,37 @@ public class JsonConfigElement implements ConfigElement {
     }
 
     @Override
-    public @Nullable ConfigObject asObject() {
-        return this.node.isObject() ? new JsonConfigObject((ObjectNode) this.node) : null;
+    public boolean isObject() {
+        return this.node.isObject();
+    }
+
+    @Override
+    public boolean asBoolean() {
+        return this.node.asBoolean();
+    }
+
+    @Override
+    public int asInt() {
+        return this.node.asInt();
+    }
+
+    @Override
+    public double asDouble() {
+        return this.node.asDouble();
+    }
+
+    @Override
+    public @NonNull String asString() {
+        return this.node.asText();
     }
 
     @Override
     public @Nullable ConfigArray asArray() {
         return this.node.isArray() ? new JsonConfigArray((ArrayNode) this.node) : null;
+    }
+
+    @Override
+    public @Nullable ConfigObject asObject() {
+        return this.node.isObject() ? new JsonConfigObject((ObjectNode) this.node) : null;
     }
 }
