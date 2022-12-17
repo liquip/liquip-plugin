@@ -16,8 +16,7 @@ public interface Item extends Keyed {
     /**
      * Creates a new item stack of itself.
      *
-     * <p>The item stack will hold all information necessary to identify that it belongs to this
-     * object.</p>
+     * <p>The item stack will hold all information necessary to identify that it belongs to this object.</p>
      *
      * @return a new item stack of itself
      * @since 0.0.1-alpha
