@@ -1,7 +1,7 @@
-package io.github.liquip.paper.standalone.listener;
+package io.github.liquip.paper.core.listener;
 
+import io.github.liquip.api.Liquip;
 import io.github.liquip.api.item.Item;
-import io.github.liquip.paper.standalone.StandaloneLiquipImpl;
 import net.kyori.adventure.key.Key;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -14,9 +14,9 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 public class BlockEventListener implements Listener {
-    private final StandaloneLiquipImpl api;
+    private final Liquip api;
 
-    public BlockEventListener(@NonNull StandaloneLiquipImpl api) {
+    public BlockEventListener(@NonNull Liquip api) {
         this.api = api;
     }
 

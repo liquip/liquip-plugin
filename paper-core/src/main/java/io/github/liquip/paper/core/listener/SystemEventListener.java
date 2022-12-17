@@ -1,6 +1,6 @@
-package io.github.liquip.paper.standalone.listener;
+package io.github.liquip.paper.core.listener;
 
-import io.github.liquip.paper.standalone.StandaloneLiquipImpl;
+import io.github.liquip.api.Liquip;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -9,9 +9,9 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class SystemEventListener implements Listener {
-    private final StandaloneLiquipImpl api;
+    private final Liquip api;
 
-    public SystemEventListener(StandaloneLiquipImpl api) {
+    public SystemEventListener(Liquip api) {
         this.api = api;
     }
 
