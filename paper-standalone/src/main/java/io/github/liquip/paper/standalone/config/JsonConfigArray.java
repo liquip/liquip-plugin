@@ -1,5 +1,6 @@
 package io.github.liquip.paper.standalone.config;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.liquip.api.config.ConfigArray;
@@ -30,7 +31,8 @@ public class JsonConfigArray implements ConfigArray {
 
     @Override
     public boolean isDouble(int index) {
-        return this.node.get(index).isDouble();
+        final JsonNode elementNode = this.node.get(index);
+        return elementNode.isFloatingPointNumber() || elementNode.isInt();
     }
 
     @Override
