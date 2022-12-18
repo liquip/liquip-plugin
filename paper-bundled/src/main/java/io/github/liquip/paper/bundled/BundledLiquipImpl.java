@@ -22,12 +22,14 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.slf4j.Logger;
 
 import java.util.Objects;
 
 public class BundledLiquipImpl implements Liquip {
     private final NamespacedKey pdcKey;
     private final Plugin plugin;
+    private final Logger systemLogger;
     private final Registry<Item> itemRegistry;
     private final Registry<Feature> featureRegistry;
     private final Registry<TaggedFeature<?>> taggedFeatureRegistry;
@@ -35,8 +37,13 @@ public class BundledLiquipImpl implements Liquip {
     private boolean enabled;
 
     public BundledLiquipImpl(@NonNull String namespace, @NonNull Plugin plugin, boolean register) {
+        this(namespace, plugin, plugin.getSLF4JLogger(), register);
+    }
+
+    public BundledLiquipImpl(@NonNull String namespace, @NonNull Plugin plugin, @NonNull Logger systemLogger, boolean register) {
         this.pdcKey = new NamespacedKey(namespace.toLowerCase(), "key");
         this.plugin = plugin;
+        this.systemLogger = systemLogger;
         this.itemRegistry = new RegistryImpl<>();
         this.featureRegistry = new RegistryImpl<>();
         this.taggedFeatureRegistry = new RegistryImpl<>();
@@ -57,6 +64,11 @@ public class BundledLiquipImpl implements Liquip {
         pluginManager.registerEvents(new BlockEventListener(this), this.plugin);
         pluginManager.registerEvents(new EntityEventListener(this), this.plugin);
         pluginManager.registerEvents(new PlayerEventListener(this), this.plugin);
+    }
+
+    @Override
+    public @NonNull Logger getSystemLogger() {
+        return this.systemLogger;
     }
 
     @Override
