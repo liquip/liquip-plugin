@@ -27,7 +27,7 @@ public class JsonConfigElement implements ConfigElement {
 
     @Override
     public boolean isDouble() {
-        return this.node.isDouble();
+        return this.node.isFloatingPointNumber() || this.node.isInt();
     }
 
     @Override
