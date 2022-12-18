@@ -23,6 +23,7 @@ import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
 import io.github.liquip.api.item.crafting.CraftingSystem;
+import io.github.liquip.paper.core.item.feature.minecraft.AttributeModifierFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.CustomModelDataFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.HideAttributesFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.HideDyeFeature;
@@ -56,6 +57,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.slf4j.Logger;
 
 import java.util.List;
 import java.util.Objects;
@@ -169,6 +171,11 @@ public final class StandaloneLiquipImpl implements Liquip {
     }
 
     @Override
+    public @NonNull Logger getSystemLogger() {
+        return this.plugin.getSLF4JLogger();
+    }
+
+    @Override
     public @NonNull Registry<Item> getItemRegistry() {
         return this.itemRegistry;
     }
@@ -242,6 +249,9 @@ public final class StandaloneLiquipImpl implements Liquip {
         this.featureRegistry.register(hideUnbreakableFeature.getKey(), hideUnbreakableFeature);
         final UnbreakableFeature unbreakableFeature = new UnbreakableFeature();
         this.featureRegistry.register(unbreakableFeature.getKey(), unbreakableFeature);
+        // Tagged features
+        final AttributeModifierFeature attributeModifierFeature = new AttributeModifierFeature();
+        this.taggedFeatureRegistry.register(attributeModifierFeature.getKey(), attributeModifierFeature);
         final CustomModelDataFeature customModelDataFeature = new CustomModelDataFeature();
         this.taggedFeatureRegistry.register(customModelDataFeature.getKey(), customModelDataFeature);
         final LeatherDyeFeature leatherDyeFeature = new LeatherDyeFeature();
