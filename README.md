@@ -1,5 +1,5 @@
 # The Liquip Plugin
-[![Gradle Package](https://github.com/liquip/liquip-plugin/actions/workflows/gradle-publish.yml/badge.svg?branch=main)](https://github.com/liquip/liquip-plugin/actions/workflows/gradle-publish.yml)
+[![Gradle Package](https://github.com/liquip/liquip-plugin/actions/workflows/gradle-publish.yml/badge.svg)](https://github.com/liquip/liquip-plugin/actions/workflows/gradle-publish.yml)
 
 Liquip is a paper-only plugin. It adds additional gameplay-features to Minecraft like the ability to
 add "custom" items.
