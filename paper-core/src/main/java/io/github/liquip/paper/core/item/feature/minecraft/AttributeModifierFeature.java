@@ -9,6 +9,7 @@ import it.unimi.dsi.fastutil.Pair;
 import org.bukkit.NamespacedKey;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -16,6 +17,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class AttributeModifierFeature implements TaggedFeature<List<Pair<Attribute, AttributeModifier>>> {
     private final NamespacedKey key = new NamespacedKey("minecraft", "attribute_modifier");
@@ -27,36 +29,86 @@ public class AttributeModifierFeature implements TaggedFeature<List<Pair<Attribu
 
     @Override
     public @Nullable List<Pair<Attribute, AttributeModifier>> initialize(@NonNull Item item, @NonNull ConfigElement element) {
+        if (element.isObject()) {
+            final ConfigObject attributeModifier = element.asObject();
+            final Pair<Attribute, AttributeModifier> result = this.parseAttribute(attributeModifier);
+            if (result == null) {
+                return null;
+            }
+            return List.of(result);
+        }
         if (!element.isArray()) {
             return null;
         }
         final ConfigArray attributeModifiers = element.asArray();
-        final List<Pair<Attribute, AttributeModifier>> result = new ArrayList<>();
+        final List<Pair<Attribute, AttributeModifier>> results = new ArrayList<>();
         for (int i = 0; i < attributeModifiers.size(); i++) {
             if (!attributeModifiers.isObject(i)) {
                 return null;
             }
             final ConfigObject attributeModifier = attributeModifiers.getObject(i);
-            if (!attributeModifier.hasElement("attribute") || !attributeModifier.isString("attribute")) {
+            final Pair<Attribute, AttributeModifier> result = this.parseAttribute(attributeModifier);
+            if (result == null) {
                 return null;
             }
-            final String attribute = attributeModifier.getString("attribute");
-            if (!attributeModifier.hasElement("name") || !attributeModifier.isString("name")) {
-                return null;
-            }
-            final String name = attributeModifier.getString("name");
-            if (!attributeModifier.hasElement("amount") || !attributeModifier.isDouble("amount")) {
-                return null;
-            }
-            final double amount = attributeModifier.getDouble("amount");
-            result.add(Pair.of(null, new AttributeModifier(name, amount, AttributeModifier.Operation.ADD_NUMBER)));
+            results.add(result);
         }
-        return result;
+        return results;
+    }
+
+    private Pair<Attribute, AttributeModifier> parseAttribute(@NonNull ConfigObject attributeModifier) {
+        if (!attributeModifier.hasElement("attribute") || !attributeModifier.isString("attribute")) {
+            return null;
+        }
+        final Attribute attribute;
+        try {
+            attribute = Attribute.valueOf(attributeModifier.getString("attribute").toUpperCase());
+        } catch (IllegalArgumentException ignored) {
+            return null;
+        }
+        if (!attributeModifier.hasElement("name") || !attributeModifier.isString("name")) {
+            return null;
+        }
+        final String name = attributeModifier.getString("name");
+        if (!attributeModifier.hasElement("amount") || !attributeModifier.isDouble("amount")) {
+            return null;
+        }
+        final double amount = attributeModifier.getDouble("amount");
+        if (!attributeModifier.hasElement("operation") || !attributeModifier.isString("operation")) {
+            return null;
+        }
+        final AttributeModifier.Operation operation = switch (attributeModifier.getString("operation").toLowerCase()) {
+            case "+", "add" -> AttributeModifier.Operation.ADD_NUMBER;
+            case "*", "multiply" -> AttributeModifier.Operation.MULTIPLY_SCALAR_1;
+            default -> null;
+        };
+        if (operation == null) {
+            return null;
+        }
+        EquipmentSlot slot = null;
+        if (attributeModifier.hasElement("slot")) {
+            if (!attributeModifier.isString("slot")) {
+                return null;
+            }
+            try {
+                slot = EquipmentSlot.valueOf(attributeModifier.getString("slot").toUpperCase());
+            } catch (IllegalArgumentException ignored) {
+                return null;
+            }
+        }
+        if (slot == null) {
+            return Pair.of(attribute, new AttributeModifier(UUID.randomUUID(), name, amount, operation));
+        }
+        return Pair.of(attribute, new AttributeModifier(UUID.randomUUID(), name, amount, operation, slot));
     }
 
     @Override
     public void apply(@NonNull Item item, @NonNull ItemStack itemStack,
         @NonNull List<Pair<Attribute, AttributeModifier>> object) {
-        TaggedFeature.super.apply(item, itemStack, object);
+        itemStack.editMeta(meta -> {
+            for (final Pair<Attribute, AttributeModifier> pair : object) {
+                meta.addAttributeModifier(pair.key(), pair.value());
+            }
+        });
     }
 }
