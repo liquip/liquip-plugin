@@ -9,6 +9,7 @@ import io.github.liquip.api.item.crafting.Recipe;
 import net.kyori.adventure.key.Key;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.slf4j.Logger;
 
 /**
  * The Liquip API.
@@ -25,6 +26,14 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @since 0.0.1-alpha
  */
 public interface Liquip {
+    /**
+     * Gets the {@link Logger} to be used by system components.
+     *
+     * @return the system's logger
+     * @since 1.2.0-beta
+     */
+    @NonNull Logger getSystemLogger();
+
     /**
      * Gets the {@link Registry}, responsible for managing {@link Item} instances.
      *
