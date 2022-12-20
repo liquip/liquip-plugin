@@ -1,7 +1,6 @@
 name: Gradle Package
 
-on:
-  create:
+on: create
 
 jobs:
   build:
