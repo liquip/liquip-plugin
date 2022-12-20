@@ -23,6 +23,7 @@ Here is an overview over the possibilities you have with the plugin:
 The following things are yet to be done:
 
 * Add shapeless recipes
+* Add recipe book
 
 ## Feedback
 
