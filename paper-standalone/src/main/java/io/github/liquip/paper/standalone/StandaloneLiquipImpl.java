@@ -60,8 +60,10 @@ import org.bukkit.plugin.PluginManager;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public final class StandaloneLiquipImpl implements Liquip {
     public static final MiniMessage MM = MiniMessage.miniMessage();
@@ -77,6 +79,8 @@ public final class StandaloneLiquipImpl implements Liquip {
     private final Registry<TaggedFeature<?>> taggedFeatureRegistry;
     private final Registry<Enchantment> enchantmentRegistry;
     private final CraftingSystem craftingSystem;
+    private final Set<Key> configItems;
+    private boolean currentlyLoadingConfig;
     private Menu craftMenu;
     private boolean loaded;
     private boolean enabled;
@@ -91,6 +95,8 @@ public final class StandaloneLiquipImpl implements Liquip {
         this.taggedFeatureRegistry = new RegistryImpl<>();
         this.enchantmentRegistry = new RegistryImpl<>();
         this.craftingSystem = new CraftingSystemImpl();
+        this.configItems = new HashSet<>();
+        this.currentlyLoadingConfig = false;
         this.craftMenu = null;
         this.loaded = false;
         this.enabled = false;
@@ -137,20 +143,37 @@ public final class StandaloneLiquipImpl implements Liquip {
         pluginManager.registerEvents(new BlockEventListener(this), this.plugin);
         pluginManager.registerEvents(new EntityEventListener(this), this.plugin);
         pluginManager.registerEvents(new PlayerEventListener(this), this.plugin);
+        this.currentlyLoadingConfig = true;
         if (!this.configLoader.loadConfig()) {
             this.plugin.getSLF4JLogger().error("Could not load config, disabling...");
             Bukkit.getPluginManager().disablePlugin(this.plugin);
             return;
         }
+        this.currentlyLoadingConfig = false;
         this.plugin.getSLF4JLogger().info("Successfully loaded config");
     }
 
     boolean reloadSystem() {
-        return this.configLoader.loadConfig();
+        for (final Key configItem : this.configItems) {
+            this.itemRegistry.unregister(configItem);
+        }
+        this.configItems.clear();
+        this.currentlyLoadingConfig = true;
+        final boolean result = this.configLoader.loadConfig();
+        this.currentlyLoadingConfig = false;
+        return result;
     }
 
     void disableSystem() {
         CommandAPI.onDisable();
+    }
+
+    public void addConfigItem(@NonNull Item item) {
+        if (!this.currentlyLoadingConfig) {
+            throw new IllegalStateException("Not loading config currently");
+        }
+        this.itemRegistry.register(item.key(), item);
+        this.configItems.add(item.key());
     }
 
     public @NonNull Plugin getPlugin() {
