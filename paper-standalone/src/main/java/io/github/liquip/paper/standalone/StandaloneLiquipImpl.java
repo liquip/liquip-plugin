@@ -23,6 +23,7 @@ import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
 import io.github.liquip.api.item.crafting.CraftingSystem;
+import io.github.liquip.paper.core.item.enchantment.BukkitEnchantment;
 import io.github.liquip.paper.core.item.feature.minecraft.AttributeModifierFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.CustomModelDataFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.HideAttributesFeature;
@@ -105,6 +106,7 @@ public final class StandaloneLiquipImpl implements Liquip {
         }
         this.loaded = true;
         this.registerMinecraftFeatures();
+        this.registerBukkitEnchantments();
         this.craftMenu = this.createCraftMenu();
         CommandAPI.onLoad(new CommandAPIConfig().silentLogs(true));
         final CommandAPICommand liquipCommand = new CommandAPICommand("liquip").withPermission("liquip.command");
@@ -256,6 +258,12 @@ public final class StandaloneLiquipImpl implements Liquip {
         this.taggedFeatureRegistry.register(customModelDataFeature.getKey(), customModelDataFeature);
         final LeatherDyeFeature leatherDyeFeature = new LeatherDyeFeature();
         this.taggedFeatureRegistry.register(leatherDyeFeature.getKey(), leatherDyeFeature);
+    }
+
+    private void registerBukkitEnchantments() {
+        for (org.bukkit.enchantments.Enchantment value : org.bukkit.enchantments.Enchantment.values()) {
+            this.enchantmentRegistry.register(value.getKey(), new BukkitEnchantment(value));
+        }
     }
 
     private @NonNull Menu createCraftMenu() {
