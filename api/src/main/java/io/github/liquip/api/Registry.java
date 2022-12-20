@@ -8,5 +8,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 public interface Registry<T extends Keyed> extends Iterable<T> {
     void register(@NonNull Key key, @NonNull T value);
 
+    void unregister(@NonNull Key key);
+
     @Nullable T get(@NonNull Key key);
 }
