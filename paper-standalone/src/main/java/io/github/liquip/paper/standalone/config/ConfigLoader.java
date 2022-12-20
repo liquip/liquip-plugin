@@ -51,11 +51,14 @@ import java.util.Optional;
 public class ConfigLoader {
     private final StandaloneLiquipImpl api;
     private final Logger logger;
-    private ConfigStructure config = null;
+    private ConfigStructure config;
+    private boolean wasLoadedBefore;
 
     public ConfigLoader(@NonNull StandaloneLiquipImpl api) {
         this.api = api;
         this.logger = api.getPlugin().getSLF4JLogger();
+        this.config = null;
+        this.wasLoadedBefore = false;
     }
 
     public boolean loadConfig() {
@@ -247,12 +250,14 @@ public class ConfigLoader {
             final Item defaultCraftingTableItem = this.getDefaultCraftingTable();
             this.api.getItemRegistry().register(defaultCraftingTableItem.key(), defaultCraftingTableItem);
             craftingTableKey = defaultCraftingTableItem.key();
-            final ShapedRecipe craftingTableRecipe =
-                new ShapedRecipe((NamespacedKey) defaultCraftingTableItem.key(), defaultCraftingTableItem.newItemStack());
-            craftingTableRecipe.shape("aaa", "bbb", "bbb");
-            craftingTableRecipe.setIngredient('a', Material.IRON_INGOT);
-            craftingTableRecipe.setIngredient('b', new RecipeChoice.MaterialChoice(Tag.PLANKS));
-            Bukkit.addRecipe(craftingTableRecipe);
+            if (!this.wasLoadedBefore) {
+                final ShapedRecipe craftingTableRecipe =
+                    new ShapedRecipe((NamespacedKey) defaultCraftingTableItem.key(), defaultCraftingTableItem.newItemStack());
+                craftingTableRecipe.shape("aaa", "bbb", "bbb");
+                craftingTableRecipe.setIngredient('a', Material.IRON_INGOT);
+                craftingTableRecipe.setIngredient('b', new RecipeChoice.MaterialChoice(Tag.PLANKS));
+                Bukkit.addRecipe(craftingTableRecipe);
+            }
         }
         final Item craftingTableItem = this.api.getItemRegistry().get(craftingTableKey);
         if (craftingTableItem == null) {
@@ -261,6 +266,7 @@ public class ConfigLoader {
             return false;
         }
         craftingTableItem.registerEvent(PlayerInteractEvent.class, this::craftingTableOnInteract);
+        this.wasLoadedBefore = true;
         return true;
     }
 
