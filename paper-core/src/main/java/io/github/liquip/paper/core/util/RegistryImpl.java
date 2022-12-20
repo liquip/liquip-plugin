@@ -21,11 +21,6 @@ public class RegistryImpl<T extends Keyed> implements Registry<T> {
         this.map = new HashMap<>(initialCapacity);
     }
 
-    @Override
-    public @Nullable T get(@NotNull Key key) {
-        return this.map.get(key);
-    }
-
     @NotNull
     @Override
     public Iterator<T> iterator() {
@@ -35,5 +30,15 @@ public class RegistryImpl<T extends Keyed> implements Registry<T> {
     @Override
     public void register(@NonNull Key key, @NonNull T value) {
         this.map.put(key, value);
+    }
+
+    @Override
+    public void unregister(@NonNull Key key) {
+        this.map.remove(key);
+    }
+
+    @Override
+    public @Nullable T get(@NotNull Key key) {
+        return this.map.get(key);
     }
 }
