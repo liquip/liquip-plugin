@@ -15,10 +15,10 @@ repositories {
         credentials {
             username = project.findProperty("gpr.user") as String? ?: if (System.getenv()
                     .containsKey("GRADLE_GITHUB_USERNAME")
-            ) System.getenv("GRADLE_GITHUB_USERNAME") else System.getenv("USERNAME")
+            ) System.getenv("GRADLE_GITHUB_USERNAME") else System.getenv("GITHUB_USERNAME")
             password = project.findProperty("gpr.key") as String? ?: if (System.getenv()
                     .containsKey("GRADLE_GITHUB_TOKEN")
-            ) System.getenv("GRADLE_GITHUB_TOKEN") else System.getenv("TOKEN")
+            ) System.getenv("GRADLE_GITHUB_TOKEN") else System.getenv("GITHUB_TOKEN")
         }
     }
 }
