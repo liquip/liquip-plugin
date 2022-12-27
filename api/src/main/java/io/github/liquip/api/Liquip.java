@@ -86,6 +86,7 @@ public interface Liquip {
     /**
      * Checks if the provided {@link ItemStack} is a custom item.
      *
+     * @param itemStack the item that will be checked
      * @return whether the item is custom or not
      * @since 0.0.1-alpha
      */
@@ -94,6 +95,7 @@ public interface Liquip {
     /**
      * Gets the {@link Key} from the {@link ItemStack}, representing the material of the item.
      *
+     * @param itemStack the item that will be used
      * @return the key of the provided item stack
      * @since 0.0.1-alpha
      */
@@ -102,6 +104,8 @@ public interface Liquip {
     /**
      * Sets the {@link Key} from the {@link ItemStack}, representing the material of the item.
      *
+     * @param itemStack the item that will be updated
+     * @param key the key that will be set
      * @since 0.2.0-alpha
      */
     void setKeyForItemStack(@NonNull ItemStack itemStack, @NonNull Key key);
