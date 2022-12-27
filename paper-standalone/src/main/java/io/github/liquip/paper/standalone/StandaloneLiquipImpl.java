@@ -23,6 +23,8 @@ import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
 import io.github.liquip.api.item.crafting.CraftingSystem;
+import io.github.liquip.paper.core.item.enchantment.BukkitEnchantment;
+import io.github.liquip.paper.core.item.feature.minecraft.AttributeModifierFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.CustomModelDataFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.HideAttributesFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.HideDyeFeature;
@@ -56,9 +58,12 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.slf4j.Logger;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public final class StandaloneLiquipImpl implements Liquip {
     public static final MiniMessage MM = MiniMessage.miniMessage();
@@ -74,6 +79,8 @@ public final class StandaloneLiquipImpl implements Liquip {
     private final Registry<TaggedFeature<?>> taggedFeatureRegistry;
     private final Registry<Enchantment> enchantmentRegistry;
     private final CraftingSystem craftingSystem;
+    private final Set<Key> configItems;
+    private boolean currentlyLoadingConfig;
     private Menu craftMenu;
     private boolean loaded;
     private boolean enabled;
@@ -88,6 +95,8 @@ public final class StandaloneLiquipImpl implements Liquip {
         this.taggedFeatureRegistry = new RegistryImpl<>();
         this.enchantmentRegistry = new RegistryImpl<>();
         this.craftingSystem = new CraftingSystemImpl();
+        this.configItems = new HashSet<>();
+        this.currentlyLoadingConfig = false;
         this.craftMenu = null;
         this.loaded = false;
         this.enabled = false;
@@ -103,6 +112,7 @@ public final class StandaloneLiquipImpl implements Liquip {
         }
         this.loaded = true;
         this.registerMinecraftFeatures();
+        this.registerBukkitEnchantments();
         this.craftMenu = this.createCraftMenu();
         CommandAPI.onLoad(new CommandAPIConfig().silentLogs(true));
         final CommandAPICommand liquipCommand = new CommandAPICommand("liquip").withPermission("liquip.command");
@@ -133,20 +143,37 @@ public final class StandaloneLiquipImpl implements Liquip {
         pluginManager.registerEvents(new BlockEventListener(this), this.plugin);
         pluginManager.registerEvents(new EntityEventListener(this), this.plugin);
         pluginManager.registerEvents(new PlayerEventListener(this), this.plugin);
+        this.currentlyLoadingConfig = true;
         if (!this.configLoader.loadConfig()) {
             this.plugin.getSLF4JLogger().error("Could not load config, disabling...");
             Bukkit.getPluginManager().disablePlugin(this.plugin);
             return;
         }
+        this.currentlyLoadingConfig = false;
         this.plugin.getSLF4JLogger().info("Successfully loaded config");
     }
 
     boolean reloadSystem() {
-        return this.configLoader.loadConfig();
+        for (final Key configItem : this.configItems) {
+            this.itemRegistry.unregister(configItem);
+        }
+        this.configItems.clear();
+        this.currentlyLoadingConfig = true;
+        final boolean result = this.configLoader.loadConfig();
+        this.currentlyLoadingConfig = false;
+        return result;
     }
 
     void disableSystem() {
         CommandAPI.onDisable();
+    }
+
+    public void addConfigItem(@NonNull Item item) {
+        if (!this.currentlyLoadingConfig) {
+            throw new IllegalStateException("Not loading config currently");
+        }
+        this.itemRegistry.register(item.key(), item);
+        this.configItems.add(item.key());
     }
 
     public @NonNull Plugin getPlugin() {
@@ -166,6 +193,11 @@ public final class StandaloneLiquipImpl implements Liquip {
             throw new IllegalStateException("Liquip uninitialized");
         }
         return this.craftMenu;
+    }
+
+    @Override
+    public @NonNull Logger getSystemLogger() {
+        return this.plugin.getSLF4JLogger();
     }
 
     @Override
@@ -242,10 +274,19 @@ public final class StandaloneLiquipImpl implements Liquip {
         this.featureRegistry.register(hideUnbreakableFeature.getKey(), hideUnbreakableFeature);
         final UnbreakableFeature unbreakableFeature = new UnbreakableFeature();
         this.featureRegistry.register(unbreakableFeature.getKey(), unbreakableFeature);
+        // Tagged features
+        final AttributeModifierFeature attributeModifierFeature = new AttributeModifierFeature();
+        this.taggedFeatureRegistry.register(attributeModifierFeature.getKey(), attributeModifierFeature);
         final CustomModelDataFeature customModelDataFeature = new CustomModelDataFeature();
         this.taggedFeatureRegistry.register(customModelDataFeature.getKey(), customModelDataFeature);
         final LeatherDyeFeature leatherDyeFeature = new LeatherDyeFeature();
         this.taggedFeatureRegistry.register(leatherDyeFeature.getKey(), leatherDyeFeature);
+    }
+
+    private void registerBukkitEnchantments() {
+        for (org.bukkit.enchantments.Enchantment value : org.bukkit.enchantments.Enchantment.values()) {
+            this.enchantmentRegistry.register(value.getKey(), new BukkitEnchantment(value));
+        }
     }
 
     private @NonNull Menu createCraftMenu() {

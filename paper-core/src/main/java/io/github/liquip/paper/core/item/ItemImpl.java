@@ -1,7 +1,6 @@
 package io.github.liquip.paper.core.item;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import io.github.liquip.api.Liquip;
 import io.github.liquip.api.config.ConfigElement;
@@ -19,7 +18,11 @@ import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 public class ItemImpl implements Item {
@@ -48,9 +51,15 @@ public class ItemImpl implements Item {
         this.features = new ArrayList<>(features.size());
         this.features.addAll(features);
         this.taggedFeatures = new LinkedHashMap<>(taggedFeatures.size());
-        this.taggedFeatures.putAll(Maps.filterValues(
-            Maps.transformEntries(taggedFeatures, (taggedFeature, config) -> taggedFeature.initialize(this, config)),
-            Objects::nonNull));
+        for (final Map.Entry<TaggedFeature<?>, ConfigElement> entry : taggedFeatures.entrySet()) {
+            final Object res = entry.getKey().initialize(this, entry.getValue());
+            if (res == null) {
+                this.api.getSystemLogger()
+                    .warn("Tagged feature '{}' could not be applied to item '{}'", entry.getKey().getKey(), this.key);
+                continue;
+            }
+            this.taggedFeatures.put(entry.getKey(), res);
+        }
         this.eventHandlers = ArrayListMultimap.create();
         this.eventHandlers.putAll(eventHandlers);
     }

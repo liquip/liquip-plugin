@@ -21,6 +21,8 @@ public interface Registry<T extends Keyed> extends Iterable<T> {
      */
     void register(@NonNull Key key, @NonNull T value);
 
+    void unregister(@NonNull Key key);
+
     /**
      * Retrieves the {@link T} stored under the specified {@link Key}.
      *

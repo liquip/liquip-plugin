@@ -25,8 +25,17 @@ public class CraftingOutputPane extends OutputSlotPane {
     }
 
     private @Nullable ItemStack @NonNull [] collectItemStacks(@NonNull Inventory inventory) {
-        return new ItemStack[]{inventory.getItem(10), inventory.getItem(11), inventory.getItem(12), inventory.getItem(19),
-            inventory.getItem(20), inventory.getItem(21), inventory.getItem(28), inventory.getItem(30), inventory.getItem(31)};
+        return new ItemStack[]{
+            inventory.getItem(10),
+            inventory.getItem(11),
+            inventory.getItem(12),
+            inventory.getItem(19),
+            inventory.getItem(20),
+            inventory.getItem(21),
+            inventory.getItem(28),
+            inventory.getItem(29),
+            inventory.getItem(30)
+        };
     }
 
     private void applyItemStacks(@NonNull Inventory inventory, @NonNull ItemStack @NonNull [] stacks) {

@@ -1,7 +1,6 @@
 package io.github.liquip.api.config;
 
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 public interface ConfigElement {
     boolean isBoolean();
@@ -24,7 +23,7 @@ public interface ConfigElement {
 
     @NonNull String asString();
 
-    @Nullable ConfigArray asArray();
+    @NonNull ConfigArray asArray();
 
-    @Nullable ConfigObject asObject();
+    @NonNull ConfigObject asObject();
 }

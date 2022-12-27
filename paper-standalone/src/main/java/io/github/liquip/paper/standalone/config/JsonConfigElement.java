@@ -7,7 +7,6 @@ import io.github.liquip.api.config.ConfigArray;
 import io.github.liquip.api.config.ConfigElement;
 import io.github.liquip.api.config.ConfigObject;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 
 public class JsonConfigElement implements ConfigElement {
     private final JsonNode node;
@@ -28,7 +27,7 @@ public class JsonConfigElement implements ConfigElement {
 
     @Override
     public boolean isDouble() {
-        return this.node.isDouble();
+        return this.node.isFloatingPointNumber() || this.node.isInt();
     }
 
     @Override
@@ -67,12 +66,12 @@ public class JsonConfigElement implements ConfigElement {
     }
 
     @Override
-    public @Nullable ConfigArray asArray() {
-        return this.node.isArray() ? new JsonConfigArray((ArrayNode) this.node) : null;
+    public @NonNull ConfigArray asArray() {
+        return new JsonConfigArray((ArrayNode) this.node);
     }
 
     @Override
-    public @Nullable ConfigObject asObject() {
-        return this.node.isObject() ? new JsonConfigObject((ObjectNode) this.node) : null;
+    public @NonNull ConfigObject asObject() {
+        return new JsonConfigObject((ObjectNode) this.node);
     }
 }

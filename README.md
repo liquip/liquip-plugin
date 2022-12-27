@@ -1,4 +1,6 @@
 # The Liquip Plugin
+[![Gradle Build](https://github.com/liquip/liquip-plugin/actions/workflows/gradle-build.yml/badge.svg)](https://github.com/liquip/liquip-plugin/actions/workflows/gradle-build.yml)
+[![Gradle Package](https://github.com/liquip/liquip-plugin/actions/workflows/gradle-publish.yml/badge.svg)](https://github.com/liquip/liquip-plugin/actions/workflows/gradle-publish.yml)
 
 Liquip is a paper-only plugin. It adds additional gameplay-features to Minecraft like the ability to
 add "custom" items.
@@ -21,6 +23,7 @@ Here is an overview over the possibilities you have with the plugin:
 The following things are yet to be done:
 
 * Add shapeless recipes
+* Add recipe book
 
 ## Feedback
 
