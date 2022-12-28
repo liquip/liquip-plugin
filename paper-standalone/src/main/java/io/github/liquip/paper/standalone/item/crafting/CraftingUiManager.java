@@ -11,6 +11,8 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +43,7 @@ public class CraftingUiManager {
     private Ui createCraftingTableUi() {
         return new UiBuilder.PaperUiBuilder().title(Component.text("Crafting Table"))
             .rows(5)
+            .onClose(0, this::craftingTableClose)
             .frame(0, Slot.RowOneSlotOne, Slot.RowFiveSlotNine, this.backgroundFillItem())
             .fill(0, Slot.RowTwoSlotFive, Slot.RowFiveSlotFive, this.backgroundFillItem())
             .addPanel(0, new StoragePanel(Slot.RowTwoSlotTwo.chestSlot, Slot.RowFourSlotFour.chestSlot, 9, Callback.Open.EMPTY,
@@ -152,6 +155,27 @@ public class CraftingUiManager {
 
     private void craftingTableToRecipeBook(@NotNull Player player, @NotNull InventoryView view, int slot) {
         this.recipeBookUi.open(player);
+    }
+
+    private void craftingTableClose(@NotNull Player player, @NotNull InventoryView view,
+        InventoryCloseEvent.@NotNull Reason reason) {
+        final Inventory topInventory = view.getTopInventory();
+        final Inventory bottomInventory = view.getBottomInventory();
+        for (int row = 0; row < 3; row++) {
+            for (int column = 0; column < 3; column++) {
+                final int slot = (row + 1) * 9 + column + 1;
+                final ItemStack item = topInventory.getItem(slot);
+                if (item == null || item.getType() == Material.AIR) {
+                    continue;
+                }
+                if (bottomInventory.firstEmpty() != -1) {
+                    bottomInventory.addItem(item);
+                    continue;
+                }
+                player.getWorld()
+                    .dropItem(player.getEyeLocation(), item);
+            }
+        }
     }
 
     private void recipeBookToCraftingTable(@NotNull Player player, @NotNull InventoryView view, int slot) {
