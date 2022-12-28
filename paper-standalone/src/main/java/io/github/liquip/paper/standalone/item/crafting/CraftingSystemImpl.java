@@ -6,8 +6,10 @@ import io.github.liquip.api.item.crafting.ShapedRecipe;
 import io.github.liquip.api.item.crafting.ShapelessRecipe;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class CraftingSystemImpl implements CraftingSystem {
@@ -47,5 +49,17 @@ public class CraftingSystemImpl implements CraftingSystem {
             return null;
         }
         return this.shapelessMap.get(craftMatrix);
+    }
+
+    @Override
+    public @NotNull Iterator<ShapedRecipe> shapedIterator() {
+        return this.shapedMap.values()
+            .iterator();
+    }
+
+    @Override
+    public @NotNull Iterator<ShapelessRecipe> shapelessIterator() {
+        return this.shapelessMap.values()
+            .iterator();
     }
 }
