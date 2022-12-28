@@ -22,7 +22,6 @@ import org.jetbrains.annotations.NotNull;
 public class CraftingUiManager {
     private final StandaloneLiquipImpl api;
     private final CraftingTableManager craftingTableManager;
-    private final TextColor color = TextColor.color(0xFFC0);
     private final Ui craftingTableUi;
     private final Ui recipeBookUi;
     private final Ui recipeShowcaseUi;
@@ -111,7 +110,7 @@ public class CraftingUiManager {
         final ItemStack item = new ItemStack(Material.KNOWLEDGE_BOOK);
         item.editMeta(it -> it.displayName(Component.empty()
             .decoration(TextDecoration.ITALIC, false)
-            .color(this.color)
+            .color(TextColor.color(0xFFC0))
             .append(Component.text("Recipe Book"))));
         return item;
     }
@@ -120,7 +119,7 @@ public class CraftingUiManager {
         final ItemStack item = new ItemStack(Material.CRAFTING_TABLE);
         item.editMeta(it -> it.displayName(Component.empty()
             .decoration(TextDecoration.ITALIC, false)
-            .color(this.color)
+            .color(TextColor.color(0xFFC0))
             .append(Component.text("Crafting Table"))));
         return item;
     }
@@ -129,7 +128,7 @@ public class CraftingUiManager {
         final ItemStack item = new ItemStack(Material.ARROW);
         item.editMeta(it -> it.displayName(Component.empty()
             .decoration(TextDecoration.ITALIC, false)
-            .color(this.color)
+            .color(TextColor.color(0xFFC0))
             .append(Component.text("Previous Page"))));
         return item;
     }
@@ -138,7 +137,7 @@ public class CraftingUiManager {
         final ItemStack item = new ItemStack(Material.ARROW);
         item.editMeta(it -> it.displayName(Component.empty()
             .decoration(TextDecoration.ITALIC, false)
-            .color(this.color)
+            .color(TextColor.color(0xFFC0))
             .append(Component.text("Next Page"))));
         return item;
     }
@@ -147,7 +146,7 @@ public class CraftingUiManager {
         final ItemStack item = new ItemStack(Material.PAPER);
         item.editMeta(it -> it.displayName(Component.empty()
             .decoration(TextDecoration.ITALIC, false)
-            .color(this.color)
+            .color(TextColor.color(0xFFC0))
             .append(Component.text("Page 0/0"))));
         return item;
     }
@@ -156,7 +155,7 @@ public class CraftingUiManager {
         final ItemStack item = new ItemStack(Material.ARROW);
         item.editMeta(it -> it.displayName(Component.empty()
             .decoration(TextDecoration.ITALIC, false)
-            .color(this.color)
+            .color(TextColor.color(0xFFC0))
             .append(Component.text("Back"))));
         return item;
     }
