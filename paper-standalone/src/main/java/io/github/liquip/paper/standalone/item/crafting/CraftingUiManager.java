@@ -1,9 +1,11 @@
 package io.github.liquip.paper.standalone.item.crafting;
 
+import com.github.sqyyy.jcougar.Callback;
 import com.github.sqyyy.jcougar.Slot;
 import com.github.sqyyy.jcougar.Ui;
 import com.github.sqyyy.jcougar.impl.UiBuilder;
 import com.github.sqyyy.jcougar.impl.panel.SingleSlotClickPanel;
+import com.github.sqyyy.jcougar.impl.panel.StoragePanel;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -41,6 +43,8 @@ public class CraftingUiManager {
             .rows(5)
             .frame(0, Slot.RowOneSlotOne, Slot.RowFiveSlotNine, this.backgroundFillItem())
             .fill(0, Slot.RowTwoSlotFive, Slot.RowFiveSlotFive, this.backgroundFillItem())
+            .addPanel(0, new StoragePanel(Slot.RowTwoSlotTwo.chestSlot, Slot.RowFourSlotFour.chestSlot, 9, Callback.Open.EMPTY,
+                Callback.Close.EMPTY, Callback.Update.EMPTY))
             .frame(0, Slot.RowTwoSlotSix, Slot.RowFourSlotEight, this.craftingResultFrameItem())
             .put(1, Slot.RowThreeSlotNine, this.recipeBookItem())
             .addPanel(1, new SingleSlotClickPanel(Slot.RowThreeSlotNine.chestSlot, this::craftingTableToRecipeBook))
