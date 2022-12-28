@@ -7,7 +7,11 @@ import com.github.sqyyy.jcougar.impl.UiBuilder;
 import com.github.sqyyy.jcougar.impl.panel.SlotClickEventPanel;
 import com.github.sqyyy.jcougar.impl.panel.StoragePanel;
 import com.github.sqyyy.jcougar.impl.panel.TakeableSlotEventPanel;
+import io.github.liquip.api.item.crafting.Recipe;
 import io.github.liquip.paper.standalone.StandaloneLiquipImpl;
+import it.unimi.dsi.fastutil.Pair;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -19,12 +23,21 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Spliterators;
+import java.util.UUID;
+import java.util.stream.StreamSupport;
+
 public class CraftingUiManager {
     private final StandaloneLiquipImpl api;
     private final CraftingTableManager craftingTableManager;
     private final Ui craftingTableUi;
     private final Ui recipeBookUi;
     private final Ui recipeShowcaseUi;
+    private final List<Pair<Recipe, ItemStack>> catalogue;
+    private final Object2IntMap<UUID> openRecipeBookPages;
+    private int pageCount;
 
     public CraftingUiManager(@NotNull StandaloneLiquipImpl api) {
         this.api = api;
@@ -32,18 +45,24 @@ public class CraftingUiManager {
         this.craftingTableUi = this.createCraftingTableUi();
         this.recipeBookUi = this.createRecipeBookUi();
         this.recipeShowcaseUi = this.createRecipeShowcaseUi();
+        this.catalogue = new ArrayList<>();
+        this.openRecipeBookPages = new Object2IntOpenHashMap<>();
+        this.pageCount = 0;
+    }
+
+    public void loadCatalogue() {
+        final int itemsPerPage = 7 * 4;
+        this.catalogue.clear();
+        this.catalogue.addAll(StreamSupport.stream(Spliterators.spliteratorUnknownSize(this.api.getCraftingSystem()
+                .shapedIterator(), 0), false)
+            .map(it -> Pair.of((Recipe) it, it.getShowcaseItem()))
+            .toList());
+        this.pageCount = this.catalogue.size() % itemsPerPage == 0 ? this.catalogue.size() / itemsPerPage :
+            this.catalogue.size() / itemsPerPage + 1;
     }
 
     public void openCraftingTable(@NotNull Player player) {
         this.craftingTableUi.open(player);
-    }
-
-    public void openRecipeBook(@NotNull Player player) {
-        this.recipeBookUi.open(player);
-    }
-
-    public void openRecipeShowcase(@NotNull Player player) {
-        this.recipeShowcaseUi.open(player);
     }
 
     private Ui createCraftingTableUi() {
@@ -72,6 +91,8 @@ public class CraftingUiManager {
             .put(1, Slot.RowSixSlotFive, this.currentPageItem())
             .put(1, Slot.RowSixSlotSix, this.nextArrowItem())
             .addPanel(1, new SlotClickEventPanel(Slot.RowSixSlotSix.chestSlot, this::recipeBookNextPage))
+            .onOpen(2, this::recipeBookOpen)
+            .onClose(this::recipeBookClose)
             .build();
     }
 
@@ -161,6 +182,7 @@ public class CraftingUiManager {
     }
 
     private void craftingTableToRecipeBook(@NotNull Player player, @NotNull InventoryView view, int slot) {
+        this.openRecipeBookPages.put(player.getUniqueId(), 0);
         this.recipeBookUi.open(player);
     }
 
@@ -201,6 +223,17 @@ public class CraftingUiManager {
         return this.craftingTableManager.onTakeItem(player, view, slot);
     }
 
+    public void recipeBookOpen(@NotNull Player player, @NotNull Inventory inventory) {
+        this.updateRecipeBook(player, inventory);
+    }
+
+    public void recipeBookClose(@NotNull Player player, @NotNull InventoryView view, InventoryCloseEvent.@NotNull Reason reason) {
+        if (reason != InventoryCloseEvent.Reason.OPEN_NEW) {
+            // TODO openCatalogue.remove(player.uniqueId)
+            this.openRecipeBookPages.removeInt(player.getUniqueId());
+        }
+    }
+
     private void recipeBookToCraftingTable(@NotNull Player player, @NotNull InventoryView view, int slot) {
         this.craftingTableUi.open(player);
     }
@@ -210,11 +243,47 @@ public class CraftingUiManager {
     }
 
     private void recipeBookPreviousPage(@NotNull Player player, @NotNull InventoryView view, int slot) {
-        player.sendMessage("Previous");
+        final int previousPage = this.openRecipeBookPages.getInt(player.getUniqueId());
+        final int newPage = Math.max(previousPage - 1, 0);
+        if (previousPage != newPage) {
+            this.openRecipeBookPages.put(player.getUniqueId(), newPage);
+            this.updateRecipeBook(player, view.getTopInventory());
+        }
     }
 
     private void recipeBookNextPage(@NotNull Player player, @NotNull InventoryView view, int slot) {
-        player.sendMessage("Next");
+        final int previousPage = this.openRecipeBookPages.getInt(player.getUniqueId());
+        final int newPage = Math.min(previousPage + 1, this.pageCount - 1);
+        if (previousPage != newPage) {
+            this.openRecipeBookPages.put(player.getUniqueId(), newPage);
+            this.updateRecipeBook(player, view.getTopInventory());
+        }
+    }
+
+    private void updateRecipeBook(@NotNull Player player, @NotNull Inventory inventory) {
+        final int itemsPerPage = 7 * 4;
+        for (int row = 1; row <= 4; row++) {
+            for (int column = 1; column <= 7; column++) {
+                inventory.setItem(row * 9 + column, null);
+            }
+        }
+        final int page = this.openRecipeBookPages.getInt(player.getUniqueId());
+        ItemStack item = inventory.getItem(Slot.RowSixSlotFive.chestSlot);
+        if (item == null) {
+            item = this.currentPageItem();
+            inventory.setItem(Slot.RowSixSlotFive.chestSlot, item);
+        }
+        item.editMeta(it -> it.displayName(Component.text("Page " + (page + 1) + "/" + this.pageCount)
+            .decoration(TextDecoration.ITALIC, false)
+            .color(TextColor.color(0xFFC0))));
+        final int startIndex = page * itemsPerPage;
+        final int endIndex = Math.min(startIndex + itemsPerPage, this.catalogue.size());
+        for (int i = startIndex; i < endIndex; i++) {
+            final int column = Slot.getColumn(7, i) + 1;
+            final int row = Slot.getRow(7, i) + 1;
+            inventory.setItem(row * 9 + column, this.catalogue.get(i)
+                .second());
+        }
     }
 
     private void recipeShowcaseToCraftingTable(@NotNull Player player, @NotNull InventoryView view, int slot) {
