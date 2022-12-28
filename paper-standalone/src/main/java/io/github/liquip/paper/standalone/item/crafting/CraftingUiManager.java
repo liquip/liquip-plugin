@@ -24,7 +24,19 @@ public class CraftingUiManager {
         this.recipeShowcaseUi = this.createRecipeShowcaseUi();
     }
 
-    public Ui createCraftingTableUi() {
+    public void openCraftingTable(@NotNull Player player) {
+        this.craftingTableUi.open(player);
+    }
+
+    public void openRecipeBook(@NotNull Player player) {
+        this.recipeBookUi.open(player);
+    }
+
+    public void openRecipeShowcase(@NotNull Player player) {
+        this.recipeShowcaseUi.open(player);
+    }
+
+    private Ui createCraftingTableUi() {
         return new UiBuilder.PaperUiBuilder().title(Component.text("Crafting Table"))
             .rows(5)
             .frame(0, Slot.RowOneSlotOne, Slot.RowFiveSlotNine, this.backgroundFillItem())
@@ -35,7 +47,7 @@ public class CraftingUiManager {
             .build();
     }
 
-    public Ui createRecipeBookUi() {
+    private Ui createRecipeBookUi() {
         return new UiBuilder.PaperUiBuilder().title(Component.text("Recipe Book"))
             .rows(6)
             .frame(0, Slot.RowOneSlotOne, Slot.RowSixSlotNine, this.backgroundFillItem())
@@ -49,7 +61,7 @@ public class CraftingUiManager {
             .build();
     }
 
-    public Ui createRecipeShowcaseUi() {
+    private Ui createRecipeShowcaseUi() {
         return new UiBuilder.PaperUiBuilder().title(Component.text("Recipe Showcase"))
             .rows(5)
             .frame(0, Slot.RowOneSlotOne, Slot.RowFiveSlotNine, this.backgroundFillItem())
@@ -62,25 +74,25 @@ public class CraftingUiManager {
             .build();
     }
 
-    public ItemStack backgroundFillItem() {
+    private ItemStack backgroundFillItem() {
         final ItemStack item = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         item.editMeta(it -> it.displayName(Component.empty()));
         return item;
     }
 
-    public ItemStack craftingResultFrameItem() {
+    private ItemStack craftingResultFrameItem() {
         final ItemStack item = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
         item.editMeta(it -> it.displayName(Component.empty()));
         return item;
     }
 
-    public ItemStack showcaseResultFrameItem() {
+    private ItemStack showcaseResultFrameItem() {
         final ItemStack item = new ItemStack(Material.BARRIER);
         item.editMeta(it -> it.displayName(Component.empty()));
         return item;
     }
 
-    public ItemStack recipeBookItem() {
+    private ItemStack recipeBookItem() {
         final ItemStack item = new ItemStack(Material.KNOWLEDGE_BOOK);
         item.editMeta(it -> it.displayName(Component.empty()
             .decoration(TextDecoration.ITALIC, false)
@@ -89,7 +101,7 @@ public class CraftingUiManager {
         return item;
     }
 
-    public ItemStack craftingTableItem() {
+    private ItemStack craftingTableItem() {
         final ItemStack item = new ItemStack(Material.CRAFTING_TABLE);
         item.editMeta(it -> it.displayName(Component.empty()
             .decoration(TextDecoration.ITALIC, false)
@@ -98,7 +110,7 @@ public class CraftingUiManager {
         return item;
     }
 
-    public ItemStack previousArrowItem() {
+    private ItemStack previousArrowItem() {
         final ItemStack item = new ItemStack(Material.ARROW);
         item.editMeta(it -> it.displayName(Component.empty()
             .decoration(TextDecoration.ITALIC, false)
@@ -107,7 +119,7 @@ public class CraftingUiManager {
         return item;
     }
 
-    public ItemStack nextArrowItem() {
+    private ItemStack nextArrowItem() {
         final ItemStack item = new ItemStack(Material.ARROW);
         item.editMeta(it -> it.displayName(Component.empty()
             .decoration(TextDecoration.ITALIC, false)
@@ -116,7 +128,7 @@ public class CraftingUiManager {
         return item;
     }
 
-    public ItemStack currentPageItem() {
+    private ItemStack currentPageItem() {
         final ItemStack item = new ItemStack(Material.PAPER);
         item.editMeta(it -> it.displayName(Component.empty()
             .decoration(TextDecoration.ITALIC, false)
@@ -125,7 +137,7 @@ public class CraftingUiManager {
         return item;
     }
 
-    public ItemStack backArrowItem() {
+    private ItemStack backArrowItem() {
         final ItemStack item = new ItemStack(Material.ARROW);
         item.editMeta(it -> it.displayName(Component.empty()
             .decoration(TextDecoration.ITALIC, false)
@@ -134,31 +146,31 @@ public class CraftingUiManager {
         return item;
     }
 
-    public void craftingTableToRecipeBook(@NotNull Player player, @NotNull InventoryView view, int slot) {
+    private void craftingTableToRecipeBook(@NotNull Player player, @NotNull InventoryView view, int slot) {
         this.recipeBookUi.open(player);
     }
 
-    public void recipeBookToCraftingTable(@NotNull Player player, @NotNull InventoryView view, int slot) {
+    private void recipeBookToCraftingTable(@NotNull Player player, @NotNull InventoryView view, int slot) {
         this.craftingTableUi.open(player);
     }
 
-    public void recipeBookToRecipeShowcase(@NotNull Player player, @NotNull InventoryView view, int slot) {
+    private void recipeBookToRecipeShowcase(@NotNull Player player, @NotNull InventoryView view, int slot) {
         this.recipeShowcaseUi.open(player);
     }
 
-    public void recipeBookPreviousPage(@NotNull Player player, @NotNull InventoryView view, int slot) {
+    private void recipeBookPreviousPage(@NotNull Player player, @NotNull InventoryView view, int slot) {
         player.sendMessage("Previous");
     }
 
-    public void recipeBookNextPage(@NotNull Player player, @NotNull InventoryView view, int slot) {
+    private void recipeBookNextPage(@NotNull Player player, @NotNull InventoryView view, int slot) {
         player.sendMessage("Next");
     }
 
-    public void recipeShowcaseToCraftingTable(@NotNull Player player, @NotNull InventoryView view, int slot) {
+    private void recipeShowcaseToCraftingTable(@NotNull Player player, @NotNull InventoryView view, int slot) {
         this.craftingTableUi.open(player);
     }
 
-    public void recipeShowcaseBack(@NotNull Player player, @NotNull InventoryView view, int slot) {
+    private void recipeShowcaseBack(@NotNull Player player, @NotNull InventoryView view, int slot) {
         this.recipeBookUi.open(player);
     }
 }
