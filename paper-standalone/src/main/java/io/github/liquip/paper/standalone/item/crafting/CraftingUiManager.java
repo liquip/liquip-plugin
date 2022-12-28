@@ -4,7 +4,7 @@ import com.github.sqyyy.jcougar.Callback;
 import com.github.sqyyy.jcougar.Slot;
 import com.github.sqyyy.jcougar.Ui;
 import com.github.sqyyy.jcougar.impl.UiBuilder;
-import com.github.sqyyy.jcougar.impl.panel.SingleSlotClickPanel;
+import com.github.sqyyy.jcougar.impl.panel.SlotClickEventPanel;
 import com.github.sqyyy.jcougar.impl.panel.StoragePanel;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -48,11 +48,10 @@ public class CraftingUiManager {
             .onClose(0, this::craftingTableClose)
             .frame(0, Slot.RowOneSlotOne, Slot.RowFiveSlotNine, this.backgroundFillItem())
             .fill(0, Slot.RowTwoSlotFive, Slot.RowFiveSlotFive, this.backgroundFillItem())
-            .addPanel(0, new StoragePanel(Slot.RowTwoSlotTwo.chestSlot, Slot.RowFourSlotFour.chestSlot, 9, Callback.Open.EMPTY,
-                Callback.Close.EMPTY, Callback.Update.EMPTY))
+            .addPanel(0, new StoragePanel(Slot.RowTwoSlotTwo.chestSlot, Slot.RowFourSlotFour.chestSlot, 9, Callback.Update.EMPTY))
             .frame(0, Slot.RowTwoSlotSix, Slot.RowFourSlotEight, this.craftingResultFrameItem())
             .put(1, Slot.RowThreeSlotNine, this.recipeBookItem())
-            .addPanel(1, new SingleSlotClickPanel(Slot.RowThreeSlotNine.chestSlot, this::craftingTableToRecipeBook))
+            .addPanel(1, new SlotClickEventPanel(Slot.RowThreeSlotNine.chestSlot, this::craftingTableToRecipeBook))
             .build();
     }
 
@@ -62,12 +61,12 @@ public class CraftingUiManager {
             .rows(6)
             .frame(0, Slot.RowOneSlotOne, Slot.RowSixSlotNine, this.backgroundFillItem())
             .put(1, Slot.RowThreeSlotNine, this.craftingTableItem())
-            .addPanel(1, new SingleSlotClickPanel(Slot.RowThreeSlotNine.chestSlot, this::recipeBookToCraftingTable))
+            .addPanel(1, new SlotClickEventPanel(Slot.RowThreeSlotNine.chestSlot, this::recipeBookToCraftingTable))
             .put(1, Slot.RowSixSlotFour, this.previousArrowItem())
-            .addPanel(1, new SingleSlotClickPanel(Slot.RowSixSlotFour.chestSlot, this::recipeBookPreviousPage))
+            .addPanel(1, new SlotClickEventPanel(Slot.RowSixSlotFour.chestSlot, this::recipeBookPreviousPage))
             .put(1, Slot.RowSixSlotFive, this.currentPageItem())
             .put(1, Slot.RowSixSlotSix, this.nextArrowItem())
-            .addPanel(1, new SingleSlotClickPanel(Slot.RowSixSlotSix.chestSlot, this::recipeBookNextPage))
+            .addPanel(1, new SlotClickEventPanel(Slot.RowSixSlotSix.chestSlot, this::recipeBookNextPage))
             .build();
     }
 
@@ -79,9 +78,9 @@ public class CraftingUiManager {
             .fill(0, Slot.RowTwoSlotFive, Slot.RowFiveSlotFive, this.backgroundFillItem())
             .frame(0, Slot.RowTwoSlotSix, Slot.RowFourSlotEight, this.showcaseResultFrameItem())
             .put(1, Slot.RowThreeSlotNine, this.craftingTableItem())
-            .addPanel(1, new SingleSlotClickPanel(Slot.RowThreeSlotNine.chestSlot, this::recipeShowcaseToCraftingTable))
+            .addPanel(1, new SlotClickEventPanel(Slot.RowThreeSlotNine.chestSlot, this::recipeShowcaseToCraftingTable))
             .put(1, Slot.RowFiveSlotNine, this.backArrowItem())
-            .addPanel(1, new SingleSlotClickPanel(Slot.RowFiveSlotNine.chestSlot, this::recipeShowcaseBack))
+            .addPanel(1, new SlotClickEventPanel(Slot.RowFiveSlotNine.chestSlot, this::recipeShowcaseBack))
             .build();
     }
 
