@@ -156,6 +156,7 @@ public final class StandaloneLiquipImpl implements Liquip {
         }
         this.currentlyLoadingConfig = false;
         this.plugin.getSLF4JLogger().info("Successfully loaded config");
+        this.craftingUiManager.loadCatalogue();
     }
 
     boolean reloadSystem() {
@@ -166,6 +167,7 @@ public final class StandaloneLiquipImpl implements Liquip {
         this.currentlyLoadingConfig = true;
         final boolean result = this.configLoader.loadConfig();
         this.currentlyLoadingConfig = false;
+        this.craftingUiManager.loadCatalogue();
         return result;
     }
 
