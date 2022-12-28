@@ -1,11 +1,12 @@
 package io.github.liquip.paper.standalone.item.crafting;
 
-import com.github.sqyyy.jcougar.Callback;
 import com.github.sqyyy.jcougar.Slot;
 import com.github.sqyyy.jcougar.Ui;
 import com.github.sqyyy.jcougar.impl.UiBuilder;
 import com.github.sqyyy.jcougar.impl.panel.SlotClickEventPanel;
 import com.github.sqyyy.jcougar.impl.panel.StoragePanel;
+import com.github.sqyyy.jcougar.impl.panel.TakeableSlotEventPanel;
+import io.github.liquip.paper.standalone.StandaloneLiquipImpl;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -18,12 +19,16 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class CraftingUiManager {
+    private final StandaloneLiquipImpl api;
+    private final CraftingTableManager craftingTableManager;
     private final TextColor color = TextColor.color(0xFFC0);
     private final Ui craftingTableUi;
     private final Ui recipeBookUi;
     private final Ui recipeShowcaseUi;
 
-    public CraftingUiManager() {
+    public CraftingUiManager(@NotNull StandaloneLiquipImpl api) {
+        this.api = api;
+        this.craftingTableManager = new CraftingTableManager(api);
         this.craftingTableUi = this.createCraftingTableUi();
         this.recipeBookUi = this.createRecipeBookUi();
         this.recipeShowcaseUi = this.createRecipeShowcaseUi();
@@ -42,22 +47,22 @@ public class CraftingUiManager {
     }
 
     private Ui createCraftingTableUi() {
-        return new UiBuilder.PaperUiBuilder().title(Component.text("Crafting Table")
-                .color(this.color))
+        return new UiBuilder.PaperUiBuilder().title(Component.text("Crafting Table"))
             .rows(5)
             .onClose(0, this::craftingTableClose)
             .frame(0, Slot.RowOneSlotOne, Slot.RowFiveSlotNine, this.backgroundFillItem())
             .fill(0, Slot.RowTwoSlotFive, Slot.RowFiveSlotFive, this.backgroundFillItem())
-            .addPanel(0, new StoragePanel(Slot.RowTwoSlotTwo.chestSlot, Slot.RowFourSlotFour.chestSlot, 9, Callback.Update.EMPTY))
+            .addPanel(0,
+                new StoragePanel(Slot.RowTwoSlotTwo.chestSlot, Slot.RowFourSlotFour.chestSlot, 9, this::craftingTableUpdate))
             .frame(0, Slot.RowTwoSlotSix, Slot.RowFourSlotEight, this.craftingResultFrameItem())
+            .addPanel(0, new TakeableSlotEventPanel(Slot.RowThreeSlotSeven.chestSlot, this::craftingTableTake))
             .put(1, Slot.RowThreeSlotNine, this.recipeBookItem())
             .addPanel(1, new SlotClickEventPanel(Slot.RowThreeSlotNine.chestSlot, this::craftingTableToRecipeBook))
             .build();
     }
 
     private Ui createRecipeBookUi() {
-        return new UiBuilder.PaperUiBuilder().title(Component.text("Recipe Book")
-                .color(this.color))
+        return new UiBuilder.PaperUiBuilder().title(Component.text("Recipe Book"))
             .rows(6)
             .frame(0, Slot.RowOneSlotOne, Slot.RowSixSlotNine, this.backgroundFillItem())
             .put(1, Slot.RowThreeSlotNine, this.craftingTableItem())
@@ -71,8 +76,7 @@ public class CraftingUiManager {
     }
 
     private Ui createRecipeShowcaseUi() {
-        return new UiBuilder.PaperUiBuilder().title(Component.text("Recipe Showcase")
-                .color(this.color))
+        return new UiBuilder.PaperUiBuilder().title(Component.text("Recipe Showcase"))
             .rows(5)
             .frame(0, Slot.RowOneSlotOne, Slot.RowFiveSlotNine, this.backgroundFillItem())
             .fill(0, Slot.RowTwoSlotFive, Slot.RowFiveSlotFive, this.backgroundFillItem())
@@ -179,6 +183,14 @@ public class CraftingUiManager {
                     .dropItem(player.getEyeLocation(), item);
             }
         }
+    }
+
+    private void craftingTableUpdate(@NotNull Player player, @NotNull InventoryView view) {
+        new CraftingScheduler(this.api, view).run();
+    }
+
+    private boolean craftingTableTake(@NotNull Player player, @NotNull InventoryView view, int slot) {
+        return this.craftingTableManager.onTakeItem(player, view, slot);
     }
 
     private void recipeBookToCraftingTable(@NotNull Player player, @NotNull InventoryView view, int slot) {
