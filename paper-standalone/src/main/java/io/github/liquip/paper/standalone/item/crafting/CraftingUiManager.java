@@ -18,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 public class CraftingUiManager {
+    private final TextColor color = TextColor.color(0xFFC0);
     private final Ui craftingTableUi;
     private final Ui recipeBookUi;
     private final Ui recipeShowcaseUi;
@@ -41,7 +42,8 @@ public class CraftingUiManager {
     }
 
     private Ui createCraftingTableUi() {
-        return new UiBuilder.PaperUiBuilder().title(Component.text("Crafting Table"))
+        return new UiBuilder.PaperUiBuilder().title(Component.text("Crafting Table")
+                .color(this.color))
             .rows(5)
             .onClose(0, this::craftingTableClose)
             .frame(0, Slot.RowOneSlotOne, Slot.RowFiveSlotNine, this.backgroundFillItem())
@@ -55,7 +57,8 @@ public class CraftingUiManager {
     }
 
     private Ui createRecipeBookUi() {
-        return new UiBuilder.PaperUiBuilder().title(Component.text("Recipe Book"))
+        return new UiBuilder.PaperUiBuilder().title(Component.text("Recipe Book")
+                .color(this.color))
             .rows(6)
             .frame(0, Slot.RowOneSlotOne, Slot.RowSixSlotNine, this.backgroundFillItem())
             .put(1, Slot.RowThreeSlotNine, this.craftingTableItem())
@@ -69,7 +72,8 @@ public class CraftingUiManager {
     }
 
     private Ui createRecipeShowcaseUi() {
-        return new UiBuilder.PaperUiBuilder().title(Component.text("Recipe Showcase"))
+        return new UiBuilder.PaperUiBuilder().title(Component.text("Recipe Showcase")
+                .color(this.color))
             .rows(5)
             .frame(0, Slot.RowOneSlotOne, Slot.RowFiveSlotNine, this.backgroundFillItem())
             .fill(0, Slot.RowTwoSlotFive, Slot.RowFiveSlotFive, this.backgroundFillItem())
@@ -103,7 +107,7 @@ public class CraftingUiManager {
         final ItemStack item = new ItemStack(Material.KNOWLEDGE_BOOK);
         item.editMeta(it -> it.displayName(Component.empty()
             .decoration(TextDecoration.ITALIC, false)
-            .color(TextColor.color(0xFFC0))
+            .color(this.color)
             .append(Component.text("Recipe Book"))));
         return item;
     }
@@ -112,7 +116,7 @@ public class CraftingUiManager {
         final ItemStack item = new ItemStack(Material.CRAFTING_TABLE);
         item.editMeta(it -> it.displayName(Component.empty()
             .decoration(TextDecoration.ITALIC, false)
-            .color(TextColor.color(0xFFC0))
+            .color(this.color)
             .append(Component.text("Crafting Table"))));
         return item;
     }
@@ -121,7 +125,7 @@ public class CraftingUiManager {
         final ItemStack item = new ItemStack(Material.ARROW);
         item.editMeta(it -> it.displayName(Component.empty()
             .decoration(TextDecoration.ITALIC, false)
-            .color(TextColor.color(0xFFC0))
+            .color(this.color)
             .append(Component.text("Previous Page"))));
         return item;
     }
@@ -130,7 +134,7 @@ public class CraftingUiManager {
         final ItemStack item = new ItemStack(Material.ARROW);
         item.editMeta(it -> it.displayName(Component.empty()
             .decoration(TextDecoration.ITALIC, false)
-            .color(TextColor.color(0xFFC0))
+            .color(this.color)
             .append(Component.text("Next Page"))));
         return item;
     }
@@ -139,7 +143,7 @@ public class CraftingUiManager {
         final ItemStack item = new ItemStack(Material.PAPER);
         item.editMeta(it -> it.displayName(Component.empty()
             .decoration(TextDecoration.ITALIC, false)
-            .color(TextColor.color(0xFFC0))
+            .color(this.color)
             .append(Component.text("Page 0/0"))));
         return item;
     }
@@ -148,7 +152,7 @@ public class CraftingUiManager {
         final ItemStack item = new ItemStack(Material.ARROW);
         item.editMeta(it -> it.displayName(Component.empty()
             .decoration(TextDecoration.ITALIC, false)
-            .color(TextColor.color(0xFFC0))
+            .color(this.color)
             .append(Component.text("Back"))));
         return item;
     }
