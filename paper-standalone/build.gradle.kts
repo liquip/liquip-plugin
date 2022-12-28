@@ -25,7 +25,7 @@ dependencies {
     implementation(project(":paper-core"))
     implementation(project(":liquip-gui"))
     implementation("dev.jorel:commandapi-shade:8.7.0")
-    implementation("com.github.sqyyy:jcougar-ui:0.3.1-alpha")
+    implementation("com.github.sqyyy:jcougar-ui:0.4.0-alpha")
     compileOnly("com.fasterxml.jackson.core:jackson-databind:2.14.0")
 }
 
