@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -51,5 +52,10 @@ public class ShapedRecipeImpl implements ShapedRecipe {
         final ItemStack item = this.item.newItemStack();
         item.setAmount(this.count);
         return item;
+    }
+
+    @Override
+    public @NotNull ItemStack getShowcaseItem() {
+        return this.item.newItemStack();
     }
 }
