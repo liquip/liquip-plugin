@@ -1,5 +1,6 @@
 package io.github.liquip.paper.standalone.item.crafting;
 
+import com.github.sqyyy.jcougar.JCougar;
 import com.github.sqyyy.jcougar.Slot;
 import com.github.sqyyy.jcougar.Ui;
 import com.github.sqyyy.jcougar.impl.UiBuilder;
@@ -190,6 +191,14 @@ public class CraftingUiManager {
     }
 
     private boolean craftingTableTake(@NotNull Player player, @NotNull InventoryView view, int slot) {
+        switch (JCougar.UnsafeValues.inventoryClickEvent.getAction()) {
+            case DROP_ONE_SLOT, PICKUP_ONE, PICKUP_HALF, PICKUP_SOME -> {
+                final ItemStack currentItem = JCougar.UnsafeValues.inventoryClickEvent.getCurrentItem();
+                if (currentItem == null || currentItem.getAmount() > 1) {
+                    return true;
+                }
+            }
+        }
         return this.craftingTableManager.onTakeItem(player, view, slot);
     }
 
