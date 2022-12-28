@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.github.sqyyy.jcougar.JCougar;
 import com.github.sqyyy.liquip.gui.Menu;
 import com.github.sqyyy.liquip.gui.MenuType;
 import com.github.sqyyy.liquip.gui.Slot;
@@ -42,6 +43,7 @@ import io.github.liquip.paper.standalone.config.ConfigLoader;
 import io.github.liquip.paper.standalone.item.crafting.CraftingOutputPane;
 import io.github.liquip.paper.standalone.item.crafting.CraftingPane;
 import io.github.liquip.paper.standalone.item.crafting.CraftingSystemImpl;
+import io.github.liquip.paper.standalone.item.crafting.CraftingUiManager;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -74,6 +76,7 @@ public final class StandaloneLiquipImpl implements Liquip {
     private final Plugin plugin;
     private final ObjectMapper mapper;
     private final ConfigLoader configLoader;
+    private final CraftingUiManager craftingUiManager;
     private final Registry<Item> itemRegistry;
     private final Registry<Feature> featureRegistry;
     private final Registry<TaggedFeature<?>> taggedFeatureRegistry;
@@ -90,6 +93,7 @@ public final class StandaloneLiquipImpl implements Liquip {
         this.mapper = new JsonMapper().enable(JsonParser.Feature.ALLOW_COMMENTS).enable(JsonParser.Feature.ALLOW_SINGLE_QUOTES)
             .enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES).disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         this.configLoader = new ConfigLoader(this);
+        this.craftingUiManager = new CraftingUiManager();
         this.itemRegistry = new RegistryImpl<>();
         this.featureRegistry = new RegistryImpl<>();
         this.taggedFeatureRegistry = new RegistryImpl<>();
@@ -121,7 +125,7 @@ public final class StandaloneLiquipImpl implements Liquip {
                 .executesPlayer(this::giveSubcommand);
         final CommandAPICommand liquipCraftCommand =
             new CommandAPICommand("craft").withPermission("liquip.command.craft").executesPlayer((player, args) -> {
-                this.craftMenu.open(player);
+                this.craftingUiManager.openCraftingTable(player);
             });
         final CommandAPICommand liquipReloadCommand =
             new CommandAPICommand("reload").withPermission("liquip.command.reload").executes(this::reloadSubcommand);
@@ -138,6 +142,7 @@ public final class StandaloneLiquipImpl implements Liquip {
         this.enabled = true;
         CommandAPI.onEnable(this.plugin);
         Menu.initialize(this.plugin);
+        JCougar.initializeSystem(this.plugin);
         final PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new SystemEventListener(this), this.plugin);
         pluginManager.registerEvents(new BlockEventListener(this), this.plugin);
