@@ -93,7 +93,7 @@ public final class StandaloneLiquipImpl implements Liquip {
         this.mapper = new JsonMapper().enable(JsonParser.Feature.ALLOW_COMMENTS).enable(JsonParser.Feature.ALLOW_SINGLE_QUOTES)
             .enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES).disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         this.configLoader = new ConfigLoader(this);
-        this.craftingUiManager = new CraftingUiManager();
+        this.craftingUiManager = new CraftingUiManager(this);
         this.itemRegistry = new RegistryImpl<>();
         this.featureRegistry = new RegistryImpl<>();
         this.taggedFeatureRegistry = new RegistryImpl<>();
