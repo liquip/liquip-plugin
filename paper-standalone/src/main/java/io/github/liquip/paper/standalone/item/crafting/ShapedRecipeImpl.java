@@ -4,6 +4,7 @@ import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.crafting.CraftMatrix;
 import io.github.liquip.api.item.crafting.ShapedRecipe;
 import net.kyori.adventure.key.KeyedValue;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
@@ -17,12 +18,19 @@ public class ShapedRecipeImpl implements ShapedRecipe {
     private final int count;
     private final List<KeyedValue<Integer>> shape;
     private final CraftMatrix matrix;
+    private final ItemStack showcaseItem;
 
     public ShapedRecipeImpl(@NonNull Item item, int count, @NonNull List<KeyedValue<Integer>> shape) {
         this.item = item;
         this.count = count;
         this.shape = shape;
         this.matrix = new ShapedCraftMatrixImpl(shape);
+        this.showcaseItem = item.newItemStack();
+        this.showcaseItem.setAmount(1);
+        this.showcaseItem.editMeta(it -> {
+            final MiniMessage mm = MiniMessage.miniMessage();
+            it.lore(List.of(mm.deserialize("<gray>Shaped"), mm.deserialize("<gray>Amount: " + count)));
+        });
     }
 
     @Override
@@ -56,6 +64,6 @@ public class ShapedRecipeImpl implements ShapedRecipe {
 
     @Override
     public @NotNull ItemStack getShowcaseItem() {
-        return this.item.newItemStack();
+        return this.showcaseItem;
     }
 }
