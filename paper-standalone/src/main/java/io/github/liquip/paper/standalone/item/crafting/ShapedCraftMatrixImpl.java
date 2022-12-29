@@ -20,10 +20,6 @@ public class ShapedCraftMatrixImpl implements CraftMatrix {
         this.hashCode = result;
     }
 
-    public @NonNull List<KeyedValue<Integer>> getShape() {
-        return this.shape;
-    }
-
     @Override
     public boolean isRecipeBound() {
         return true;
@@ -60,8 +56,8 @@ public class ShapedCraftMatrixImpl implements CraftMatrix {
     }
 
     @Override
-    public @NonNull List<KeyedValue<Integer>> getStacks() throws IllegalStateException {
-        throw new IllegalStateException();
+    public @NonNull List<KeyedValue<Integer>> getStacks() {
+        return this.shape;
     }
 
     @Override
