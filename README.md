@@ -32,7 +32,7 @@ Each submodule has its own purpose.
 
 The `api` submodule contains the code for the API.
 
-The `gui` submodule contains the *old* code for the inventory gui used in the crafting table.
+The `gui` submodule contains the *old* code for the inventory gui used in the old crafting table.
 It will be removed in the future.
 
 The `paper-core` submodules implements the parts of the API that are common between the submodules
@@ -51,7 +51,6 @@ The module depends on `api`, `gui` and `paper-core`.
 The following things are yet to be done:
 
 * Add shapeless recipes
-* Add recipe book
 
 ## Feedback
 
