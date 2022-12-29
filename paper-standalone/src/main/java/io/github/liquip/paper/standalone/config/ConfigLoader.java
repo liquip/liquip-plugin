@@ -182,7 +182,6 @@ public class ConfigLoader {
             final Item itemInstance =
                 new ItemImpl(this.api, key, material, displayName, lore, enchantments, features, taggedFeatures,
                     ArrayListMultimap.create());
-            this.logger.info("Registering...");
             this.api.addConfigItem(itemInstance);
             if (item.getRecipes() != null) {
                 recipe:
