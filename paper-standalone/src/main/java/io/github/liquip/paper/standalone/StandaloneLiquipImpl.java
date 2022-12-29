@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.github.sqyyy.jcougar.JCougar;
-import com.github.sqyyy.liquip.gui.Menu;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandAPIConfig;
@@ -127,7 +126,6 @@ public final class StandaloneLiquipImpl implements Liquip {
         }
         this.enabled = true;
         CommandAPI.onEnable(this.plugin);
-        Menu.initialize(this.plugin);
         JCougar.initializeSystem(this.plugin);
         final PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new SystemEventListener(this), this.plugin);
