@@ -4,12 +4,11 @@ import com.github.sqyyy.jcougar.JCougar;
 import com.github.sqyyy.jcougar.Slot;
 import com.github.sqyyy.jcougar.Ui;
 import com.github.sqyyy.jcougar.impl.UiBuilder;
+import com.github.sqyyy.jcougar.impl.panel.ClickPanel;
 import com.github.sqyyy.jcougar.impl.panel.SlotClickEventPanel;
 import com.github.sqyyy.jcougar.impl.panel.StoragePanel;
 import com.github.sqyyy.jcougar.impl.panel.TakeableSlotEventPanel;
-import io.github.liquip.api.item.crafting.Recipe;
 import io.github.liquip.paper.standalone.StandaloneLiquipImpl;
-import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.kyori.adventure.text.Component;
@@ -25,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Spliterators;
 import java.util.UUID;
 import java.util.stream.StreamSupport;
@@ -35,8 +35,9 @@ public class CraftingUiManager {
     private final Ui craftingTableUi;
     private final Ui recipeBookUi;
     private final Ui recipeShowcaseUi;
-    private final List<Pair<Recipe, ItemStack>> catalogue;
+    private final List<CraftingCatalogueEntry> catalogue;
     private final Object2IntMap<UUID> openRecipeBookPages;
+    private final Object2IntMap<UUID> openRecipeShowcasePages;
     private int pageCount;
 
     public CraftingUiManager(@NotNull StandaloneLiquipImpl api) {
@@ -47,6 +48,7 @@ public class CraftingUiManager {
         this.recipeShowcaseUi = this.createRecipeShowcaseUi();
         this.catalogue = new ArrayList<>();
         this.openRecipeBookPages = new Object2IntOpenHashMap<>();
+        this.openRecipeShowcasePages = new Object2IntOpenHashMap<>();
         this.pageCount = 0;
     }
 
@@ -55,7 +57,8 @@ public class CraftingUiManager {
         this.catalogue.clear();
         this.catalogue.addAll(StreamSupport.stream(Spliterators.spliteratorUnknownSize(this.api.getCraftingSystem()
                 .shapedIterator(), 0), false)
-            .map(it -> Pair.of((Recipe) it, it.getShowcaseItem()))
+            .map(it -> CraftingCatalogueEntry.load(this.api, it))
+            .filter(Objects::nonNull)
             .toList());
         this.pageCount = this.catalogue.size() % itemsPerPage == 0 ? this.catalogue.size() / itemsPerPage :
             this.catalogue.size() / itemsPerPage + 1;
@@ -93,6 +96,8 @@ public class CraftingUiManager {
             .addPanel(1, new SlotClickEventPanel(Slot.RowSixSlotSix.chestSlot, this::recipeBookNextPage))
             .onOpen(2, this::recipeBookOpen)
             .onClose(this::recipeBookClose)
+            .addPanel(3, new ClickPanel(Slot.RowTwoSlotTwo.chestSlot, Slot.RowFiveSlotEight.chestSlot, 9,
+                this::recipeBookToRecipeShowcase))
             .build();
     }
 
@@ -106,6 +111,8 @@ public class CraftingUiManager {
             .addPanel(1, new SlotClickEventPanel(Slot.RowThreeSlotNine.chestSlot, this::recipeShowcaseToCraftingTable))
             .put(1, Slot.RowFiveSlotNine, this.backArrowItem())
             .addPanel(1, new SlotClickEventPanel(Slot.RowFiveSlotNine.chestSlot, this::recipeShowcaseBack))
+            .onOpen(this::recipeShowcaseOpen)
+            .onClose(this::recipeShowcaseClose)
             .build();
     }
 
@@ -223,13 +230,13 @@ public class CraftingUiManager {
         return this.craftingTableManager.onTakeItem(player, view, slot);
     }
 
-    public void recipeBookOpen(@NotNull Player player, @NotNull Inventory inventory) {
+    private void recipeBookOpen(@NotNull Player player, @NotNull Inventory inventory) {
         this.updateRecipeBook(player, inventory);
     }
 
-    public void recipeBookClose(@NotNull Player player, @NotNull InventoryView view, InventoryCloseEvent.@NotNull Reason reason) {
+    private void recipeBookClose(@NotNull Player player, @NotNull InventoryView view,
+        InventoryCloseEvent.@NotNull Reason reason) {
         if (reason != InventoryCloseEvent.Reason.OPEN_NEW) {
-            // TODO openCatalogue.remove(player.uniqueId)
             this.openRecipeBookPages.removeInt(player.getUniqueId());
         }
     }
@@ -239,6 +246,13 @@ public class CraftingUiManager {
     }
 
     private void recipeBookToRecipeShowcase(@NotNull Player player, @NotNull InventoryView view, int slot) {
+        final int row = Slot.getRow(9, slot) - 1;
+        final int column = Slot.getColumn(9, slot) - 1;
+        final int i = row * 7 + column + this.openRecipeBookPages.getInt(player.getUniqueId()) * 7 * 4;
+        if (i >= this.catalogue.size()) {
+            return;
+        }
+        this.openRecipeShowcasePages.put(player.getUniqueId(), i);
         this.recipeShowcaseUi.open(player);
     }
 
@@ -282,8 +296,29 @@ public class CraftingUiManager {
             final int column = Slot.getColumn(7, i) + 1;
             final int row = Slot.getRow(7, i) + 1;
             inventory.setItem(row * 9 + column, this.catalogue.get(i)
-                .second());
+                .getShowcaseItem());
         }
+    }
+
+    private void recipeShowcaseOpen(@NotNull Player player, @NotNull Inventory inventory) {
+        final CraftingCatalogueEntry catalogueEntry =
+            this.catalogue.get(this.openRecipeShowcasePages.getInt(player.getUniqueId()));
+        inventory.setItem(Slot.RowThreeSlotSeven.chestSlot, catalogueEntry.getResult());
+        final ItemStack[] items = catalogueEntry.getItems();
+        inventory.setItem(10, items[0]);
+        inventory.setItem(11, items[1]);
+        inventory.setItem(12, items[2]);
+        inventory.setItem(19, items[3]);
+        inventory.setItem(20, items[4]);
+        inventory.setItem(21, items[5]);
+        inventory.setItem(28, items[6]);
+        inventory.setItem(29, items[7]);
+        inventory.setItem(30, items[8]);
+    }
+
+    private void recipeShowcaseClose(@NotNull Player player, @NotNull InventoryView view,
+        InventoryCloseEvent.@NotNull Reason reason) {
+        this.openRecipeShowcasePages.removeInt(player.getUniqueId());
     }
 
     private void recipeShowcaseToCraftingTable(@NotNull Player player, @NotNull InventoryView view, int slot) {
