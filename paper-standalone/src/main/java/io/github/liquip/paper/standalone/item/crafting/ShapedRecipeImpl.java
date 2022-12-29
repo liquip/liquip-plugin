@@ -4,8 +4,10 @@ import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.crafting.CraftMatrix;
 import io.github.liquip.api.item.crafting.ShapedRecipe;
 import net.kyori.adventure.key.KeyedValue;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
@@ -29,7 +31,10 @@ public class ShapedRecipeImpl implements ShapedRecipe {
         this.showcaseItem.setAmount(1);
         this.showcaseItem.editMeta(it -> {
             final MiniMessage mm = MiniMessage.miniMessage();
-            it.lore(List.of(mm.deserialize("<gray>Shaped"), mm.deserialize("<gray>Amount: " + count)));
+            it.lore(List.of(mm.deserialize("<dark_gray>Shaped")
+                .decoration(TextDecoration.ITALIC, false), mm.deserialize("<dark_gray>Amount: " + count)
+                .decoration(TextDecoration.ITALIC, false)));
+            it.addItemFlags(ItemFlag.values());
         });
     }
 
