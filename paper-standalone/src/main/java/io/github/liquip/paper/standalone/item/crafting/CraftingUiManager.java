@@ -293,8 +293,8 @@ public class CraftingUiManager {
         final int startIndex = page * itemsPerPage;
         final int endIndex = Math.min(startIndex + itemsPerPage, this.catalogue.size());
         for (int i = startIndex; i < endIndex; i++) {
-            final int column = Slot.getColumn(7, i) + 1;
-            final int row = Slot.getRow(7, i) + 1;
+            final int column = Slot.getColumn(7, i % itemsPerPage) + 1;
+            final int row = Slot.getRow(7, i % itemsPerPage) + 1;
             inventory.setItem(row * 9 + column, this.catalogue.get(i)
                 .getShowcaseItem());
         }
