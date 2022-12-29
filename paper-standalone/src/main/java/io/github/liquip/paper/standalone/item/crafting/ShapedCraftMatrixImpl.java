@@ -15,7 +15,8 @@ public class ShapedCraftMatrixImpl implements CraftMatrix {
         this.shape = Collections.unmodifiableList(shape);
         int result = 1;
         for (KeyedValue<Integer> element : this.shape) {
-            result = 31 * result + (element == null ? 0 : element.key().hashCode());
+            result = 31 * result + (element == null ? 0 : element.key()
+                .hashCode());
         }
         this.hashCode = result;
     }
@@ -48,7 +49,8 @@ public class ShapedCraftMatrixImpl implements CraftMatrix {
             if (otherIngredient == null) {
                 return false;
             }
-            if (!ingredient.key().equals(otherIngredient.key()) || ingredient.value() > otherIngredient.value()) {
+            if (!ingredient.key()
+                .equals(otherIngredient.key()) || ingredient.value() > otherIngredient.value()) {
                 return false;
             }
         }

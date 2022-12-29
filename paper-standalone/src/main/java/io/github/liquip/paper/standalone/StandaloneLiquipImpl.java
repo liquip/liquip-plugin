@@ -77,8 +77,10 @@ public final class StandaloneLiquipImpl implements Liquip {
 
     public StandaloneLiquipImpl(@NonNull Plugin plugin) {
         this.plugin = plugin;
-        this.mapper = new JsonMapper().enable(JsonParser.Feature.ALLOW_COMMENTS).enable(JsonParser.Feature.ALLOW_SINGLE_QUOTES)
-            .enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES).disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        this.mapper = new JsonMapper().enable(JsonParser.Feature.ALLOW_COMMENTS)
+            .enable(JsonParser.Feature.ALLOW_SINGLE_QUOTES)
+            .enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES)
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         this.configLoader = new ConfigLoader(this);
         this.craftingUiManager = new CraftingUiManager(this);
         this.itemRegistry = new RegistryImpl<>();
@@ -105,19 +107,20 @@ public final class StandaloneLiquipImpl implements Liquip {
         this.registerBukkitEnchantments();
         CommandAPI.onLoad(new CommandAPIConfig().silentLogs(true));
         final CommandAPICommand liquipCommand = new CommandAPICommand("liquip").withPermission("liquip.command");
-        final CommandAPICommand liquipGiveCommand =
-            new CommandAPICommand("give").withPermission("liquip.command.give").withArguments(new NamespacedKeyArgument("key"))
-                .executesPlayer(this::giveSubcommand);
-        final CommandAPICommand liquipCraftCommand =
-            new CommandAPICommand("craft").withPermission("liquip.command.craft").executesPlayer((player, args) -> {
+        final CommandAPICommand liquipGiveCommand = new CommandAPICommand("give").withPermission("liquip.command.give")
+            .withArguments(new NamespacedKeyArgument("key"))
+            .executesPlayer(this::giveSubcommand);
+        final CommandAPICommand liquipCraftCommand = new CommandAPICommand("craft").withPermission("liquip.command.craft")
+            .executesPlayer((player, args) -> {
                 this.craftingUiManager.openCraftingTable(player);
             });
-        final CommandAPICommand liquipReloadCommand =
-            new CommandAPICommand("reload").withPermission("liquip.command.reload").executes(this::reloadSubcommand);
+        final CommandAPICommand liquipReloadCommand = new CommandAPICommand("reload").withPermission("liquip.command.reload")
+            .executes(this::reloadSubcommand);
         final CommandAPICommand liquipDumpCommand = new CommandAPICommand("dump").withPermission("liquip.command.dump")
             .withArguments(new MultiLiteralArgument("items", "features", "tagged_features", "enchantments"))
             .executes(this::dumpSubcommand);
-        liquipCommand.withSubcommands(liquipGiveCommand, liquipCraftCommand, liquipReloadCommand, liquipDumpCommand).register();
+        liquipCommand.withSubcommands(liquipGiveCommand, liquipCraftCommand, liquipReloadCommand, liquipDumpCommand)
+            .register();
     }
 
     void enableSystem() {
@@ -134,12 +137,15 @@ public final class StandaloneLiquipImpl implements Liquip {
         pluginManager.registerEvents(new PlayerEventListener(this), this.plugin);
         this.currentlyLoadingConfig = true;
         if (!this.configLoader.loadConfig()) {
-            this.plugin.getSLF4JLogger().error("Could not load config, disabling...");
-            Bukkit.getPluginManager().disablePlugin(this.plugin);
+            this.plugin.getSLF4JLogger()
+                .error("Could not load config, disabling...");
+            Bukkit.getPluginManager()
+                .disablePlugin(this.plugin);
             return;
         }
         this.currentlyLoadingConfig = false;
-        this.plugin.getSLF4JLogger().info("Successfully loaded config");
+        this.plugin.getSLF4JLogger()
+            .info("Successfully loaded config");
         this.craftingUiManager.loadCatalogue();
     }
 
@@ -224,7 +230,8 @@ public final class StandaloneLiquipImpl implements Liquip {
         if (itemStack.getItemMeta() == null) {
             return false;
         }
-        final PersistentDataContainer persistentDataContainer = itemStack.getItemMeta().getPersistentDataContainer();
+        final PersistentDataContainer persistentDataContainer = itemStack.getItemMeta()
+            .getPersistentDataContainer();
         if (!persistentDataContainer.has(PDC_KEY, PersistentDataType.STRING)) {
             return false;
         }
@@ -235,18 +242,22 @@ public final class StandaloneLiquipImpl implements Liquip {
     @SuppressWarnings("DataFlowIssue")
     public @NonNull Key getKeyFromItemStack(@NonNull ItemStack itemStack) {
         if (itemStack.getItemMeta() == null) {
-            return itemStack.getType().getKey();
+            return itemStack.getType()
+                .getKey();
         }
-        final PersistentDataContainer persistentDataContainer = itemStack.getItemMeta().getPersistentDataContainer();
+        final PersistentDataContainer persistentDataContainer = itemStack.getItemMeta()
+            .getPersistentDataContainer();
         if (!persistentDataContainer.has(PDC_KEY, PersistentDataType.STRING)) {
-            return itemStack.getType().getKey();
+            return itemStack.getType()
+                .getKey();
         }
         return Objects.requireNonNull(NamespacedKey.fromString(persistentDataContainer.get(PDC_KEY, PersistentDataType.STRING)));
     }
 
     @Override
     public void setKeyForItemStack(@NonNull ItemStack itemStack, @NonNull Key key) {
-        itemStack.editMeta(meta -> meta.getPersistentDataContainer().set(PDC_KEY, PersistentDataType.STRING, key.asString()));
+        itemStack.editMeta(meta -> meta.getPersistentDataContainer()
+            .set(PDC_KEY, PersistentDataType.STRING, key.asString()));
     }
 
     private void registerMinecraftFeatures() {
@@ -281,19 +292,23 @@ public final class StandaloneLiquipImpl implements Liquip {
         final NamespacedKey key = (NamespacedKey) args[0];
         final Item item = this.itemRegistry.get(key);
         if (item == null) {
-            player.sendMessage(Component.text("Item could not be found").color(TextColor.color(COLOR_ERROR)));
+            player.sendMessage(Component.text("Item could not be found")
+                .color(TextColor.color(COLOR_ERROR)));
             return;
         }
-        player.getInventory().addItem(item.newItemStack());
-        player.sendMessage(
-            Component.text("Gave [" + key.asString() + "] to " + player.getName()).color(TextColor.color(COLOR_OK)));
+        player.getInventory()
+            .addItem(item.newItemStack());
+        player.sendMessage(Component.text("Gave [" + key.asString() + "] to " + player.getName())
+            .color(TextColor.color(COLOR_OK)));
     }
 
     private void reloadSubcommand(CommandSender sender, Object[] args) {
         if (this.reloadSystem()) {
-            sender.sendMessage(Component.text("Successfully reloaded config").color(TextColor.color(COLOR_OK)));
+            sender.sendMessage(Component.text("Successfully reloaded config")
+                .color(TextColor.color(COLOR_OK)));
         } else {
-            sender.sendMessage(Component.text("Could not reload config").color(TextColor.color(COLOR_ERROR)));
+            sender.sendMessage(Component.text("Could not reload config")
+                .color(TextColor.color(COLOR_ERROR)));
         }
     }
 
@@ -301,22 +316,26 @@ public final class StandaloneLiquipImpl implements Liquip {
         switch ((String) args[0]) {
             case "items" -> {
                 for (final Item item : this.itemRegistry) {
-                    sender.sendMessage(Component.text(item.key().asString()));
+                    sender.sendMessage(Component.text(item.key()
+                        .asString()));
                 }
             }
             case "features" -> {
                 for (final Feature feature : this.featureRegistry) {
-                    sender.sendMessage(Component.text(feature.key().asString()));
+                    sender.sendMessage(Component.text(feature.key()
+                        .asString()));
                 }
             }
             case "tagged_features" -> {
                 for (final TaggedFeature<?> taggedFeature : this.taggedFeatureRegistry) {
-                    sender.sendMessage(Component.text(taggedFeature.key().asString()));
+                    sender.sendMessage(Component.text(taggedFeature.key()
+                        .asString()));
                 }
             }
             case "enchantments" -> {
                 for (final Enchantment enchantment : this.enchantmentRegistry) {
-                    sender.sendMessage(Component.text(enchantment.key().asString()));
+                    sender.sendMessage(Component.text(enchantment.key()
+                        .asString()));
                 }
             }
         }

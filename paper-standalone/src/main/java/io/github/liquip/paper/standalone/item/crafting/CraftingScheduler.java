@@ -26,7 +26,8 @@ public class CraftingScheduler extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (this.view != this.view.getPlayer().getOpenInventory()) {
+        if (this.view != this.view.getPlayer()
+            .getOpenInventory()) {
             return;
         }
         final Inventory topInventory = this.view.getTopInventory();
@@ -42,14 +43,16 @@ public class CraftingScheduler extends BukkitRunnable {
             }
         }
         final UnboundCraftMatrixImpl craftMatrix = new UnboundCraftMatrixImpl(true, stacks);
-        final Recipe shapedRecipe = this.api.getCraftingSystem().getShapedRecipe(craftMatrix);
+        final Recipe shapedRecipe = this.api.getCraftingSystem()
+            .getShapedRecipe(craftMatrix);
         if (shapedRecipe != null) {
             final ItemStack result = shapedRecipe.getResult(stacks);
             topInventory.setItem(Slot.RowThreeSlotSeven.chestSlot, result);
             return;
         }
         craftMatrix.setShaped(false);
-        final Recipe shapelessRecipe = this.api.getCraftingSystem().getShapelessRecipe(craftMatrix);
+        final Recipe shapelessRecipe = this.api.getCraftingSystem()
+            .getShapelessRecipe(craftMatrix);
         if (shapelessRecipe != null) {
             final ItemStack result = shapelessRecipe.getResult(stacks);
             topInventory.setItem(Slot.RowThreeSlotSeven.chestSlot, result);

@@ -23,17 +23,8 @@ public class CraftingTableManager {
     }
 
     private @Nullable ItemStack @NotNull [] collectItemStacks(@NotNull Inventory inventory) {
-        return new ItemStack[]{
-            inventory.getItem(10),
-            inventory.getItem(11),
-            inventory.getItem(12),
-            inventory.getItem(19),
-            inventory.getItem(20),
-            inventory.getItem(21),
-            inventory.getItem(28),
-            inventory.getItem(29),
-            inventory.getItem(30)
-        };
+        return new ItemStack[]{inventory.getItem(10), inventory.getItem(11), inventory.getItem(12), inventory.getItem(19),
+            inventory.getItem(20), inventory.getItem(21), inventory.getItem(28), inventory.getItem(29), inventory.getItem(30)};
     }
 
     private void applyItemStacks(@NotNull Inventory inventory, @NotNull ItemStack @NotNull [] stacks) {
