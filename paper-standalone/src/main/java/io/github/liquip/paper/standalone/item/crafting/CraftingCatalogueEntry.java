@@ -33,6 +33,9 @@ public class CraftingCatalogueEntry {
         final ItemStack[] items = new ItemStack[9];
         for (int i = 0; i < stacks.size(); i++) {
             final KeyedValue<Integer> stack = stacks.get(i);
+            if (stack == null || stack.value() < 1) {
+                continue;
+            }
             final Material material = Registry.MATERIAL.get((NamespacedKey) stack.key());
             if (material != null) {
                 items[i] = new ItemStack(material, stack.value());
