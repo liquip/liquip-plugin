@@ -15,13 +15,10 @@ public class ShapedCraftMatrixImpl implements CraftMatrix {
         this.shape = Collections.unmodifiableList(shape);
         int result = 1;
         for (KeyedValue<Integer> element : this.shape) {
-            result = 31 * result + (element == null ? 0 : element.key().hashCode());
+            result = 31 * result + (element == null ? 0 : element.key()
+                .hashCode());
         }
         this.hashCode = result;
-    }
-
-    public @NonNull List<KeyedValue<Integer>> getShape() {
-        return this.shape;
     }
 
     @Override
@@ -52,7 +49,8 @@ public class ShapedCraftMatrixImpl implements CraftMatrix {
             if (otherIngredient == null) {
                 return false;
             }
-            if (!ingredient.key().equals(otherIngredient.key()) || ingredient.value() > otherIngredient.value()) {
+            if (!ingredient.key()
+                .equals(otherIngredient.key()) || ingredient.value() > otherIngredient.value()) {
                 return false;
             }
         }
@@ -60,8 +58,8 @@ public class ShapedCraftMatrixImpl implements CraftMatrix {
     }
 
     @Override
-    public @NonNull List<KeyedValue<Integer>> getStacks() throws IllegalStateException {
-        throw new IllegalStateException();
+    public @NonNull List<KeyedValue<Integer>> getStacks() {
+        return this.shape;
     }
 
     @Override

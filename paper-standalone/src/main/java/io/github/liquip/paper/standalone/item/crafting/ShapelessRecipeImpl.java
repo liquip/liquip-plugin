@@ -6,6 +6,7 @@ import io.github.liquip.api.item.crafting.ShapelessRecipe;
 import net.kyori.adventure.key.KeyedValue;
 import org.bukkit.inventory.ItemStack;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Set;
@@ -31,6 +32,11 @@ public class ShapelessRecipeImpl implements ShapelessRecipe {
 
     @Override
     public @NonNull ItemStack getResult(@NonNull List<KeyedValue<Integer>> stacks) {
+        return this.item.newItemStack();
+    }
+
+    @Override
+    public @NotNull ItemStack getShowcaseItem() {
         return this.item.newItemStack();
     }
 }

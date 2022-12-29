@@ -7,6 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      packages: read
 
     steps:
       - uses: actions/checkout@v3
@@ -24,3 +25,6 @@ jobs:
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         with:
           arguments: build
+        env:
+          GRADLE_GITHUB_USERNAME: ${{ github.actor }}
+          GRADLE_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

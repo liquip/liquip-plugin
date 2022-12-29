@@ -21,12 +21,14 @@ public class JsonConfigObject implements ConfigObject {
 
     @Override
     public boolean isBoolean(@NonNull String key) {
-        return this.node.get(key).isBoolean();
+        return this.node.get(key)
+            .isBoolean();
     }
 
     @Override
     public boolean isInt(@NonNull String key) {
-        return this.node.get(key).isInt();
+        return this.node.get(key)
+            .isInt();
     }
 
     @Override
@@ -37,37 +39,44 @@ public class JsonConfigObject implements ConfigObject {
 
     @Override
     public boolean isString(@NonNull String key) {
-        return this.node.get(key).isTextual();
+        return this.node.get(key)
+            .isTextual();
     }
 
     @Override
     public boolean isArray(@NonNull String key) {
-        return this.node.get(key).isArray();
+        return this.node.get(key)
+            .isArray();
     }
 
     @Override
     public boolean isObject(@NonNull String key) {
-        return this.node.get(key).isObject();
+        return this.node.get(key)
+            .isObject();
     }
 
     @Override
     public boolean getBoolean(@NonNull String key) {
-        return this.node.get(key).booleanValue();
+        return this.node.get(key)
+            .booleanValue();
     }
 
     @Override
     public int getInt(@NonNull String key) {
-        return this.node.get(key).intValue();
+        return this.node.get(key)
+            .intValue();
     }
 
     @Override
     public double getDouble(@NonNull String key) {
-        return this.node.get(key).doubleValue();
+        return this.node.get(key)
+            .doubleValue();
     }
 
     @Override
     public @NonNull String getString(@NonNull String key) {
-        return this.node.get(key).textValue();
+        return this.node.get(key)
+            .textValue();
     }
 
     @Override

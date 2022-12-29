@@ -1,6 +1,6 @@
 package io.github.liquip.paper.standalone.item.crafting;
 
-import com.github.sqyyy.liquip.gui.Slot;
+import com.github.sqyyy.jcougar.Slot;
 import io.github.liquip.api.item.crafting.Recipe;
 import io.github.liquip.paper.standalone.StandaloneLiquipImpl;
 import net.kyori.adventure.key.KeyedValue;
@@ -26,7 +26,8 @@ public class CraftingScheduler extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (this.view != this.view.getPlayer().getOpenInventory()) {
+        if (this.view != this.view.getPlayer()
+            .getOpenInventory()) {
             return;
         }
         final Inventory topInventory = this.view.getTopInventory();
@@ -42,19 +43,21 @@ public class CraftingScheduler extends BukkitRunnable {
             }
         }
         final UnboundCraftMatrixImpl craftMatrix = new UnboundCraftMatrixImpl(true, stacks);
-        final Recipe shapedRecipe = this.api.getCraftingSystem().getShapedRecipe(craftMatrix);
+        final Recipe shapedRecipe = this.api.getCraftingSystem()
+            .getShapedRecipe(craftMatrix);
         if (shapedRecipe != null) {
             final ItemStack result = shapedRecipe.getResult(stacks);
-            topInventory.setItem(Slot.ROW_THREE_SLOT_SEVEN.getSlot(), result);
+            topInventory.setItem(Slot.RowThreeSlotSeven.chestSlot, result);
             return;
         }
         craftMatrix.setShaped(false);
-        final Recipe shapelessRecipe = this.api.getCraftingSystem().getShapelessRecipe(craftMatrix);
+        final Recipe shapelessRecipe = this.api.getCraftingSystem()
+            .getShapelessRecipe(craftMatrix);
         if (shapelessRecipe != null) {
             final ItemStack result = shapelessRecipe.getResult(stacks);
-            topInventory.setItem(Slot.ROW_THREE_SLOT_SEVEN.getSlot(), result);
+            topInventory.setItem(Slot.RowThreeSlotSeven.chestSlot, result);
             return;
         }
-        topInventory.setItem(Slot.ROW_THREE_SLOT_SEVEN.getSlot(), null);
+        topInventory.setItem(Slot.RowThreeSlotSeven.chestSlot, null);
     }
 }
