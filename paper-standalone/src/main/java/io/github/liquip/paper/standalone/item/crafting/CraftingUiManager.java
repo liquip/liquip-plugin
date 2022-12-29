@@ -14,6 +14,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -23,6 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Spliterators;
@@ -59,6 +61,20 @@ public class CraftingUiManager {
                 .shapedIterator(), 0), false)
             .map(it -> CraftingCatalogueEntry.load(this.api, it))
             .filter(Objects::nonNull)
+            .filter(it -> it.getShowcaseItem()
+                .getItemMeta() != null && it.getShowcaseItem()
+                .getItemMeta()
+                .displayName() != null)
+            .sorted(Comparator.comparing(it -> {
+                final Component displayName = it.getShowcaseItem()
+                    .getItemMeta()
+                    .displayName();
+                if (displayName == null) {
+                    throw new NullPointerException();
+                }
+                return PlainTextComponentSerializer.plainText()
+                    .serialize(displayName);
+            }))
             .toList());
         this.pageCount = this.catalogue.size() % itemsPerPage == 0 ? this.catalogue.size() / itemsPerPage :
             this.catalogue.size() / itemsPerPage + 1;
