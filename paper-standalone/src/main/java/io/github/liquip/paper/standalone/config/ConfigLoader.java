@@ -265,7 +265,9 @@ public class ConfigLoader {
             this.logger.error("Invalid crafting table item");
             return false;
         }
-        craftingTableItem.registerEvent(PlayerInteractEvent.class, this::craftingTableOnInteract);
+        if (!this.config.hasCustomCraftingTable()) {
+            craftingTableItem.registerEvent(PlayerInteractEvent.class, this::craftingTableOnInteract);
+        }
         this.wasLoadedBefore = true;
         return true;
     }
@@ -318,6 +320,6 @@ public class ConfigLoader {
 
     private void craftingTableOnInteract(@NonNull PlayerInteractEvent event, @Nullable ItemStack item) {
         event.setCancelled(true);
-        this.api.getCraftMenu().open(event.getPlayer());
+        this.api.getCraftingUiManager().openCraftingTable(event.getPlayer());
     }
 }
