@@ -6,12 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.github.sqyyy.jcougar.JCougar;
 import com.github.sqyyy.liquip.gui.Menu;
-import com.github.sqyyy.liquip.gui.MenuType;
-import com.github.sqyyy.liquip.gui.Slot;
-import com.github.sqyyy.liquip.gui.impl.BasicMenu;
-import com.github.sqyyy.liquip.gui.impl.FillItemPane;
-import com.github.sqyyy.liquip.gui.impl.FillPane;
-import com.github.sqyyy.liquip.gui.impl.StoragePane;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandAPIConfig;
@@ -40,17 +34,13 @@ import io.github.liquip.paper.core.listener.PlayerEventListener;
 import io.github.liquip.paper.core.listener.SystemEventListener;
 import io.github.liquip.paper.core.util.RegistryImpl;
 import io.github.liquip.paper.standalone.config.ConfigLoader;
-import io.github.liquip.paper.standalone.item.crafting.CraftingOutputPane;
-import io.github.liquip.paper.standalone.item.crafting.CraftingPane;
 import io.github.liquip.paper.standalone.item.crafting.CraftingSystemImpl;
 import io.github.liquip.paper.standalone.item.crafting.CraftingUiManager;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -63,7 +53,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import org.slf4j.Logger;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -84,7 +73,6 @@ public final class StandaloneLiquipImpl implements Liquip {
     private final CraftingSystem craftingSystem;
     private final Set<Key> configItems;
     private boolean currentlyLoadingConfig;
-    private Menu craftMenu;
     private boolean loaded;
     private boolean enabled;
 
@@ -101,7 +89,6 @@ public final class StandaloneLiquipImpl implements Liquip {
         this.craftingSystem = new CraftingSystemImpl();
         this.configItems = new HashSet<>();
         this.currentlyLoadingConfig = false;
-        this.craftMenu = null;
         this.loaded = false;
         this.enabled = false;
     }
@@ -117,7 +104,6 @@ public final class StandaloneLiquipImpl implements Liquip {
         this.loaded = true;
         this.registerMinecraftFeatures();
         this.registerBukkitEnchantments();
-        this.craftMenu = this.createCraftMenu();
         CommandAPI.onLoad(new CommandAPIConfig().silentLogs(true));
         final CommandAPICommand liquipCommand = new CommandAPICommand("liquip").withPermission("liquip.command");
         final CommandAPICommand liquipGiveCommand =
@@ -195,11 +181,8 @@ public final class StandaloneLiquipImpl implements Liquip {
         return this.configLoader;
     }
 
-    public @NonNull Menu getCraftMenu() {
-        if (this.craftMenu == null) {
-            throw new IllegalStateException("Liquip uninitialized");
-        }
-        return this.craftMenu;
+    public @NonNull CraftingUiManager getCraftingUiManager() {
+        return this.craftingUiManager;
     }
 
     @Override
@@ -294,22 +277,6 @@ public final class StandaloneLiquipImpl implements Liquip {
         for (org.bukkit.enchantments.Enchantment value : org.bukkit.enchantments.Enchantment.values()) {
             this.enchantmentRegistry.register(value.getKey(), new BukkitEnchantment(value));
         }
-    }
-
-    private @NonNull Menu createCraftMenu() {
-        final ItemStack blackGlass = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
-        blackGlass.editMeta(meta -> meta.displayName(Component.empty()));
-        final ItemStack greenGlass = new ItemStack(Material.LIME_STAINED_GLASS_PANE);
-        greenGlass.editMeta(meta -> meta.displayName(Component.empty()));
-        final ItemStack recipeBook = new ItemStack(Material.KNOWLEDGE_BOOK);
-        recipeBook.editMeta(meta -> meta.displayName(Component.text("Recipe Book").decoration(TextDecoration.ITALIC, false)));
-        return new BasicMenu(Component.text("Advanced Crafting"), 5, MenuType.CHEST,
-            List.of(new FillPane(0, Slot.ROW_ONE_SLOT_ONE, Slot.ROW_FIVE_SLOT_NINE, blackGlass), new CraftingPane(this, 0),
-                new FillPane(1, Slot.ROW_TWO_SLOT_SIX, Slot.ROW_FOUR_SLOT_EIGHT, greenGlass),
-                new FillItemPane(1, Slot.ROW_THREE_SLOT_NINE, recipeBook),
-                new StoragePane(2, Slot.ROW_TWO_SLOT_TWO, Slot.ROW_FOUR_SLOT_FOUR, (storagePane, inventory) -> {
-                }, (storagePane, inventoryCloseEvent) -> {
-                }), new CraftingOutputPane(this, 2)));
     }
 
     private void giveSubcommand(Player player, Object[] args) {
