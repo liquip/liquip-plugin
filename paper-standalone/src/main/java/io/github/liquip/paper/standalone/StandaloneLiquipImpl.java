@@ -11,6 +11,9 @@ import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
 import io.github.liquip.api.item.crafting.CraftingSystem;
+import io.github.liquip.api.item.crafting.Recipe;
+import io.github.liquip.api.item.crafting.ShapedRecipe;
+import io.github.liquip.api.item.crafting.ShapelessRecipe;
 import io.github.liquip.paper.core.item.enchantment.BukkitEnchantment;
 import io.github.liquip.paper.core.item.feature.minecraft.AttributeModifierFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.CustomModelDataFeature;
@@ -66,6 +69,8 @@ public final class StandaloneLiquipImpl implements Liquip {
     private final CraftingSystem craftingSystem;
     private final List<Service> services;
     private final Set<Key> configItems;
+    private final Set<ShapedRecipe> configShapedRecipes;
+    private final Set<ShapelessRecipe> configShapelessRecipes;
     private boolean currentlyLoadingConfig;
     private boolean loaded;
     private boolean enabled;
@@ -86,6 +91,8 @@ public final class StandaloneLiquipImpl implements Liquip {
         this.craftingSystem = new CraftingSystemImpl();
         this.services = List.of(this.craftingUiManager, this.commandManager);
         this.configItems = new HashSet<>();
+        this.configShapedRecipes = new HashSet<>();
+        this.configShapelessRecipes = new HashSet<>();
         this.currentlyLoadingConfig = false;
         this.loaded = false;
         this.enabled = false;
@@ -138,6 +145,14 @@ public final class StandaloneLiquipImpl implements Liquip {
             this.itemRegistry.unregister(configItem);
         }
         this.configItems.clear();
+        for (final ShapedRecipe configShapedRecipe : this.configShapedRecipes) {
+            this.craftingSystem.unregisterShapedRecipe(configShapedRecipe);
+        }
+        this.configShapedRecipes.clear();
+        for (final ShapelessRecipe configShapelessRecipe : this.configShapelessRecipes) {
+            this.craftingSystem.unregisterShapelessRecipe(configShapelessRecipe);
+        }
+        this.configShapelessRecipes.clear();
         this.currentlyLoadingConfig = true;
         final boolean result = this.configLoader.loadConfig();
         this.currentlyLoadingConfig = false;
@@ -159,6 +174,21 @@ public final class StandaloneLiquipImpl implements Liquip {
         }
         this.itemRegistry.register(item.key(), item);
         this.configItems.add(item.key());
+    }
+
+    public void addConfigRecipe(@NonNull Recipe recipe) {
+        if (!this.currentlyLoadingConfig) {
+            throw new IllegalStateException("Not loading config currently");
+        }
+        if (recipe instanceof ShapedRecipe shapedRecipe) {
+            this.craftingSystem.registerShapedRecipe(shapedRecipe);
+            this.configShapedRecipes.add(shapedRecipe);
+            return;
+        }
+        if (recipe instanceof ShapelessRecipe shapelessRecipe) {
+            this.craftingSystem.registerShapelessRecipe(shapelessRecipe);
+            this.configShapelessRecipes.add(shapelessRecipe);
+        }
     }
 
     public @NonNull Plugin getPlugin() {

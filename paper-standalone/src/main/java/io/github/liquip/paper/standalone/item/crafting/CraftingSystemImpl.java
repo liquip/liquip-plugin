@@ -31,8 +31,28 @@ public class CraftingSystemImpl implements CraftingSystem {
     }
 
     @Override
+    public void unregisterShapedRecipe(@NonNull ShapedRecipe recipe) {
+        for (final Map.Entry<CraftMatrix, ShapedRecipe> entry : this.shapedMap.entrySet()) {
+            if (entry.getValue() == recipe) {
+                this.shapedMap.remove(entry.getKey(), recipe);
+                break;
+            }
+        }
+    }
+
+    @Override
     public void registerShapelessRecipe(@NonNull ShapelessRecipe recipe) {
         this.shapelessMap.put(recipe.getMatrix(), recipe);
+    }
+
+    @Override
+    public void unregisterShapelessRecipe(@NonNull ShapelessRecipe recipe) {
+        for (final Map.Entry<CraftMatrix, ShapelessRecipe> entry : this.shapelessMap.entrySet()) {
+            if (entry.getValue() == recipe) {
+                this.shapelessMap.remove(entry.getKey(), recipe);
+                break;
+            }
+        }
     }
 
     @Override
