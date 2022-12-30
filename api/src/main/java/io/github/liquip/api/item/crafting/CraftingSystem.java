@@ -9,7 +9,11 @@ import java.util.Iterator;
 public interface CraftingSystem {
     void registerShapedRecipe(@NonNull ShapedRecipe recipe);
 
+    void unregisterShapedRecipe(@NonNull ShapedRecipe recipe);
+
     void registerShapelessRecipe(@NonNull ShapelessRecipe recipe);
+
+    void unregisterShapelessRecipe(@NonNull ShapelessRecipe recipe);
 
     @Nullable ShapedRecipe getShapedRecipe(@NonNull CraftMatrix craftMatrix);
 
