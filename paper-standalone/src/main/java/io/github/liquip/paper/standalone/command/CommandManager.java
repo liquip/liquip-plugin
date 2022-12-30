@@ -3,6 +3,7 @@ package io.github.liquip.paper.standalone.command;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.CommandAPIConfig;
+import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.MultiLiteralArgument;
 import dev.jorel.commandapi.arguments.NamespacedKeyArgument;
 import io.github.liquip.api.item.Enchantment;
@@ -19,11 +20,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CommandManager implements Service {
     private final StandaloneLiquipImpl api;
+    private final List<NamespacedKey> cache;
 
     public CommandManager(@NotNull StandaloneLiquipImpl api) {
         this.api = api;
+        this.cache = new ArrayList<>();
     }
 
     private @NotNull CommandAPICommand createCommand() {
@@ -34,7 +40,11 @@ public class CommandManager implements Service {
 
     private @NotNull CommandAPICommand createGiveSubcommand() {
         return new CommandAPICommand("give").withPermission("liquip.command.give")
-            .withArguments(new NamespacedKeyArgument("key"))
+            .withArguments(new NamespacedKeyArgument("key").replaceSuggestions(ArgumentSuggestions.stringCollection(
+                suggestionInfo -> this.cache.stream()
+                    .map(NamespacedKey::asString)
+                    .filter(s -> s.contains(suggestionInfo.currentArg()))
+                    .toList())))
             .executesPlayer(this::giveSubcommand);
     }
 
@@ -111,6 +121,15 @@ public class CommandManager implements Service {
         }
     }
 
+    private void reloadCache() {
+        this.cache.clear();
+        for (final Item item : this.api.getItemRegistry()) {
+            this.cache.add(new NamespacedKey(item.key()
+                .namespace(), item.key()
+                .value()));
+        }
+    }
+
     @Override
     public void onLoad(@NotNull Plugin plugin) {
         CommandAPI.onLoad(new CommandAPIConfig().silentLogs(true));
@@ -119,8 +138,14 @@ public class CommandManager implements Service {
     @Override
     public void onEnable(@NotNull Plugin plugin) {
         CommandAPI.onEnable(plugin);
+        this.reloadCache();
         this.createCommand()
             .register();
+    }
+
+    @Override
+    public void onReload(@NotNull Plugin plugin) {
+        this.reloadCache();
     }
 
     @Override
