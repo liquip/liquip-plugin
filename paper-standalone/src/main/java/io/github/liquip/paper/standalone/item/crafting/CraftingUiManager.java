@@ -350,5 +350,11 @@ public class CraftingUiManager implements Service {
     @Override
     public void onEnable(@NotNull Plugin plugin) {
         JCougar.initializeSystem(plugin);
+        this.loadCatalogue();
+    }
+
+    @Override
+    public void onReload(@NotNull Plugin plugin) {
+        this.loadCatalogue();
     }
 }
