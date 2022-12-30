@@ -8,6 +8,7 @@ import com.github.sqyyy.jcougar.impl.panel.ClickPanel;
 import com.github.sqyyy.jcougar.impl.panel.SlotClickEventPanel;
 import com.github.sqyyy.jcougar.impl.panel.StoragePanel;
 import com.github.sqyyy.jcougar.impl.panel.TakeableSlotEventPanel;
+import io.github.liquip.paper.standalone.Service;
 import io.github.liquip.paper.standalone.StandaloneLiquipImpl;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -21,6 +22,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -31,7 +33,7 @@ import java.util.Spliterators;
 import java.util.UUID;
 import java.util.stream.StreamSupport;
 
-public class CraftingUiManager {
+public class CraftingUiManager implements Service {
     private final StandaloneLiquipImpl api;
     private final CraftingTableManager craftingTableManager;
     private final Ui craftingTableUi;
@@ -343,5 +345,10 @@ public class CraftingUiManager {
 
     private void recipeShowcaseBack(@NotNull Player player, @NotNull InventoryView view, int slot) {
         this.recipeBookUi.open(player);
+    }
+
+    @Override
+    public void onEnable(@NotNull Plugin plugin) {
+        JCougar.initializeSystem(plugin);
     }
 }
