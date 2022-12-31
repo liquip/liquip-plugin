@@ -30,6 +30,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;
 import org.bukkit.Tag;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
@@ -337,6 +338,12 @@ public class ConfigLoader {
     }
 
     private void craftingTableOnInteract(@NonNull PlayerInteractEvent event, @Nullable ItemStack item) {
+        if (event.getPlayer()
+            .getOpenInventory()
+            .getTopInventory()
+            .getType() != InventoryType.CRAFTING) {
+            return;
+        }
         event.setCancelled(true);
         this.api.getCraftingUiManager()
             .openCraftingTable(event.getPlayer());
