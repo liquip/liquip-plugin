@@ -31,10 +31,10 @@ public class ItemImpl implements Item {
     private final Material material;
     private final Component displayName;
     private final List<Component> lore;
+    private final Multimap<Class<? extends Event>, BiConsumer<? extends Event, ItemStack>> eventHandlers;
     private final Object2IntMap<Enchantment> enchantments;
     private final List<Feature> features;
     private final Map<TaggedFeature<?>, Object> taggedFeatures;
-    private final Multimap<Class<? extends Event>, BiConsumer<? extends Event, ItemStack>> eventHandlers;
 
     public ItemImpl(@NonNull Liquip api, @NonNull Key key, @NonNull Material material, @NonNull Component displayName,
         @NonNull List<Component> lore, @NonNull Object2IntMap<Enchantment> enchantments, @NonNull List<Feature> features,
@@ -46,10 +46,18 @@ public class ItemImpl implements Item {
         this.displayName = displayName;
         this.lore = new ArrayList<>(lore.size());
         this.lore.addAll(lore);
+        this.eventHandlers = ArrayListMultimap.create();
+        this.eventHandlers.putAll(eventHandlers);
         this.enchantments = new Object2IntOpenHashMap<>(enchantments.size());
-        this.enchantments.putAll(enchantments);
+        for (final Object2IntMap.Entry<Enchantment> entry : enchantments.object2IntEntrySet()) {
+            this.enchantments.put(entry.getKey(), entry.getIntValue());
+            entry.getKey().initialize(this, entry.getIntValue());
+        }
         this.features = new ArrayList<>(features.size());
-        this.features.addAll(features);
+        for (final Feature feature : features) {
+            this.features.add(feature);
+            feature.initialize(this);
+        }
         this.taggedFeatures = new LinkedHashMap<>(taggedFeatures.size());
         for (final Map.Entry<TaggedFeature<?>, ConfigElement> entry : taggedFeatures.entrySet()) {
             final Object res = entry.getKey().initialize(this, entry.getValue());
@@ -60,8 +68,6 @@ public class ItemImpl implements Item {
             }
             this.taggedFeatures.put(entry.getKey(), res);
         }
-        this.eventHandlers = ArrayListMultimap.create();
-        this.eventHandlers.putAll(eventHandlers);
     }
 
     @SuppressWarnings("unchecked")
