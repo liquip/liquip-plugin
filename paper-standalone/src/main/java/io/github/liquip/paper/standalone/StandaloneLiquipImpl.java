@@ -23,6 +23,7 @@ import io.github.liquip.paper.core.item.feature.minecraft.HideEnchantmentsFeatur
 import io.github.liquip.paper.core.item.feature.minecraft.HidePotionEffectsFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.HideUnbreakableFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.LeatherDyeFeature;
+import io.github.liquip.paper.core.item.feature.minecraft.SkullTextureFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.UnbreakableFeature;
 import io.github.liquip.paper.core.listener.BlockEventListener;
 import io.github.liquip.paper.core.listener.EntityEventListener;
@@ -302,6 +303,8 @@ public final class StandaloneLiquipImpl implements Liquip {
         this.taggedFeatureRegistry.register(customModelDataFeature.getKey(), customModelDataFeature);
         final LeatherDyeFeature leatherDyeFeature = new LeatherDyeFeature();
         this.taggedFeatureRegistry.register(leatherDyeFeature.getKey(), leatherDyeFeature);
+        final SkullTextureFeature skullTextureFeature = new SkullTextureFeature();
+        this.taggedFeatureRegistry.register(skullTextureFeature.getKey(), skullTextureFeature);
     }
 
     private void registerBukkitEnchantments() {
