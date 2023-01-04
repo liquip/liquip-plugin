@@ -18,6 +18,7 @@ Here is an overview over the possibilities you have with the plugin:
     * Set lore
     * Add features
 * Add shaped recipes for custom crafting table
+* View recipes in custom recipe book
 
 ## Structure
 
