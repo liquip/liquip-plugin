@@ -42,5 +42,6 @@ bukkit {
 }
 
 tasks.shadowJar {
-    relocate("dev.jorel.commandapi", "io.github.liquip.commandapi")
+    relocate("dev.jorel.commandapi", "io.github.liquip.paper.standalone.commandapi")
+    relocate("com.github.sqyyy.jcougar", "io.github.liquip.paper.standalone.jcougar")
 }
