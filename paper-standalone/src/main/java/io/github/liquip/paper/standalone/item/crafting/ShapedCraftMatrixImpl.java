@@ -2,7 +2,7 @@ package io.github.liquip.paper.standalone.item.crafting;
 
 import io.github.liquip.api.item.crafting.CraftMatrix;
 import net.kyori.adventure.key.KeyedValue;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -11,7 +11,7 @@ public class ShapedCraftMatrixImpl implements CraftMatrix {
     private final List<KeyedValue<Integer>> shape;
     private final int hashCode;
 
-    public ShapedCraftMatrixImpl(@NonNull List<KeyedValue<Integer>> shape) {
+    public ShapedCraftMatrixImpl(@NotNull List<KeyedValue<Integer>> shape) {
         this.shape = Collections.unmodifiableList(shape);
         int result = 1;
         for (KeyedValue<Integer> element : this.shape) {
@@ -32,7 +32,7 @@ public class ShapedCraftMatrixImpl implements CraftMatrix {
     }
 
     @Override
-    public boolean matches(@NonNull CraftMatrix that) {
+    public boolean matches(@NotNull CraftMatrix that) {
         if (that.isRecipeBound() || !that.isShaped()) {
             return false;
         }
@@ -58,7 +58,7 @@ public class ShapedCraftMatrixImpl implements CraftMatrix {
     }
 
     @Override
-    public @NonNull List<KeyedValue<Integer>> getStacks() {
+    public @NotNull List<KeyedValue<Integer>> getStacks() {
         return this.shape;
     }
 

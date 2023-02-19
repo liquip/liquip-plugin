@@ -5,7 +5,6 @@ import io.github.liquip.api.item.crafting.CraftMatrix;
 import io.github.liquip.api.item.crafting.ShapelessRecipe;
 import net.kyori.adventure.key.KeyedValue;
 import org.bukkit.inventory.ItemStack;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -15,23 +14,23 @@ public class ShapelessRecipeImpl implements ShapelessRecipe {
     private final Item item;
     private final CraftMatrix matrix;
 
-    public ShapelessRecipeImpl(@NonNull Item item, @NonNull Set<KeyedValue<Integer>> ingredients) {
+    public ShapelessRecipeImpl(@NotNull Item item, @NotNull Set<KeyedValue<Integer>> ingredients) {
         this.item = item;
         this.matrix = new ShapelessCraftMatrixImpl(ingredients);
     }
 
     @Override
-    public @NonNull CraftMatrix getMatrix() {
+    public @NotNull CraftMatrix getMatrix() {
         return this.matrix;
     }
 
     @Override
-    public void apply(@NonNull ItemStack @NonNull [] stacks) {
+    public void apply(@NotNull ItemStack @NotNull [] stacks) {
         // TODO - implement
     }
 
     @Override
-    public @NonNull ItemStack getResult(@NonNull List<KeyedValue<Integer>> stacks) {
+    public @NotNull ItemStack getResult(@NotNull List<KeyedValue<Integer>> stacks) {
         return this.item.newItemStack();
     }
 

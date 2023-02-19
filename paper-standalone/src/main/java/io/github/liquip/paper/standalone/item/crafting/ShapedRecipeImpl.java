@@ -9,9 +9,8 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -22,7 +21,7 @@ public class ShapedRecipeImpl implements ShapedRecipe {
     private final CraftMatrix matrix;
     private final ItemStack showcaseItem;
 
-    public ShapedRecipeImpl(@NonNull Item item, int count, @NonNull List<KeyedValue<Integer>> shape) {
+    public ShapedRecipeImpl(@NotNull Item item, int count, @NotNull List<KeyedValue<Integer>> shape) {
         this.item = item;
         this.count = count;
         this.shape = shape;
@@ -39,12 +38,12 @@ public class ShapedRecipeImpl implements ShapedRecipe {
     }
 
     @Override
-    public @NonNull CraftMatrix getMatrix() {
+    public @NotNull CraftMatrix getMatrix() {
         return this.matrix;
     }
 
     @Override
-    public void apply(@Nullable ItemStack @NonNull [] stacks) {
+    public void apply(@Nullable ItemStack @NotNull [] stacks) {
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 3; column++) {
                 final KeyedValue<Integer> ingredient = this.shape.get(row * 3 + column);
@@ -61,7 +60,7 @@ public class ShapedRecipeImpl implements ShapedRecipe {
     }
 
     @Override
-    public @NonNull ItemStack getResult(@NonNull List<KeyedValue<Integer>> stacks) {
+    public @NotNull ItemStack getResult(@NotNull List<KeyedValue<Integer>> stacks) {
         final ItemStack item = this.item.newItemStack();
         item.setAmount(this.count);
         return item;

@@ -2,7 +2,7 @@ package io.github.liquip.paper.standalone.item.crafting;
 
 import io.github.liquip.api.item.crafting.CraftMatrix;
 import net.kyori.adventure.key.KeyedValue;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -11,7 +11,7 @@ public class UnboundCraftMatrixImpl implements CraftMatrix {
     private final List<KeyedValue<Integer>> stacks;
     private boolean shaped;
 
-    public UnboundCraftMatrixImpl(boolean shaped, @NonNull List<KeyedValue<Integer>> stacks) {
+    public UnboundCraftMatrixImpl(boolean shaped, @NotNull List<KeyedValue<Integer>> stacks) {
         this.shaped = shaped;
         this.stacks = Collections.unmodifiableList(stacks);
     }
@@ -31,7 +31,7 @@ public class UnboundCraftMatrixImpl implements CraftMatrix {
     }
 
     @Override
-    public boolean matches(@NonNull CraftMatrix that) {
+    public boolean matches(@NotNull CraftMatrix that) {
         return that.matches(this);
     }
 
@@ -54,7 +54,7 @@ public class UnboundCraftMatrixImpl implements CraftMatrix {
     }
 
     @Override
-    public @NonNull List<KeyedValue<Integer>> getStacks() throws IllegalStateException {
+    public @NotNull List<KeyedValue<Integer>> getStacks() throws IllegalStateException {
         return this.stacks;
     }
 }

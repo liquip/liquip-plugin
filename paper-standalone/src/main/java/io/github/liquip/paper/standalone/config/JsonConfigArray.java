@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.liquip.api.config.ConfigArray;
 import io.github.liquip.api.config.ConfigObject;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 public class JsonConfigArray implements ConfigArray {
     private final ArrayNode node;
@@ -74,18 +74,18 @@ public class JsonConfigArray implements ConfigArray {
     }
 
     @Override
-    public @NonNull String getString(int index) {
+    public @NotNull String getString(int index) {
         return this.node.get(index)
             .textValue();
     }
 
     @Override
-    public @NonNull ConfigArray getArray(int index) {
+    public @NotNull ConfigArray getArray(int index) {
         return new JsonConfigArray((ArrayNode) this.node.get(index));
     }
 
     @Override
-    public @NonNull ConfigObject getObject(int index) {
+    public @NotNull ConfigObject getObject(int index) {
         return new JsonConfigObject((ObjectNode) this.node.get(index));
     }
 }
