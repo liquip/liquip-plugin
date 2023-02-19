@@ -3,14 +3,14 @@ package io.github.liquip.api.item;
 import io.github.liquip.api.config.ConfigElement;
 import org.bukkit.Keyed;
 import org.bukkit.inventory.ItemStack;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public interface TaggedFeature<T> extends Keyed {
-    default @Nullable T initialize(@NonNull Item item, @NonNull ConfigElement element) {
+    default @Nullable T initialize(@NotNull Item item, @NotNull ConfigElement element) {
         return null;
     }
 
-    default void apply(@NonNull Item item, @NonNull ItemStack itemStack, @NonNull T object) {
+    default void apply(@NotNull Item item, @NotNull ItemStack itemStack, @NotNull T object) {
     }
 }

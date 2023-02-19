@@ -1,7 +1,7 @@
 package io.github.liquip.api.item.crafting;
 
 import net.kyori.adventure.key.KeyedValue;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -10,9 +10,9 @@ public interface CraftMatrix {
 
     boolean isShaped();
 
-    boolean matches(@NonNull CraftMatrix that);
+    boolean matches(@NotNull CraftMatrix that);
 
-    @NonNull List<KeyedValue<Integer>> getStacks() throws IllegalStateException;
+    @NotNull List<KeyedValue<Integer>> getStacks() throws IllegalStateException;
 
     int hashCode();
 

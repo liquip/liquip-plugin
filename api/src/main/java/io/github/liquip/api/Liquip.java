@@ -8,7 +8,7 @@ import io.github.liquip.api.item.crafting.CraftingSystem;
 import io.github.liquip.api.item.crafting.Recipe;
 import net.kyori.adventure.key.Key;
 import org.bukkit.inventory.ItemStack;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 /**
@@ -32,7 +32,7 @@ public interface Liquip {
      * @return the system's logger
      * @since 1.2.0-beta
      */
-    @NonNull Logger getSystemLogger();
+    @NotNull Logger getSystemLogger();
 
     /**
      * Gets the {@link Registry}, responsible for managing {@link Item} instances.
@@ -40,7 +40,7 @@ public interface Liquip {
      * @return the item registry
      * @since 0.0.1-alpha
      */
-    @NonNull Registry<Item> getItemRegistry();
+    @NotNull Registry<Item> getItemRegistry();
 
     /**
      * Gets the {@link Registry}, responsible for managing {@link Feature} instances.
@@ -48,7 +48,7 @@ public interface Liquip {
      * @return the feature registry
      * @since 0.0.1-alpha
      */
-    @NonNull Registry<Feature> getFeatureRegistry();
+    @NotNull Registry<Feature> getFeatureRegistry();
 
     /**
      * Gets the {@link Registry}, responsible for managing {@link TaggedFeature} instances.
@@ -56,7 +56,7 @@ public interface Liquip {
      * @return the tagged feature registry
      * @since 0.0.1-alpha
      */
-    @NonNull Registry<TaggedFeature<?>> getTaggedFeatureRegistry();
+    @NotNull Registry<TaggedFeature<?>> getTaggedFeatureRegistry();
 
     /**
      * Gets the {@link Registry}, responsible for managing {@link Enchantment} instances.
@@ -64,7 +64,7 @@ public interface Liquip {
      * @return the enchantment registry
      * @since 0.0.1-alpha
      */
-    @NonNull Registry<Enchantment> getEnchantmentRegistry();
+    @NotNull Registry<Enchantment> getEnchantmentRegistry();
 
     /**
      * Return whether the {@link CraftingSystem}, responsible for managing {@link Recipe} instances is available on this instance
@@ -81,7 +81,7 @@ public interface Liquip {
      * @return the crafting system
      * @since 0.2.0-alpha
      */
-    @NonNull CraftingSystem getCraftingSystem();
+    @NotNull CraftingSystem getCraftingSystem();
 
     /**
      * Checks if the provided {@link ItemStack} is a custom item.
@@ -90,7 +90,7 @@ public interface Liquip {
      * @return whether the item is custom or not
      * @since 0.0.1-alpha
      */
-    boolean isCustomItemStack(@NonNull ItemStack itemStack);
+    boolean isCustomItemStack(@NotNull ItemStack itemStack);
 
     /**
      * Gets the {@link Key} from the {@link ItemStack}, representing the material of the item.
@@ -99,14 +99,14 @@ public interface Liquip {
      * @return the key of the provided item stack
      * @since 0.0.1-alpha
      */
-    @NonNull Key getKeyFromItemStack(@NonNull ItemStack itemStack);
+    @NotNull Key getKeyFromItemStack(@NotNull ItemStack itemStack);
 
     /**
      * Sets the {@link Key} from the {@link ItemStack}, representing the material of the item.
      *
      * @param itemStack the item that will be updated
-     * @param key the key that will be set
+     * @param key       the key that will be set
      * @since 0.2.0-alpha
      */
-    void setKeyForItemStack(@NonNull ItemStack itemStack, @NonNull Key key);
+    void setKeyForItemStack(@NotNull ItemStack itemStack, @NotNull Key key);
 }
