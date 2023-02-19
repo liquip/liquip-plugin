@@ -27,7 +27,6 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
     implementation(project(":api"))
     implementation(project(":paper-core"))
-    implementation(project(":liquip-gui"))
     implementation("dev.jorel:commandapi-shade:8.7.0")
     implementation("com.github.sqyyy:jcougar-ui:0.5.1-alpha")
     bukkitLibrary("com.fasterxml.jackson.core:jackson-databind:2.14.0")
