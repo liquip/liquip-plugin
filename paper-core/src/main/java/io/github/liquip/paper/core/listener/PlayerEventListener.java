@@ -1,5 +1,6 @@
 package io.github.liquip.paper.core.listener;
 
+import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import io.github.liquip.api.Liquip;
 import io.github.liquip.api.item.Item;
 import net.kyori.adventure.key.Key;
@@ -99,6 +100,18 @@ public class PlayerEventListener implements Listener {
                 .getItemInOffHand();
         }
         this.handleItem(PlayerBucketEmptyEvent.class, event, hand);
+    }
+
+    @EventHandler
+    public void onArmorChange(@NotNull PlayerArmorChangeEvent event) {
+        final ItemStack oldItem = event.getOldItem();
+        if (oldItem != null) {
+            this.handleItem(PlayerArmorChangeEvent.class, event, oldItem);
+        }
+        final ItemStack newItem = event.getNewItem();
+        if (newItem != null) {
+            this.handleItem(PlayerArmorChangeEvent.class, event, newItem);
+        }
     }
 
     private <T extends PlayerEvent> void handleItem(@NotNull Class<T> eventClass, @NotNull T event, @NotNull ItemStack stack) {
