@@ -10,8 +10,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Objects;
 
-public class HashRegistry<T extends Keyed> implements Registry<T> {
-    private final HashMap<Key, T> map;
+/**
+ * Implementation of the {@link Registry} interface with a {@link HashMap}.
+ *
+ * @param <V> the type of the value being stored
+ */
+public class HashRegistry<V extends Keyed> implements Registry<V> {
+    private final HashMap<Key, V> map;
 
     public HashRegistry() {
         this(16);
@@ -22,13 +27,13 @@ public class HashRegistry<T extends Keyed> implements Registry<T> {
     }
 
     @Override
-    public @NotNull Iterator<T> iterator() {
+    public @NotNull Iterator<V> iterator() {
         return this.map.values()
             .iterator();
     }
 
     @Override
-    public void register(@NotNull Key key, @NotNull T value) {
+    public void register(@NotNull Key key, @NotNull V value) {
         Objects.requireNonNull(value);
         this.map.put(key, value);
     }
@@ -40,7 +45,7 @@ public class HashRegistry<T extends Keyed> implements Registry<T> {
     }
 
     @Override
-    public @Nullable T get(@NotNull Key key) {
+    public @Nullable V get(@NotNull Key key) {
         Objects.requireNonNull(key);
         return this.map.get(key);
     }

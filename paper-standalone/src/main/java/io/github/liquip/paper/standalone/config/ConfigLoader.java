@@ -1,14 +1,12 @@
 package io.github.liquip.paper.standalone.config;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ImmutableMultimap;
 import io.github.liquip.api.config.ConfigElement;
 import io.github.liquip.api.item.Enchantment;
 import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
-import io.github.liquip.paper.core.item.SimpleItem;
+import io.github.liquip.paper.core.item.FixedItem;
 import io.github.liquip.paper.standalone.StandaloneLiquip;
 import io.github.liquip.paper.standalone.config.structure.ConfigStructure;
 import io.github.liquip.paper.standalone.config.structure.EnchantmentStructure;
@@ -19,7 +17,6 @@ import io.github.liquip.paper.standalone.item.crafting.StandaloneShapedRecipe;
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMaps;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.KeyedValue;
@@ -128,7 +125,7 @@ public class ConfigLoader {
             }
         }
         for (final ItemStructure item : items) {
-            final Key key = NamespacedKey.fromString(item.getKey());
+            final NamespacedKey key = NamespacedKey.fromString(item.getKey());
             if (key == null) {
                 this.logger.warn("Could not get key for item '{}', skipping...", item.getKey());
                 continue;
@@ -193,10 +190,15 @@ public class ConfigLoader {
                                 featureEntry.getKey(), key.asString()));
                 }
             }
-            final Item itemInstance =
-                new SimpleItem(this.api, key, material, displayName, lore, enchantments, features, taggedFeatures,
-                    ArrayListMultimap.create());
-            this.api.addConfigItem(itemInstance);
+            final Item itemInstance = new FixedItem.Builder(api).key(key)
+                .material(material)
+                .name(displayName)
+                .lore(lore)
+                .enchant(enchantments)
+                .features(features)
+                .taggedFeatures(taggedFeatures)
+                .build();
+            api.addConfigItem(itemInstance);
             if (item.getRecipes() != null) {
                 recipe:
                 for (final RecipeStructure recipe : item.getRecipes()) {
@@ -333,10 +335,11 @@ public class ConfigLoader {
     }
 
     private Item getDefaultCraftingTable() {
-        return new SimpleItem(this.api, new NamespacedKey("liquip", "crafting_table"), Material.CRAFTING_TABLE,
-            Component.text("Advanced Crafting Table")
-                .decoration(TextDecoration.ITALIC, false), List.of(), Object2IntMaps.emptyMap(), List.of(), Map.of(),
-            ImmutableMultimap.of());
+        return new FixedItem.Builder(api).key(new NamespacedKey("liquip", "crafting_table"))
+            .material(Material.CRAFTING_TABLE)
+            .name(Component.text("Advanced Crafting Table")
+                .decoration(TextDecoration.ITALIC, false))
+            .build();
     }
 
     private void craftingTableOnInteract(@NotNull PlayerInteractEvent event, @Nullable ItemStack item) {
