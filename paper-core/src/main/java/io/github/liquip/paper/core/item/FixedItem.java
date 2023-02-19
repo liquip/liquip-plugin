@@ -125,6 +125,16 @@ public class FixedItem extends ItemBase {
             return this;
         }
 
+        public Builder enchant(@NotNull Object2IntMap<Enchantment> enchants) {
+            Objects.requireNonNull(enchants);
+            enchants.forEach((k, v) -> {
+                Objects.requireNonNull(k);
+                Objects.requireNonNull(v);
+            });
+            enchantments.putAll(enchants);
+            return this;
+        }
+
         public Builder feature(@NotNull Feature feature) {
             Objects.requireNonNull(feature);
             features.add(feature);
@@ -157,13 +167,13 @@ public class FixedItem extends ItemBase {
             return this;
         }
 
-        public Builder taggedFeatures(@NotNull Map<TaggedFeature<Object>, ConfigElement> taggedFeatures) {
+        public Builder taggedFeatures(@NotNull Map<TaggedFeature<?>, ConfigElement> taggedFeatures) {
             Objects.requireNonNull(taggedFeatures);
-            for (final Map.Entry<TaggedFeature<Object>, ConfigElement> entry : taggedFeatures.entrySet()) {
+            for (final Map.Entry<TaggedFeature<?>, ConfigElement> entry : taggedFeatures.entrySet()) {
                 Objects.requireNonNull(entry.getKey());
                 Objects.requireNonNull(entry.getValue());
             }
-            for (final Map.Entry<TaggedFeature<Object>, ConfigElement> entry : taggedFeatures.entrySet()) {
+            for (final Map.Entry<TaggedFeature<?>, ConfigElement> entry : taggedFeatures.entrySet()) {
                 Objects.requireNonNull(entry.getKey());
                 Objects.requireNonNull(entry.getValue());
             }
