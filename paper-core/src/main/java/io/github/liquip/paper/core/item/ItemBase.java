@@ -24,6 +24,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
+/**
+ * Basic implementation of the {@link Item} interface.
+ * <p>
+ * This class is meant to be inherited and not used directly.
+ * </p>
+ */
 public class ItemBase implements Item {
     protected final Liquip api;
     protected final NamespacedKey key;
@@ -36,13 +42,12 @@ public class ItemBase implements Item {
     @Deprecated(forRemoval = true)
     protected final Multimap<Class<? extends Event>, BiConsumer<? extends Event, ItemStack>> eventHandlers;
 
-    public ItemBase(@NotNull Liquip api, @NotNull NamespacedKey key, @NotNull Material material,
-        @NotNull Component displayName) {
+    public ItemBase(@NotNull Liquip api, @NotNull NamespacedKey key, @NotNull Material material, @NotNull Component displayName) {
         this(api, key, material, displayName, List.of());
     }
 
-    public ItemBase(@NotNull Liquip api, @NotNull NamespacedKey key, @NotNull Material material,
-        @NotNull Component displayName, @NotNull List<Component> lore) {
+    public ItemBase(@NotNull Liquip api, @NotNull NamespacedKey key, @NotNull Material material, @NotNull Component displayName,
+        @NotNull List<Component> lore) {
         Objects.requireNonNull(api);
         Objects.requireNonNull(key);
         Objects.requireNonNull(material);

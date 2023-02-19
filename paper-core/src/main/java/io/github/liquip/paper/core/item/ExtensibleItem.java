@@ -4,6 +4,7 @@ import com.google.common.collect.Multimap;
 import io.github.liquip.api.Liquip;
 import io.github.liquip.api.item.Enchantment;
 import io.github.liquip.api.item.Feature;
+import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.kyori.adventure.text.Component;
@@ -17,6 +18,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
+/**
+ * Implementation of the {@link Item} interface.
+ * <p>
+ * This class is meant to be used if the item should be modifiable after its instantiation.
+ * </p>
+ */
 public class ExtensibleItem extends ItemBase {
     public ExtensibleItem(@NotNull Liquip api, @NotNull NamespacedKey key, @NotNull Material material,
         @NotNull Component displayName) {

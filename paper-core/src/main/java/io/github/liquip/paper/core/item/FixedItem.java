@@ -6,6 +6,7 @@ import io.github.liquip.api.Liquip;
 import io.github.liquip.api.config.ConfigElement;
 import io.github.liquip.api.item.Enchantment;
 import io.github.liquip.api.item.Feature;
+import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -23,6 +24,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
+/**
+ * Implementation of the {@link Item} interface.
+ * <p>
+ * This class is meant to be used if the item should not be modifiable after its instantiation.
+ * </p>
+ */
 public class FixedItem extends ItemBase {
     public FixedItem(@NotNull Liquip api, @NotNull NamespacedKey key, @NotNull Material material, @NotNull Component displayName,
         @NotNull List<Component> lore, @NotNull Object2IntMap<Enchantment> enchantments, @NotNull List<Feature> features,
