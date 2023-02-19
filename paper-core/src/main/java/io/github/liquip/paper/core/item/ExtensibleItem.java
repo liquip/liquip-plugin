@@ -46,6 +46,7 @@ public class ExtensibleItem extends ItemBase {
 
     public <T> boolean addTaggedFeature(@NotNull TaggedFeature<T> feature, @NotNull ConfigElement config) {
         Objects.requireNonNull(feature);
+        Objects.requireNonNull(config);
         final T value = feature.initialize(this, config);
         if (value == null) {
             return false;
