@@ -41,6 +41,9 @@ public class BundledLiquipImpl implements Liquip {
     }
 
     public BundledLiquipImpl(@NotNull String namespace, @NotNull Plugin plugin, @NotNull Logger systemLogger, boolean register) {
+        Objects.requireNonNull(namespace);
+        Objects.requireNonNull(plugin);
+        Objects.requireNonNull(systemLogger);
         this.pdcKey = new NamespacedKey(namespace.toLowerCase(), "key");
         this.plugin = plugin;
         this.systemLogger = systemLogger;
@@ -104,6 +107,7 @@ public class BundledLiquipImpl implements Liquip {
     @Override
     @SuppressWarnings("DataFlowIssue")
     public boolean isCustomItemStack(@NotNull ItemStack itemStack) {
+        Objects.requireNonNull(itemStack);
         if (itemStack.getItemMeta() == null) {
             return false;
         }
@@ -118,6 +122,7 @@ public class BundledLiquipImpl implements Liquip {
     @Override
     @SuppressWarnings("DataFlowIssue")
     public @NotNull Key getKeyFromItemStack(@NotNull ItemStack itemStack) {
+        Objects.requireNonNull(itemStack);
         if (itemStack.getItemMeta() == null) {
             return itemStack.getType()
                 .getKey();
@@ -134,6 +139,8 @@ public class BundledLiquipImpl implements Liquip {
 
     @Override
     public void setKeyForItemStack(@NotNull ItemStack itemStack, @NotNull Key key) {
+        Objects.requireNonNull(itemStack);
+        Objects.requireNonNull(key);
         itemStack.editMeta(meta -> meta.getPersistentDataContainer()
             .set(this.pdcKey, PersistentDataType.STRING, key.asString()));
     }
