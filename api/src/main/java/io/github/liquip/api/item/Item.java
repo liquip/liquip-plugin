@@ -32,6 +32,7 @@ public interface Item extends Keyed {
      * @param <T>        the type of the event to be handled
      * @since 0.0.1-alpha
      */
+    @Deprecated(forRemoval = true)
     <T extends Event> void callEvent(@NotNull Class<T> eventClass, @NotNull T event, @NotNull ItemStack itemStack);
 
     /**
@@ -42,5 +43,6 @@ public interface Item extends Keyed {
      * @param <T>          the type of the event to be registered
      * @since 0.0.1-alpha
      */
+    @Deprecated(forRemoval = true)
     <T extends Event> void registerEvent(@NotNull Class<T> eventClass, @NotNull BiConsumer<T, ItemStack> eventHandler);
 }

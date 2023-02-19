@@ -181,6 +181,7 @@ public class FixedItem extends ItemBase {
             return this;
         }
 
+        @Deprecated(forRemoval = true)
         public <T extends Event> Builder event(@NotNull Class<T> eventClass, @NotNull BiConsumer<T, ItemStack> eventHandler) {
             Objects.requireNonNull(eventClass);
             Objects.requireNonNull(eventHandler);
@@ -188,11 +189,13 @@ public class FixedItem extends ItemBase {
             return this;
         }
 
+        @Deprecated(forRemoval = true)
         public Builder events() {
             eventHandlers.clear();
             return this;
         }
 
+        @Deprecated(forRemoval = true)
         public Builder events(@NotNull Multimap<Class<Event>, BiConsumer<Event, ItemStack>> eventHandlers) {
             Objects.requireNonNull(eventHandlers);
             eventHandlers.forEach((k, v) -> {

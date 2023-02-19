@@ -33,6 +33,7 @@ public class ItemBase implements Item {
     protected final Object2IntMap<Enchantment> enchantments;
     protected final List<Feature> features;
     protected final Map<TaggedFeature<?>, Object> taggedFeatures;
+    @Deprecated(forRemoval = true)
     protected final Multimap<Class<? extends Event>, BiConsumer<? extends Event, ItemStack>> eventHandlers;
 
     public ItemBase(@NotNull Liquip api, @NotNull NamespacedKey key, @NotNull Material material,
@@ -76,6 +77,7 @@ public class ItemBase implements Item {
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     @SuppressWarnings("unchecked")
     public <T extends Event> void callEvent(@NotNull Class<T> eventClass, @NotNull T event, @NotNull ItemStack itemStack) {
         final Collection<BiConsumer<? extends Event, ItemStack>> handlers = this.eventHandlers.get(eventClass);
@@ -85,6 +87,7 @@ public class ItemBase implements Item {
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     public <T extends Event> void registerEvent(@NotNull Class<T> eventClass, @NotNull BiConsumer<T, ItemStack> eventHandler) {
         this.eventHandlers.put(eventClass, eventHandler);
     }
