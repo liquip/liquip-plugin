@@ -12,10 +12,13 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class BlockEventListener implements Listener {
     private final Liquip api;
 
     public BlockEventListener(@NotNull Liquip api) {
+        Objects.requireNonNull(api);
         this.api = api;
     }
 

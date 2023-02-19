@@ -13,10 +13,13 @@ import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+
 public class EntityEventListener implements Listener {
     private final Liquip api;
 
     public EntityEventListener(@NotNull Liquip api) {
+        Objects.requireNonNull(api);
         this.api = api;
     }
 

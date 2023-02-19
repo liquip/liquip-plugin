@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 public class ItemImpl implements Item {
@@ -39,6 +40,15 @@ public class ItemImpl implements Item {
         @NotNull List<Component> lore, @NotNull Object2IntMap<Enchantment> enchantments, @NotNull List<Feature> features,
         @NotNull Map<TaggedFeature<?>, ConfigElement> taggedFeatures,
         @NotNull Multimap<Class<? extends Event>, BiConsumer<? extends Event, ItemStack>> eventHandlers) {
+        Objects.requireNonNull(api);
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(material);
+        Objects.requireNonNull(displayName);
+        Objects.requireNonNull(lore);
+        Objects.requireNonNull(enchantments);
+        Objects.requireNonNull(features);
+        Objects.requireNonNull(taggedFeatures);
+        Objects.requireNonNull(eventHandlers);
         this.api = api;
         this.key = key;
         this.material = material;

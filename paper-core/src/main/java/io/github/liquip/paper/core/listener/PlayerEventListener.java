@@ -17,10 +17,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class PlayerEventListener implements Listener {
     private final Liquip api;
 
-    public PlayerEventListener(Liquip api) {
+    public PlayerEventListener(@NotNull Liquip api) {
+        Objects.requireNonNull(api);
         this.api = api;
     }
 

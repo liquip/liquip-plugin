@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Objects;
 
 public class RegistryImpl<T extends Keyed> implements Registry<T> {
     private final HashMap<Key, T> map;
@@ -20,25 +21,27 @@ public class RegistryImpl<T extends Keyed> implements Registry<T> {
         this.map = new HashMap<>(initialCapacity);
     }
 
-    @NotNull
     @Override
-    public Iterator<T> iterator() {
+    public @NotNull Iterator<T> iterator() {
         return this.map.values()
             .iterator();
     }
 
     @Override
     public void register(@NotNull Key key, @NotNull T value) {
+        Objects.requireNonNull(value);
         this.map.put(key, value);
     }
 
     @Override
     public void unregister(@NotNull Key key) {
+        Objects.requireNonNull(key);
         this.map.remove(key);
     }
 
     @Override
     public @Nullable T get(@NotNull Key key) {
+        Objects.requireNonNull(key);
         return this.map.get(key);
     }
 }

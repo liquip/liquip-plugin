@@ -9,10 +9,13 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class SystemEventListener implements Listener {
     private final Liquip api;
 
     public SystemEventListener(@NotNull Liquip api) {
+        Objects.requireNonNull(api);
         this.api = api;
     }
 
