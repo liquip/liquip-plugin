@@ -77,6 +77,7 @@ public final class StandaloneLiquipImpl implements Liquip {
     private boolean enabled;
 
     public StandaloneLiquipImpl(@NotNull Plugin plugin) {
+        Objects.requireNonNull(plugin);
         this.plugin = plugin;
         this.mapper = new JsonMapper().enable(JsonParser.Feature.ALLOW_COMMENTS)
             .enable(JsonParser.Feature.ALLOW_SINGLE_QUOTES)
@@ -100,6 +101,7 @@ public final class StandaloneLiquipImpl implements Liquip {
     }
 
     public static @NotNull Component MM(@NotNull String input) {
+        Objects.requireNonNull(input);
         return MM.deserialize(input);
     }
 
@@ -170,6 +172,7 @@ public final class StandaloneLiquipImpl implements Liquip {
     }
 
     public void addConfigItem(@NotNull Item item) {
+        Objects.requireNonNull(item);
         if (!this.currentlyLoadingConfig) {
             throw new IllegalStateException("Not loading config currently");
         }
@@ -178,6 +181,7 @@ public final class StandaloneLiquipImpl implements Liquip {
     }
 
     public void addConfigRecipe(@NotNull Recipe recipe) {
+        Objects.requireNonNull(recipe);
         if (!this.currentlyLoadingConfig) {
             throw new IllegalStateException("Not loading config currently");
         }
@@ -250,6 +254,7 @@ public final class StandaloneLiquipImpl implements Liquip {
     @Override
     @SuppressWarnings("DataFlowIssue")
     public boolean isCustomItemStack(@NotNull ItemStack itemStack) {
+        Objects.requireNonNull(itemStack);
         if (itemStack.getItemMeta() == null) {
             return false;
         }
@@ -264,6 +269,7 @@ public final class StandaloneLiquipImpl implements Liquip {
     @Override
     @SuppressWarnings("DataFlowIssue")
     public @NotNull Key getKeyFromItemStack(@NotNull ItemStack itemStack) {
+        Objects.requireNonNull(itemStack);
         if (itemStack.getItemMeta() == null) {
             return itemStack.getType()
                 .getKey();
@@ -279,6 +285,8 @@ public final class StandaloneLiquipImpl implements Liquip {
 
     @Override
     public void setKeyForItemStack(@NotNull ItemStack itemStack, @NotNull Key key) {
+        Objects.requireNonNull(itemStack);
+        Objects.requireNonNull(key);
         itemStack.editMeta(meta -> meta.getPersistentDataContainer()
             .set(PDC_KEY, PersistentDataType.STRING, key.asString()));
     }

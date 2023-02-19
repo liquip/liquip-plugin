@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @ApiStatus.Experimental
@@ -15,6 +16,7 @@ public class ShapelessCraftMatrixImpl implements CraftMatrix {
     private final int hashCode;
 
     public ShapelessCraftMatrixImpl(@NotNull Set<KeyedValue<Integer>> ingredients) {
+        Objects.requireNonNull(ingredients);
         this.ingredients = ingredients;
         this.hashCode = ingredients.hashCode();
     }
@@ -35,6 +37,7 @@ public class ShapelessCraftMatrixImpl implements CraftMatrix {
 
     @Override
     public boolean matches(@NotNull CraftMatrix that) {
+        Objects.requireNonNull(that);
         // TODO - implement
         return false;
     }

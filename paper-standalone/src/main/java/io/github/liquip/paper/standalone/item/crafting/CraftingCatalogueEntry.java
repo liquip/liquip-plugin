@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 
 public class CraftingCatalogueEntry {
     private final Recipe recipe;
@@ -21,6 +22,13 @@ public class CraftingCatalogueEntry {
 
     public CraftingCatalogueEntry(@NotNull Recipe recipe, @NotNull ItemStack showcaseItem, @Nullable ItemStack @NotNull [] items,
         @NotNull ItemStack result) {
+        Objects.requireNonNull(recipe);
+        Objects.requireNonNull(showcaseItem);
+        Objects.requireNonNull(items);
+        for (final ItemStack item : items) {
+            Objects.requireNonNull(item);
+        }
+        Objects.requireNonNull(result);
         this.recipe = recipe;
         this.showcaseItem = showcaseItem;
         this.items = items;

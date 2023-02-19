@@ -8,10 +8,13 @@ import io.github.liquip.api.config.ConfigElement;
 import io.github.liquip.api.config.ConfigObject;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class JsonConfigElement implements ConfigElement {
     private final JsonNode node;
 
     public JsonConfigElement(@NotNull JsonNode node) {
+        Objects.requireNonNull(node);
         this.node = node;
     }
 

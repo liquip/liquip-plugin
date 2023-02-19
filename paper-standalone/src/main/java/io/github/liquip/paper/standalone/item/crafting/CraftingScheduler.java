@@ -14,12 +14,15 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class CraftingScheduler extends BukkitRunnable {
     private final StandaloneLiquipImpl api;
     private final InventoryView view;
 
     public CraftingScheduler(@NotNull StandaloneLiquipImpl api, @NotNull InventoryView view) {
+        Objects.requireNonNull(api);
+        Objects.requireNonNull(view);
         this.api = api;
         this.view = view;
     }

@@ -7,10 +7,13 @@ import io.github.liquip.api.config.ConfigArray;
 import io.github.liquip.api.config.ConfigObject;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class JsonConfigArray implements ConfigArray {
     private final ArrayNode node;
 
-    public JsonConfigArray(ArrayNode node) {
+    public JsonConfigArray(@NotNull ArrayNode node) {
+        Objects.requireNonNull(node);
         this.node = node;
     }
 

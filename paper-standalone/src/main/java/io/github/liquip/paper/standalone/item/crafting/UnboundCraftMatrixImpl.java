@@ -6,12 +6,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class UnboundCraftMatrixImpl implements CraftMatrix {
     private final List<KeyedValue<Integer>> stacks;
     private boolean shaped;
 
     public UnboundCraftMatrixImpl(boolean shaped, @NotNull List<KeyedValue<Integer>> stacks) {
+        Objects.requireNonNull(stacks);
         this.shaped = shaped;
         this.stacks = Collections.unmodifiableList(stacks);
     }
@@ -32,6 +34,7 @@ public class UnboundCraftMatrixImpl implements CraftMatrix {
 
     @Override
     public boolean matches(@NotNull CraftMatrix that) {
+        Objects.requireNonNull(that);
         return that.matches(this);
     }
 

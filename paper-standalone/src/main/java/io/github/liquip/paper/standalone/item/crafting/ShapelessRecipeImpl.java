@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public class ShapelessRecipeImpl implements ShapelessRecipe {
@@ -15,6 +16,8 @@ public class ShapelessRecipeImpl implements ShapelessRecipe {
     private final CraftMatrix matrix;
 
     public ShapelessRecipeImpl(@NotNull Item item, @NotNull Set<KeyedValue<Integer>> ingredients) {
+        Objects.requireNonNull(item);
+        Objects.requireNonNull(ingredients);
         this.item = item;
         this.matrix = new ShapelessCraftMatrixImpl(ingredients);
     }
@@ -26,11 +29,13 @@ public class ShapelessRecipeImpl implements ShapelessRecipe {
 
     @Override
     public void apply(@NotNull ItemStack @NotNull [] stacks) {
+        Objects.requireNonNull(stacks);
         // TODO - implement
     }
 
     @Override
     public @NotNull ItemStack getResult(@NotNull List<KeyedValue<Integer>> stacks) {
+        Objects.requireNonNull(stacks);
         return this.item.newItemStack();
     }
 

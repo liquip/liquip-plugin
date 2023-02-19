@@ -47,6 +47,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 public class ConfigLoader {
@@ -56,6 +57,7 @@ public class ConfigLoader {
     private boolean wasLoadedBefore;
 
     public ConfigLoader(@NotNull StandaloneLiquipImpl api) {
+        Objects.requireNonNull(api);
         this.api = api;
         this.logger = api.getPlugin()
             .getSLF4JLogger();

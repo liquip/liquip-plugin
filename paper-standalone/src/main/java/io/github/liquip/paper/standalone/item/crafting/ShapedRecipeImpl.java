@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ShapedRecipeImpl implements ShapedRecipe {
     private final Item item;
@@ -22,6 +23,8 @@ public class ShapedRecipeImpl implements ShapedRecipe {
     private final ItemStack showcaseItem;
 
     public ShapedRecipeImpl(@NotNull Item item, int count, @NotNull List<KeyedValue<Integer>> shape) {
+        Objects.requireNonNull(item);
+        Objects.requireNonNull(shape);
         this.item = item;
         this.count = count;
         this.shape = shape;
@@ -44,6 +47,7 @@ public class ShapedRecipeImpl implements ShapedRecipe {
 
     @Override
     public void apply(@Nullable ItemStack @NotNull [] stacks) {
+        Objects.requireNonNull(stacks);
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 3; column++) {
                 final KeyedValue<Integer> ingredient = this.shape.get(row * 3 + column);
@@ -61,6 +65,7 @@ public class ShapedRecipeImpl implements ShapedRecipe {
 
     @Override
     public @NotNull ItemStack getResult(@NotNull List<KeyedValue<Integer>> stacks) {
+        Objects.requireNonNull(stacks);
         final ItemStack item = this.item.newItemStack();
         item.setAmount(this.count);
         return item;
