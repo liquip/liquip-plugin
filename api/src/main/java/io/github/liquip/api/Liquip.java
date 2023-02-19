@@ -1,5 +1,6 @@
 package io.github.liquip.api;
 
+import io.github.liquip.api.event.EventSystem;
 import io.github.liquip.api.item.Enchantment;
 import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
@@ -67,8 +68,8 @@ public interface Liquip {
     @NotNull Registry<Enchantment> getEnchantmentRegistry();
 
     /**
-     * Return whether the {@link CraftingSystem}, responsible for managing {@link Recipe} instances is available on this instance
-     * of the API.
+     * Return whether the {@link CraftingSystem} - responsible for managing {@link Recipe} instances - is available on this
+     * instance of the API.
      *
      * @return whether the crafting system is supported by this API
      * @since 0.2.0-alpha
@@ -81,7 +82,27 @@ public interface Liquip {
      * @return the crafting system
      * @since 0.2.0-alpha
      */
-    @NotNull CraftingSystem getCraftingSystem();
+    default @NotNull CraftingSystem getCraftingSystem() {
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Return whether this instance of the API supports the {@link EventSystem} or not.
+     *
+     * @return whether the event system is supported by this API
+     * @since 3.0.0
+     */
+    boolean supportsEventSystem();
+
+    /**
+     * Gets the {@link EventSystem}, responsible for managing event handling.
+     *
+     * @return the event system
+     * @since 3.0.0
+     */
+    default @NotNull EventSystem getEventSystem() {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Checks if the provided {@link ItemStack} is a custom item.

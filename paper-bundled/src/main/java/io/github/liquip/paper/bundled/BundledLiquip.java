@@ -6,7 +6,6 @@ import io.github.liquip.api.item.Enchantment;
 import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
-import io.github.liquip.api.item.crafting.CraftingSystem;
 import io.github.liquip.paper.core.listener.BlockEventListener;
 import io.github.liquip.paper.core.listener.EntityEventListener;
 import io.github.liquip.paper.core.listener.PlayerEventListener;
@@ -27,14 +26,14 @@ import org.slf4j.Logger;
 import java.util.Objects;
 
 public class BundledLiquip implements Liquip {
-    private final NamespacedKey pdcKey;
-    private final Plugin plugin;
-    private final Logger systemLogger;
-    private final Registry<Item> itemRegistry;
-    private final Registry<Feature> featureRegistry;
-    private final Registry<TaggedFeature<?>> taggedFeatureRegistry;
-    private final Registry<Enchantment> enchantmentRegistry;
-    private boolean enabled;
+    protected final NamespacedKey pdcKey;
+    protected final Plugin plugin;
+    protected final Logger systemLogger;
+    protected final Registry<Item> itemRegistry;
+    protected final Registry<Feature> featureRegistry;
+    protected final Registry<TaggedFeature<?>> taggedFeatureRegistry;
+    protected final Registry<Enchantment> enchantmentRegistry;
+    protected boolean enabled;
 
     public BundledLiquip(@NotNull String namespace, @NotNull Plugin plugin, boolean register) {
         this(namespace, plugin, plugin.getSLF4JLogger(), register);
@@ -100,8 +99,8 @@ public class BundledLiquip implements Liquip {
     }
 
     @Override
-    public @NotNull CraftingSystem getCraftingSystem() {
-        throw new UnsupportedOperationException();
+    public boolean supportsEventSystem() {
+        return false;
     }
 
     @Override

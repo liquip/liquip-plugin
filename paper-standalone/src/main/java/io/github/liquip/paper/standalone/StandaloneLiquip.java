@@ -252,6 +252,11 @@ public final class StandaloneLiquip implements Liquip {
     }
 
     @Override
+    public boolean supportsEventSystem() {
+        return false;
+    }
+
+    @Override
     @SuppressWarnings("DataFlowIssue")
     public boolean isCustomItemStack(@NotNull ItemStack itemStack) {
         Objects.requireNonNull(itemStack);
