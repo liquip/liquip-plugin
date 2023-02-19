@@ -4,7 +4,6 @@ import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 public class UnbreakableFeature implements Feature {
@@ -16,7 +15,7 @@ public class UnbreakableFeature implements Feature {
     }
 
     @Override
-    public void apply(@NonNull Item item, @NonNull ItemStack itemStack) {
+    public void apply(@NotNull Item item, @NotNull ItemStack itemStack) {
         itemStack.editMeta(it -> it.setUnbreakable(true));
     }
 }

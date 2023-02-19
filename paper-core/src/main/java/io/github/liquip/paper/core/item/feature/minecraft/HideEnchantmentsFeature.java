@@ -5,7 +5,6 @@ import io.github.liquip.api.item.Item;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 public class HideEnchantmentsFeature implements Feature {
@@ -17,7 +16,7 @@ public class HideEnchantmentsFeature implements Feature {
     }
 
     @Override
-    public void apply(@NonNull Item item, @NonNull ItemStack itemStack) {
+    public void apply(@NotNull Item item, @NotNull ItemStack itemStack) {
         itemStack.editMeta(it -> it.addItemFlags(ItemFlag.HIDE_ENCHANTS));
     }
 }

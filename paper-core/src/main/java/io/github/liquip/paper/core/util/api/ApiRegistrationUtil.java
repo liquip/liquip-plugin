@@ -2,6 +2,7 @@ package io.github.liquip.paper.core.util.api;
 
 import io.github.liquip.api.Liquip;
 import io.github.liquip.api.LiquipProvider;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
 
@@ -20,7 +21,7 @@ public class ApiRegistrationUtil {
         }
     }
 
-    public static void registerProvider(Liquip liquipApi) {
+    public static void registerProvider(@NotNull Liquip liquipApi) {
         try {
             REGISTER.invoke(null, liquipApi);
         } catch (Exception e) {

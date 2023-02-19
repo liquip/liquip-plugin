@@ -15,7 +15,6 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.event.Event;
 import org.bukkit.inventory.ItemStack;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -36,10 +35,10 @@ public class ItemImpl implements Item {
     private final List<Feature> features;
     private final Map<TaggedFeature<?>, Object> taggedFeatures;
 
-    public ItemImpl(@NonNull Liquip api, @NonNull Key key, @NonNull Material material, @NonNull Component displayName,
-        @NonNull List<Component> lore, @NonNull Object2IntMap<Enchantment> enchantments, @NonNull List<Feature> features,
-        @NonNull Map<TaggedFeature<?>, ConfigElement> taggedFeatures,
-        @NonNull Multimap<Class<? extends Event>, BiConsumer<? extends Event, ItemStack>> eventHandlers) {
+    public ItemImpl(@NotNull Liquip api, @NotNull Key key, @NotNull Material material, @NotNull Component displayName,
+        @NotNull List<Component> lore, @NotNull Object2IntMap<Enchantment> enchantments, @NotNull List<Feature> features,
+        @NotNull Map<TaggedFeature<?>, ConfigElement> taggedFeatures,
+        @NotNull Multimap<Class<? extends Event>, BiConsumer<? extends Event, ItemStack>> eventHandlers) {
         this.api = api;
         this.key = key;
         this.material = material;
@@ -51,7 +50,8 @@ public class ItemImpl implements Item {
         this.enchantments = new Object2IntOpenHashMap<>(enchantments.size());
         for (final Object2IntMap.Entry<Enchantment> entry : enchantments.object2IntEntrySet()) {
             this.enchantments.put(entry.getKey(), entry.getIntValue());
-            entry.getKey().initialize(this, entry.getIntValue());
+            entry.getKey()
+                .initialize(this, entry.getIntValue());
         }
         this.features = new ArrayList<>(features.size());
         for (final Feature feature : features) {
@@ -60,10 +60,12 @@ public class ItemImpl implements Item {
         }
         this.taggedFeatures = new LinkedHashMap<>(taggedFeatures.size());
         for (final Map.Entry<TaggedFeature<?>, ConfigElement> entry : taggedFeatures.entrySet()) {
-            final Object res = entry.getKey().initialize(this, entry.getValue());
+            final Object res = entry.getKey()
+                .initialize(this, entry.getValue());
             if (res == null) {
                 this.api.getSystemLogger()
-                    .warn("Tagged feature '{}' could not be applied to item '{}'", entry.getKey().getKey(), this.key);
+                    .warn("Tagged feature '{}' could not be applied to item '{}'", entry.getKey()
+                        .getKey(), this.key);
                 continue;
             }
             this.taggedFeatures.put(entry.getKey(), res);
@@ -81,7 +83,7 @@ public class ItemImpl implements Item {
     }
 
     @Override
-    public @NonNull ItemStack newItemStack() {
+    public @NotNull ItemStack newItemStack() {
         final ItemStack itemStack = new ItemStack(this.material);
         itemStack.editMeta(meta -> {
             meta.displayName(this.displayName);
@@ -96,7 +98,7 @@ public class ItemImpl implements Item {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends Event> void callEvent(@NonNull Class<T> eventClass, @NonNull T event, @NonNull ItemStack itemStack) {
+    public <T extends Event> void callEvent(@NotNull Class<T> eventClass, @NotNull T event, @NotNull ItemStack itemStack) {
         final Collection<BiConsumer<? extends Event, ItemStack>> handlers = this.eventHandlers.get(eventClass);
         for (BiConsumer<? extends Event, ItemStack> handler : handlers) {
             ((BiConsumer<Event, ItemStack>) handler).accept(event, itemStack);
@@ -104,7 +106,7 @@ public class ItemImpl implements Item {
     }
 
     @Override
-    public <T extends Event> void registerEvent(@NonNull Class<T> eventClass, @NonNull BiConsumer<T, ItemStack> eventHandler) {
+    public <T extends Event> void registerEvent(@NotNull Class<T> eventClass, @NotNull BiConsumer<T, ItemStack> eventHandler) {
         this.eventHandlers.put(eventClass, eventHandler);
     }
 }

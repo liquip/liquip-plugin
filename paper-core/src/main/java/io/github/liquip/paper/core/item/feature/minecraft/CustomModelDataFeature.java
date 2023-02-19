@@ -5,9 +5,8 @@ import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CustomModelDataFeature implements TaggedFeature<Integer> {
     private final NamespacedKey key = new NamespacedKey("minecraft", "custom_model_data");
@@ -18,7 +17,7 @@ public class CustomModelDataFeature implements TaggedFeature<Integer> {
     }
 
     @Override
-    public @Nullable Integer initialize(@NonNull Item item, @NonNull ConfigElement element) {
+    public @Nullable Integer initialize(@NotNull Item item, @NotNull ConfigElement element) {
         if (!element.isInt()) {
             return null;
         }
@@ -26,7 +25,7 @@ public class CustomModelDataFeature implements TaggedFeature<Integer> {
     }
 
     @Override
-    public void apply(@NonNull Item item, @NonNull ItemStack itemStack, @NonNull Integer object) {
+    public void apply(@NotNull Item item, @NotNull ItemStack itemStack, @NotNull Integer object) {
         itemStack.editMeta(it -> it.setCustomModelData(object));
     }
 }

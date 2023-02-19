@@ -7,17 +7,19 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class SystemEventListener implements Listener {
     private final Liquip api;
 
-    public SystemEventListener(Liquip api) {
+    public SystemEventListener(@NotNull Liquip api) {
         this.api = api;
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onCraft(CraftItemEvent event) {
-        for (final ItemStack item : event.getInventory().getMatrix()) {
+        for (final ItemStack item : event.getInventory()
+            .getMatrix()) {
             if (item == null) {
                 continue;
             }

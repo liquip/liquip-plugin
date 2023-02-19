@@ -7,9 +7,8 @@ import org.bukkit.Color;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class LeatherDyeFeature implements TaggedFeature<Integer> {
     private final NamespacedKey key = new NamespacedKey("minecraft", "dye_leather");
@@ -20,7 +19,7 @@ public class LeatherDyeFeature implements TaggedFeature<Integer> {
     }
 
     @Override
-    public @Nullable Integer initialize(@NonNull Item item, @NonNull ConfigElement element) {
+    public @Nullable Integer initialize(@NotNull Item item, @NotNull ConfigElement element) {
         if (element.isInt()) {
             return element.asInt();
         }
@@ -36,7 +35,7 @@ public class LeatherDyeFeature implements TaggedFeature<Integer> {
     }
 
     @Override
-    public void apply(@NonNull Item item, @NonNull ItemStack itemStack, @NonNull Integer object) {
+    public void apply(@NotNull Item item, @NotNull ItemStack itemStack, @NotNull Integer object) {
         itemStack.editMeta(it -> {
             if (it instanceof LeatherArmorMeta) {
                 ((LeatherArmorMeta) it).setColor(Color.fromRGB(object));

@@ -3,7 +3,6 @@ package io.github.liquip.paper.core.util;
 import io.github.liquip.api.Registry;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,16 +23,17 @@ public class RegistryImpl<T extends Keyed> implements Registry<T> {
     @NotNull
     @Override
     public Iterator<T> iterator() {
-        return this.map.values().iterator();
+        return this.map.values()
+            .iterator();
     }
 
     @Override
-    public void register(@NonNull Key key, @NonNull T value) {
+    public void register(@NotNull Key key, @NotNull T value) {
         this.map.put(key, value);
     }
 
     @Override
-    public void unregister(@NonNull Key key) {
+    public void unregister(@NotNull Key key) {
         this.map.remove(key);
     }
 
