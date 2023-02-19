@@ -20,7 +20,7 @@ import io.github.liquip.paper.core.item.feature.minecraft.CustomModelDataFeature
 import io.github.liquip.paper.core.item.feature.minecraft.HideAttributesFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.HideDyeFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.HideEnchantmentsFeature;
-import io.github.liquip.paper.core.item.feature.minecraft.HidePotionEffectsFeature;
+import io.github.liquip.paper.core.item.feature.minecraft.HideSpecificsFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.HideUnbreakableFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.LeatherDyeFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.SkullTextureFeature;
@@ -298,8 +298,8 @@ public final class StandaloneLiquipImpl implements Liquip {
         this.featureRegistry.register(hideDyeFeature.getKey(), hideDyeFeature);
         final HideEnchantmentsFeature hideEnchantmentsFeature = new HideEnchantmentsFeature();
         this.featureRegistry.register(hideEnchantmentsFeature.getKey(), hideEnchantmentsFeature);
-        final HidePotionEffectsFeature hidePotionEffectsFeature = new HidePotionEffectsFeature();
-        this.featureRegistry.register(hidePotionEffectsFeature.getKey(), hidePotionEffectsFeature);
+        final HideSpecificsFeature hideSpecificsFeature = new HideSpecificsFeature();
+        this.featureRegistry.register(hideSpecificsFeature.getKey(), hideSpecificsFeature);
         final HideUnbreakableFeature hideUnbreakableFeature = new HideUnbreakableFeature();
         this.featureRegistry.register(hideUnbreakableFeature.getKey(), hideUnbreakableFeature);
         final UnbreakableFeature unbreakableFeature = new UnbreakableFeature();

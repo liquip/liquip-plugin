@@ -7,8 +7,8 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class HidePotionEffectsFeature implements Feature {
-    private final NamespacedKey key = new NamespacedKey("minecraft", "hide_potion_effects");
+public class HideSpecificsFeature implements Feature {
+    private final NamespacedKey key = new NamespacedKey("minecraft", "hide_specifics");
 
     @Override
     public @NotNull NamespacedKey getKey() {
@@ -17,6 +17,6 @@ public class HidePotionEffectsFeature implements Feature {
 
     @Override
     public void apply(@NotNull Item item, @NotNull ItemStack itemStack) {
-        itemStack.editMeta(it -> it.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS));
+        itemStack.editMeta(it -> it.addItemFlags(ItemFlag.HIDE_ITEM_SPECIFICS));
     }
 }
