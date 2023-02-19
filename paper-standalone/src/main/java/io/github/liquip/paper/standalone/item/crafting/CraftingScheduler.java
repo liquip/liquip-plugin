@@ -2,7 +2,7 @@ package io.github.liquip.paper.standalone.item.crafting;
 
 import com.github.sqyyy.jcougar.Slot;
 import io.github.liquip.api.item.crafting.Recipe;
-import io.github.liquip.paper.standalone.StandaloneLiquipImpl;
+import io.github.liquip.paper.standalone.StandaloneLiquip;
 import net.kyori.adventure.key.KeyedValue;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -17,10 +17,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class CraftingScheduler extends BukkitRunnable {
-    private final StandaloneLiquipImpl api;
+    private final StandaloneLiquip api;
     private final InventoryView view;
 
-    public CraftingScheduler(@NotNull StandaloneLiquipImpl api, @NotNull InventoryView view) {
+    public CraftingScheduler(@NotNull StandaloneLiquip api, @NotNull InventoryView view) {
         Objects.requireNonNull(api);
         Objects.requireNonNull(view);
         this.api = api;
@@ -45,7 +45,7 @@ public class CraftingScheduler extends BukkitRunnable {
                 stacks.set(row * 3 + column, KeyedValue.keyedValue(this.api.getKeyFromItemStack(item), item.getAmount()));
             }
         }
-        final UnboundCraftMatrixImpl craftMatrix = new UnboundCraftMatrixImpl(true, stacks);
+        final UnboundCraftMatrix craftMatrix = new UnboundCraftMatrix(true, stacks);
         final Recipe shapedRecipe = this.api.getCraftingSystem()
             .getShapedRecipe(craftMatrix);
         if (shapedRecipe != null) {

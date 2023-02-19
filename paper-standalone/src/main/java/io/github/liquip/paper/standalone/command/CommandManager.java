@@ -11,7 +11,7 @@ import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
 import io.github.liquip.paper.standalone.Service;
-import io.github.liquip.paper.standalone.StandaloneLiquipImpl;
+import io.github.liquip.paper.standalone.StandaloneLiquip;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.NamespacedKey;
@@ -25,10 +25,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class CommandManager implements Service {
-    private final StandaloneLiquipImpl api;
+    private final StandaloneLiquip api;
     private final List<NamespacedKey> cache;
 
-    public CommandManager(@NotNull StandaloneLiquipImpl api) {
+    public CommandManager(@NotNull StandaloneLiquip api) {
         Objects.requireNonNull(api);
         this.api = api;
         this.cache = new ArrayList<>();
@@ -75,22 +75,22 @@ public class CommandManager implements Service {
             .get(key);
         if (item == null) {
             player.sendMessage(Component.text("Item could not be found")
-                .color(TextColor.color(StandaloneLiquipImpl.COLOR_ERROR)));
+                .color(TextColor.color(StandaloneLiquip.COLOR_ERROR)));
             return;
         }
         player.getInventory()
             .addItem(item.newItemStack());
         player.sendMessage(Component.text("Gave [" + key.asString() + "] to " + player.getName())
-            .color(TextColor.color(StandaloneLiquipImpl.COLOR_OK)));
+            .color(TextColor.color(StandaloneLiquip.COLOR_OK)));
     }
 
     private void reloadSubcommand(CommandSender sender, Object[] args) {
         if (this.api.reloadSystem()) {
             sender.sendMessage(Component.text("Successfully reloaded config")
-                .color(TextColor.color(StandaloneLiquipImpl.COLOR_OK)));
+                .color(TextColor.color(StandaloneLiquip.COLOR_OK)));
         } else {
             sender.sendMessage(Component.text("Could not reload config")
-                .color(TextColor.color(StandaloneLiquipImpl.COLOR_ERROR)));
+                .color(TextColor.color(StandaloneLiquip.COLOR_ERROR)));
         }
     }
 

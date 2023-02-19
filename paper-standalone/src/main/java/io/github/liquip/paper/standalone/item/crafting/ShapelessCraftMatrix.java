@@ -11,11 +11,11 @@ import java.util.Objects;
 import java.util.Set;
 
 @ApiStatus.Experimental
-public class ShapelessCraftMatrixImpl implements CraftMatrix {
+public class ShapelessCraftMatrix implements CraftMatrix {
     private final Set<KeyedValue<Integer>> ingredients;
     private final int hashCode;
 
-    public ShapelessCraftMatrixImpl(@NotNull Set<KeyedValue<Integer>> ingredients) {
+    public ShapelessCraftMatrix(@NotNull Set<KeyedValue<Integer>> ingredients) {
         Objects.requireNonNull(ingredients);
         this.ingredients = ingredients;
         this.hashCode = ingredients.hashCode();

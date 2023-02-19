@@ -29,11 +29,11 @@ import io.github.liquip.paper.core.listener.BlockEventListener;
 import io.github.liquip.paper.core.listener.EntityEventListener;
 import io.github.liquip.paper.core.listener.PlayerEventListener;
 import io.github.liquip.paper.core.listener.SystemEventListener;
-import io.github.liquip.paper.core.util.RegistryImpl;
+import io.github.liquip.paper.core.util.HashRegistry;
 import io.github.liquip.paper.standalone.command.CommandManager;
 import io.github.liquip.paper.standalone.config.ConfigLoader;
-import io.github.liquip.paper.standalone.item.crafting.CraftingSystemImpl;
 import io.github.liquip.paper.standalone.item.crafting.CraftingUiManager;
+import io.github.liquip.paper.standalone.item.crafting.StandaloneCraftingSystem;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -52,7 +52,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public final class StandaloneLiquipImpl implements Liquip {
+public final class StandaloneLiquip implements Liquip {
     public static final MiniMessage MM = MiniMessage.miniMessage();
     public static final String NAMESPACE = "liquip";
     public static final int COLOR_OK = 0x32cd32;
@@ -76,7 +76,7 @@ public final class StandaloneLiquipImpl implements Liquip {
     private boolean loaded;
     private boolean enabled;
 
-    public StandaloneLiquipImpl(@NotNull Plugin plugin) {
+    public StandaloneLiquip(@NotNull Plugin plugin) {
         Objects.requireNonNull(plugin);
         this.plugin = plugin;
         this.mapper = new JsonMapper().enable(JsonParser.Feature.ALLOW_COMMENTS)
@@ -86,11 +86,11 @@ public final class StandaloneLiquipImpl implements Liquip {
         this.configLoader = new ConfigLoader(this);
         this.craftingUiManager = new CraftingUiManager(this);
         this.commandManager = new CommandManager(this);
-        this.itemRegistry = new RegistryImpl<>();
-        this.featureRegistry = new RegistryImpl<>();
-        this.taggedFeatureRegistry = new RegistryImpl<>();
-        this.enchantmentRegistry = new RegistryImpl<>();
-        this.craftingSystem = new CraftingSystemImpl();
+        this.itemRegistry = new HashRegistry<>();
+        this.featureRegistry = new HashRegistry<>();
+        this.taggedFeatureRegistry = new HashRegistry<>();
+        this.enchantmentRegistry = new HashRegistry<>();
+        this.craftingSystem = new StandaloneCraftingSystem();
         this.services = List.of(this.craftingUiManager, this.commandManager);
         this.configItems = new HashSet<>();
         this.configShapedRecipes = new HashSet<>();

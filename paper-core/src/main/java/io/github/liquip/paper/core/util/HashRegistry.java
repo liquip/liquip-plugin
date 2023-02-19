@@ -10,14 +10,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Objects;
 
-public class RegistryImpl<T extends Keyed> implements Registry<T> {
+public class HashRegistry<T extends Keyed> implements Registry<T> {
     private final HashMap<Key, T> map;
 
-    public RegistryImpl() {
+    public HashRegistry() {
         this(16);
     }
 
-    public RegistryImpl(int initialCapacity) {
+    public HashRegistry(int initialCapacity) {
         this.map = new HashMap<>(initialCapacity);
     }
 

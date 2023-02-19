@@ -8,14 +8,14 @@ import io.github.liquip.api.item.Enchantment;
 import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
-import io.github.liquip.paper.core.item.ItemImpl;
-import io.github.liquip.paper.standalone.StandaloneLiquipImpl;
+import io.github.liquip.paper.core.item.SimpleItem;
+import io.github.liquip.paper.standalone.StandaloneLiquip;
 import io.github.liquip.paper.standalone.config.structure.ConfigStructure;
 import io.github.liquip.paper.standalone.config.structure.EnchantmentStructure;
 import io.github.liquip.paper.standalone.config.structure.IngredientStructure;
 import io.github.liquip.paper.standalone.config.structure.ItemStructure;
 import io.github.liquip.paper.standalone.config.structure.RecipeStructure;
-import io.github.liquip.paper.standalone.item.crafting.ShapedRecipeImpl;
+import io.github.liquip.paper.standalone.item.crafting.StandaloneShapedRecipe;
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
@@ -51,12 +51,12 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class ConfigLoader {
-    private final StandaloneLiquipImpl api;
+    private final StandaloneLiquip api;
     private final Logger logger;
     private ConfigStructure config;
     private boolean wasLoadedBefore;
 
-    public ConfigLoader(@NotNull StandaloneLiquipImpl api) {
+    public ConfigLoader(@NotNull StandaloneLiquip api) {
         Objects.requireNonNull(api);
         this.api = api;
         this.logger = api.getPlugin()
@@ -145,14 +145,14 @@ public class ConfigLoader {
             }
             final Component displayName = Component.text()
                 .decoration(TextDecoration.ITALIC, false)
-                .append(StandaloneLiquipImpl.MM(item.getDisplayName()))
+                .append(StandaloneLiquip.MM(item.getDisplayName()))
                 .build();
             final List<Component> lore = new ArrayList<>(0);
             if (item.getLore() != null) {
                 for (final String loreLine : item.getLore()) {
                     lore.add(Component.text()
                         .decoration(TextDecoration.ITALIC, false)
-                        .append(StandaloneLiquipImpl.MM(loreLine))
+                        .append(StandaloneLiquip.MM(loreLine))
                         .build());
                 }
             }
@@ -194,7 +194,7 @@ public class ConfigLoader {
                 }
             }
             final Item itemInstance =
-                new ItemImpl(this.api, key, material, displayName, lore, enchantments, features, taggedFeatures,
+                new SimpleItem(this.api, key, material, displayName, lore, enchantments, features, taggedFeatures,
                     ArrayListMultimap.create());
             this.api.addConfigItem(itemInstance);
             if (item.getRecipes() != null) {
@@ -243,7 +243,7 @@ public class ConfigLoader {
                                 shape.set(i * 3 + j, KeyedValue.keyedValue(ingredientKey, ingredientStructure.getCount()));
                             }
                         }
-                        this.api.addConfigRecipe(new ShapedRecipeImpl(itemInstance, recipe.getCount(), shape));
+                        this.api.addConfigRecipe(new StandaloneShapedRecipe(itemInstance, recipe.getCount(), shape));
                         continue;
                     }
                     this.logger.warn("Shapeless crafting is not implemented yet");
@@ -333,7 +333,7 @@ public class ConfigLoader {
     }
 
     private Item getDefaultCraftingTable() {
-        return new ItemImpl(this.api, new NamespacedKey("liquip", "crafting_table"), Material.CRAFTING_TABLE,
+        return new SimpleItem(this.api, new NamespacedKey("liquip", "crafting_table"), Material.CRAFTING_TABLE,
             Component.text("Advanced Crafting Table")
                 .decoration(TextDecoration.ITALIC, false), List.of(), Object2IntMaps.emptyMap(), List.of(), Map.of(),
             ImmutableMultimap.of());

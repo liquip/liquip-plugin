@@ -15,20 +15,20 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 
-public class ShapedRecipeImpl implements ShapedRecipe {
+public class StandaloneShapedRecipe implements ShapedRecipe {
     private final Item item;
     private final int count;
     private final List<KeyedValue<Integer>> shape;
     private final CraftMatrix matrix;
     private final ItemStack showcaseItem;
 
-    public ShapedRecipeImpl(@NotNull Item item, int count, @NotNull List<KeyedValue<Integer>> shape) {
+    public StandaloneShapedRecipe(@NotNull Item item, int count, @NotNull List<KeyedValue<Integer>> shape) {
         Objects.requireNonNull(item);
         Objects.requireNonNull(shape);
         this.item = item;
         this.count = count;
         this.shape = shape;
-        this.matrix = new ShapedCraftMatrixImpl(shape);
+        this.matrix = new ShapedCraftMatrix(shape);
         this.showcaseItem = item.newItemStack();
         this.showcaseItem.setAmount(1);
         this.showcaseItem.editMeta(it -> {

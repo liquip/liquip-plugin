@@ -8,11 +8,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class ShapedCraftMatrixImpl implements CraftMatrix {
+public class ShapedCraftMatrix implements CraftMatrix {
     private final List<KeyedValue<Integer>> shape;
     private final int hashCode;
 
-    public ShapedCraftMatrixImpl(@NotNull List<KeyedValue<Integer>> shape) {
+    public ShapedCraftMatrix(@NotNull List<KeyedValue<Integer>> shape) {
         Objects.requireNonNull(shape);
         this.shape = Collections.unmodifiableList(shape);
         int result = 1;
