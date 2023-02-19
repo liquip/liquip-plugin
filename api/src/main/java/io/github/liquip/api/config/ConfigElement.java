@@ -1,6 +1,6 @@
 package io.github.liquip.api.config;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 public interface ConfigElement {
     boolean isBoolean();
@@ -21,9 +21,9 @@ public interface ConfigElement {
 
     double asDouble();
 
-    @NonNull String asString();
+    @NotNull String asString();
 
-    @NonNull ConfigArray asArray();
+    @NotNull ConfigArray asArray();
 
-    @NonNull ConfigObject asObject();
+    @NotNull ConfigObject asObject();
 }

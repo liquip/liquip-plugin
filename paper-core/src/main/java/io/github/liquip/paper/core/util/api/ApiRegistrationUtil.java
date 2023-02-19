@@ -2,8 +2,10 @@ package io.github.liquip.paper.core.util.api;
 
 import io.github.liquip.api.Liquip;
 import io.github.liquip.api.LiquipProvider;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 public class ApiRegistrationUtil {
     private static final Method REGISTER;
@@ -20,9 +22,10 @@ public class ApiRegistrationUtil {
         }
     }
 
-    public static void registerProvider(Liquip liquipApi) {
+    public static void registerProvider(@NotNull Liquip api) {
+        Objects.requireNonNull(api);
         try {
-            REGISTER.invoke(null, liquipApi);
+            REGISTER.invoke(null, api);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -9,17 +9,20 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class CraftingScheduler extends BukkitRunnable {
     private final StandaloneLiquipImpl api;
     private final InventoryView view;
 
-    public CraftingScheduler(@NonNull StandaloneLiquipImpl api, @NonNull InventoryView view) {
+    public CraftingScheduler(@NotNull StandaloneLiquipImpl api, @NotNull InventoryView view) {
+        Objects.requireNonNull(api);
+        Objects.requireNonNull(view);
         this.api = api;
         this.view = view;
     }

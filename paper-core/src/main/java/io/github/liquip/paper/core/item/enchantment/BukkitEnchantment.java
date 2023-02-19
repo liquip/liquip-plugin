@@ -4,7 +4,6 @@ import io.github.liquip.api.item.Enchantment;
 import io.github.liquip.api.item.Item;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
 
 public class BukkitEnchantment implements Enchantment {
@@ -20,7 +19,7 @@ public class BukkitEnchantment implements Enchantment {
     }
 
     @Override
-    public void apply(@NonNull Item item, @NonNull ItemStack itemStack, int level) {
+    public void apply(@NotNull Item item, @NotNull ItemStack itemStack, int level) {
         itemStack.addUnsafeEnchantment(this.base, level);
     }
 }

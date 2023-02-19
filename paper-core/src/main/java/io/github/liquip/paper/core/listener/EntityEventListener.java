@@ -10,13 +10,16 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 public class EntityEventListener implements Listener {
     private final Liquip api;
 
-    public EntityEventListener(@NonNull Liquip api) {
+    public EntityEventListener(@NotNull Liquip api) {
+        Objects.requireNonNull(api);
         this.api = api;
     }
 
@@ -34,7 +37,7 @@ public class EntityEventListener implements Listener {
         this.handleItem(EntityDamageByEntityEvent.class, event, inventory.getBoots());
     }
 
-    private <T extends EntityEvent> void handleItem(@NonNull Class<T> eventClass, @NonNull T event, @Nullable ItemStack stack) {
+    private <T extends EntityEvent> void handleItem(@NotNull Class<T> eventClass, @NotNull T event, @Nullable ItemStack stack) {
         if (stack == null) {
             return;
         }
@@ -42,7 +45,8 @@ public class EntityEventListener implements Listener {
             return;
         }
         final Key identifierResult = this.api.getKeyFromItemStack(stack);
-        final Item item = this.api.getItemRegistry().get(identifierResult);
+        final Item item = this.api.getItemRegistry()
+            .get(identifierResult);
         if (item != null) {
             item.callEvent(eventClass, event, stack);
         }

@@ -1,31 +1,31 @@
 package io.github.liquip.api.config;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 
 public interface ConfigObject {
-    boolean hasElement(@NonNull String key);
+    boolean hasElement(@NotNull String key);
 
-    boolean isBoolean(@NonNull String key);
+    boolean isBoolean(@NotNull String key);
 
-    boolean isInt(@NonNull String key);
+    boolean isInt(@NotNull String key);
 
-    boolean isDouble(@NonNull String key);
+    boolean isDouble(@NotNull String key);
 
-    boolean isString(@NonNull String key);
+    boolean isString(@NotNull String key);
 
-    boolean isArray(@NonNull String key);
+    boolean isArray(@NotNull String key);
 
-    boolean isObject(@NonNull String key);
+    boolean isObject(@NotNull String key);
 
-    boolean getBoolean(@NonNull String key);
+    boolean getBoolean(@NotNull String key);
 
-    int getInt(@NonNull String key);
+    int getInt(@NotNull String key);
 
-    double getDouble(@NonNull String key);
+    double getDouble(@NotNull String key);
 
-    @NonNull String getString(@NonNull String key);
+    @NotNull String getString(@NotNull String key);
 
-    @NonNull ConfigArray getArray(@NonNull String key);
+    @NotNull ConfigArray getArray(@NotNull String key);
 
-    @NonNull ConfigObject getObject(@NonNull String key);
+    @NotNull ConfigObject getObject(@NotNull String key);
 }

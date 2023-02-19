@@ -22,12 +22,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CommandManager implements Service {
     private final StandaloneLiquipImpl api;
     private final List<NamespacedKey> cache;
 
     public CommandManager(@NotNull StandaloneLiquipImpl api) {
+        Objects.requireNonNull(api);
         this.api = api;
         this.cache = new ArrayList<>();
     }
@@ -132,11 +134,13 @@ public class CommandManager implements Service {
 
     @Override
     public void onLoad(@NotNull Plugin plugin) {
+        Objects.requireNonNull(plugin);
         CommandAPI.onLoad(new CommandAPIConfig().silentLogs(true));
     }
 
     @Override
     public void onEnable(@NotNull Plugin plugin) {
+        Objects.requireNonNull(plugin);
         CommandAPI.onEnable(plugin);
         this.reloadCache();
         this.createCommand()
@@ -145,11 +149,13 @@ public class CommandManager implements Service {
 
     @Override
     public void onReload(@NotNull Plugin plugin) {
+        Objects.requireNonNull(plugin);
         this.reloadCache();
     }
 
     @Override
     public void onDisable(@NotNull Plugin plugin) {
+        Objects.requireNonNull(plugin);
         CommandAPI.onDisable();
     }
 }

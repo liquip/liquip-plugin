@@ -1,23 +1,22 @@
 package io.github.liquip.api.item.crafting;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 
 public interface CraftingSystem {
-    void registerShapedRecipe(@NonNull ShapedRecipe recipe);
+    void registerShapedRecipe(@NotNull ShapedRecipe recipe);
 
-    void unregisterShapedRecipe(@NonNull ShapedRecipe recipe);
+    void unregisterShapedRecipe(@NotNull ShapedRecipe recipe);
 
-    void registerShapelessRecipe(@NonNull ShapelessRecipe recipe);
+    void registerShapelessRecipe(@NotNull ShapelessRecipe recipe);
 
-    void unregisterShapelessRecipe(@NonNull ShapelessRecipe recipe);
+    void unregisterShapelessRecipe(@NotNull ShapelessRecipe recipe);
 
-    @Nullable ShapedRecipe getShapedRecipe(@NonNull CraftMatrix craftMatrix);
+    @Nullable ShapedRecipe getShapedRecipe(@NotNull CraftMatrix craftMatrix);
 
-    @Nullable ShapelessRecipe getShapelessRecipe(@NonNull CraftMatrix craftMatrix);
+    @Nullable ShapelessRecipe getShapelessRecipe(@NotNull CraftMatrix craftMatrix);
 
     @NotNull Iterator<ShapedRecipe> shapedIterator();
 

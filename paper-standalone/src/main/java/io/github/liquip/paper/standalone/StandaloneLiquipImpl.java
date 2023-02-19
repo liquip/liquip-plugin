@@ -44,7 +44,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.util.HashSet;
@@ -76,7 +76,8 @@ public final class StandaloneLiquipImpl implements Liquip {
     private boolean loaded;
     private boolean enabled;
 
-    public StandaloneLiquipImpl(@NonNull Plugin plugin) {
+    public StandaloneLiquipImpl(@NotNull Plugin plugin) {
+        Objects.requireNonNull(plugin);
         this.plugin = plugin;
         this.mapper = new JsonMapper().enable(JsonParser.Feature.ALLOW_COMMENTS)
             .enable(JsonParser.Feature.ALLOW_SINGLE_QUOTES)
@@ -99,7 +100,8 @@ public final class StandaloneLiquipImpl implements Liquip {
         this.enabled = false;
     }
 
-    public static @NonNull Component MM(@NonNull String input) {
+    public static @NotNull Component MM(@NotNull String input) {
+        Objects.requireNonNull(input);
         return MM.deserialize(input);
     }
 
@@ -169,7 +171,8 @@ public final class StandaloneLiquipImpl implements Liquip {
         }
     }
 
-    public void addConfigItem(@NonNull Item item) {
+    public void addConfigItem(@NotNull Item item) {
+        Objects.requireNonNull(item);
         if (!this.currentlyLoadingConfig) {
             throw new IllegalStateException("Not loading config currently");
         }
@@ -177,7 +180,8 @@ public final class StandaloneLiquipImpl implements Liquip {
         this.configItems.add(item.key());
     }
 
-    public void addConfigRecipe(@NonNull Recipe recipe) {
+    public void addConfigRecipe(@NotNull Recipe recipe) {
+        Objects.requireNonNull(recipe);
         if (!this.currentlyLoadingConfig) {
             throw new IllegalStateException("Not loading config currently");
         }
@@ -192,48 +196,48 @@ public final class StandaloneLiquipImpl implements Liquip {
         }
     }
 
-    public @NonNull Plugin getPlugin() {
+    public @NotNull Plugin getPlugin() {
         return this.plugin;
     }
 
-    public @NonNull ObjectMapper getMapper() {
+    public @NotNull ObjectMapper getMapper() {
         return this.mapper;
     }
 
-    public @NonNull ConfigLoader getConfigLoader() {
+    public @NotNull ConfigLoader getConfigLoader() {
         return this.configLoader;
     }
 
-    public @NonNull CraftingUiManager getCraftingUiManager() {
+    public @NotNull CraftingUiManager getCraftingUiManager() {
         return this.craftingUiManager;
     }
 
-    public @NonNull CommandManager getCommandManager() {
+    public @NotNull CommandManager getCommandManager() {
         return this.commandManager;
     }
 
     @Override
-    public @NonNull Logger getSystemLogger() {
+    public @NotNull Logger getSystemLogger() {
         return this.plugin.getSLF4JLogger();
     }
 
     @Override
-    public @NonNull Registry<Item> getItemRegistry() {
+    public @NotNull Registry<Item> getItemRegistry() {
         return this.itemRegistry;
     }
 
     @Override
-    public @NonNull Registry<Feature> getFeatureRegistry() {
+    public @NotNull Registry<Feature> getFeatureRegistry() {
         return this.featureRegistry;
     }
 
     @Override
-    public @NonNull Registry<TaggedFeature<?>> getTaggedFeatureRegistry() {
+    public @NotNull Registry<TaggedFeature<?>> getTaggedFeatureRegistry() {
         return this.taggedFeatureRegistry;
     }
 
     @Override
-    public @NonNull Registry<Enchantment> getEnchantmentRegistry() {
+    public @NotNull Registry<Enchantment> getEnchantmentRegistry() {
         return this.enchantmentRegistry;
     }
 
@@ -243,13 +247,14 @@ public final class StandaloneLiquipImpl implements Liquip {
     }
 
     @Override
-    public @NonNull CraftingSystem getCraftingSystem() {
+    public @NotNull CraftingSystem getCraftingSystem() {
         return this.craftingSystem;
     }
 
     @Override
     @SuppressWarnings("DataFlowIssue")
-    public boolean isCustomItemStack(@NonNull ItemStack itemStack) {
+    public boolean isCustomItemStack(@NotNull ItemStack itemStack) {
+        Objects.requireNonNull(itemStack);
         if (itemStack.getItemMeta() == null) {
             return false;
         }
@@ -263,7 +268,8 @@ public final class StandaloneLiquipImpl implements Liquip {
 
     @Override
     @SuppressWarnings("DataFlowIssue")
-    public @NonNull Key getKeyFromItemStack(@NonNull ItemStack itemStack) {
+    public @NotNull Key getKeyFromItemStack(@NotNull ItemStack itemStack) {
+        Objects.requireNonNull(itemStack);
         if (itemStack.getItemMeta() == null) {
             return itemStack.getType()
                 .getKey();
@@ -278,7 +284,9 @@ public final class StandaloneLiquipImpl implements Liquip {
     }
 
     @Override
-    public void setKeyForItemStack(@NonNull ItemStack itemStack, @NonNull Key key) {
+    public void setKeyForItemStack(@NotNull ItemStack itemStack, @NotNull Key key) {
+        Objects.requireNonNull(itemStack);
+        Objects.requireNonNull(key);
         itemStack.editMeta(meta -> meta.getPersistentDataContainer()
             .set(PDC_KEY, PersistentDataType.STRING, key.asString()));
     }

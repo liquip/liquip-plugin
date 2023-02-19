@@ -6,12 +6,15 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.liquip.api.config.ConfigArray;
 import io.github.liquip.api.config.ConfigElement;
 import io.github.liquip.api.config.ConfigObject;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Objects;
 
 public class JsonConfigElement implements ConfigElement {
     private final JsonNode node;
 
-    public JsonConfigElement(@NonNull JsonNode node) {
+    public JsonConfigElement(@NotNull JsonNode node) {
+        Objects.requireNonNull(node);
         this.node = node;
     }
 
@@ -61,17 +64,17 @@ public class JsonConfigElement implements ConfigElement {
     }
 
     @Override
-    public @NonNull String asString() {
+    public @NotNull String asString() {
         return this.node.asText();
     }
 
     @Override
-    public @NonNull ConfigArray asArray() {
+    public @NotNull ConfigArray asArray() {
         return new JsonConfigArray((ArrayNode) this.node);
     }
 
     @Override
-    public @NonNull ConfigObject asObject() {
+    public @NotNull ConfigObject asObject() {
         return new JsonConfigObject((ObjectNode) this.node);
     }
 }

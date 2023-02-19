@@ -2,8 +2,8 @@ package io.github.liquip.api;
 
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.Keyed;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * A registry holding values of type {@link T} accessible by a {@link Key}.
@@ -19,9 +19,9 @@ public interface Registry<T extends Keyed> extends Iterable<T> {
      * @param value the value that will be stored
      * @since 0.0.1-alpha
      */
-    void register(@NonNull Key key, @NonNull T value);
+    void register(@NotNull Key key, @NotNull T value);
 
-    void unregister(@NonNull Key key);
+    void unregister(@NotNull Key key);
 
     /**
      * Retrieves the {@link T} stored under the specified {@link Key}.
@@ -30,5 +30,5 @@ public interface Registry<T extends Keyed> extends Iterable<T> {
      * @return the value that is stored under the specified key
      * @since 0.0.1-alpha
      */
-    @Nullable T get(@NonNull Key key);
+    @Nullable T get(@NotNull Key key);
 }

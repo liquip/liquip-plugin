@@ -35,8 +35,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -47,6 +47,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 public class ConfigLoader {
@@ -55,7 +56,8 @@ public class ConfigLoader {
     private ConfigStructure config;
     private boolean wasLoadedBefore;
 
-    public ConfigLoader(@NonNull StandaloneLiquipImpl api) {
+    public ConfigLoader(@NotNull StandaloneLiquipImpl api) {
+        Objects.requireNonNull(api);
         this.api = api;
         this.logger = api.getPlugin()
             .getSLF4JLogger();
@@ -287,7 +289,7 @@ public class ConfigLoader {
         return true;
     }
 
-    private @NonNull Optional<Enchantment> resolveEnchantment(@NonNull String key) {
+    private @NotNull Optional<Enchantment> resolveEnchantment(@NotNull String key) {
         final Key namespacedKey = NamespacedKey.fromString(key);
         if (namespacedKey == null) {
             return Optional.empty();
@@ -296,7 +298,7 @@ public class ConfigLoader {
             .get(namespacedKey));
     }
 
-    private @NonNull Optional<Feature> resolveFeature(@NonNull String key) {
+    private @NotNull Optional<Feature> resolveFeature(@NotNull String key) {
         final Key namespacedKey = NamespacedKey.fromString(key);
         if (namespacedKey == null) {
             return Optional.empty();
@@ -305,7 +307,7 @@ public class ConfigLoader {
             .get(namespacedKey));
     }
 
-    private @NonNull Optional<TaggedFeature<?>> resolveTaggedFeature(@NonNull String key) {
+    private @NotNull Optional<TaggedFeature<?>> resolveTaggedFeature(@NotNull String key) {
         final Key namespacedKey = NamespacedKey.fromString(key);
         if (namespacedKey == null) {
             return Optional.empty();
@@ -314,7 +316,7 @@ public class ConfigLoader {
             .get(namespacedKey));
     }
 
-    private boolean verifyShape(@NonNull List<String> shape) {
+    private boolean verifyShape(@NotNull List<String> shape) {
         if (shape.size() != 3) {
             return false;
         }
@@ -337,7 +339,7 @@ public class ConfigLoader {
             ImmutableMultimap.of());
     }
 
-    private void craftingTableOnInteract(@NonNull PlayerInteractEvent event, @Nullable ItemStack item) {
+    private void craftingTableOnInteract(@NotNull PlayerInteractEvent event, @Nullable ItemStack item) {
         if (event.getPlayer()
             .getOpenInventory()
             .getTopInventory()

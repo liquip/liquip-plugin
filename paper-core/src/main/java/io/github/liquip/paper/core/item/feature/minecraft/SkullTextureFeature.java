@@ -9,9 +9,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -24,7 +23,7 @@ public class SkullTextureFeature implements TaggedFeature<String> {
     }
 
     @Override
-    public @Nullable String initialize(@NonNull Item item, @NonNull ConfigElement element) {
+    public @Nullable String initialize(@NotNull Item item, @NotNull ConfigElement element) {
         if (!element.isString()) {
             return null;
         }
@@ -32,7 +31,7 @@ public class SkullTextureFeature implements TaggedFeature<String> {
     }
 
     @Override
-    public void apply(@NonNull Item item, @NonNull ItemStack itemStack, @NonNull String object) {
+    public void apply(@NotNull Item item, @NotNull ItemStack itemStack, @NotNull String object) {
         itemStack.editMeta(it -> {
             if (it instanceof SkullMeta meta) {
                 final PlayerProfile profile = Bukkit.createProfile(UUID.randomUUID());

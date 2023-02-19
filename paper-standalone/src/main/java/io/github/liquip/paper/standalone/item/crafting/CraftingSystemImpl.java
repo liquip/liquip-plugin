@@ -4,13 +4,13 @@ import io.github.liquip.api.item.crafting.CraftMatrix;
 import io.github.liquip.api.item.crafting.CraftingSystem;
 import io.github.liquip.api.item.crafting.ShapedRecipe;
 import io.github.liquip.api.item.crafting.ShapelessRecipe;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 
 public class CraftingSystemImpl implements CraftingSystem {
     private final Map<CraftMatrix, ShapedRecipe> shapedMap;
@@ -26,12 +26,14 @@ public class CraftingSystemImpl implements CraftingSystem {
     }
 
     @Override
-    public void registerShapedRecipe(@NonNull ShapedRecipe recipe) {
+    public void registerShapedRecipe(@NotNull ShapedRecipe recipe) {
+        Objects.requireNonNull(recipe);
         this.shapedMap.put(recipe.getMatrix(), recipe);
     }
 
     @Override
-    public void unregisterShapedRecipe(@NonNull ShapedRecipe recipe) {
+    public void unregisterShapedRecipe(@NotNull ShapedRecipe recipe) {
+        Objects.requireNonNull(recipe);
         for (final Map.Entry<CraftMatrix, ShapedRecipe> entry : this.shapedMap.entrySet()) {
             if (entry.getValue() == recipe) {
                 this.shapedMap.remove(entry.getKey(), recipe);
@@ -41,12 +43,14 @@ public class CraftingSystemImpl implements CraftingSystem {
     }
 
     @Override
-    public void registerShapelessRecipe(@NonNull ShapelessRecipe recipe) {
+    public void registerShapelessRecipe(@NotNull ShapelessRecipe recipe) {
+        Objects.requireNonNull(recipe);
         this.shapelessMap.put(recipe.getMatrix(), recipe);
     }
 
     @Override
-    public void unregisterShapelessRecipe(@NonNull ShapelessRecipe recipe) {
+    public void unregisterShapelessRecipe(@NotNull ShapelessRecipe recipe) {
+        Objects.requireNonNull(recipe);
         for (final Map.Entry<CraftMatrix, ShapelessRecipe> entry : this.shapelessMap.entrySet()) {
             if (entry.getValue() == recipe) {
                 this.shapelessMap.remove(entry.getKey(), recipe);
@@ -56,7 +60,8 @@ public class CraftingSystemImpl implements CraftingSystem {
     }
 
     @Override
-    public @Nullable ShapedRecipe getShapedRecipe(@NonNull CraftMatrix craftMatrix) {
+    public @Nullable ShapedRecipe getShapedRecipe(@NotNull CraftMatrix craftMatrix) {
+        Objects.requireNonNull(craftMatrix);
         if (!craftMatrix.isShaped()) {
             return null;
         }
@@ -64,7 +69,8 @@ public class CraftingSystemImpl implements CraftingSystem {
     }
 
     @Override
-    public @Nullable ShapelessRecipe getShapelessRecipe(@NonNull CraftMatrix craftMatrix) {
+    public @Nullable ShapelessRecipe getShapelessRecipe(@NotNull CraftMatrix craftMatrix) {
+        Objects.requireNonNull(craftMatrix);
         if (craftMatrix.isShaped()) {
             return null;
         }

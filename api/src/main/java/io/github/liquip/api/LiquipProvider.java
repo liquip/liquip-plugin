@@ -1,7 +1,6 @@
 package io.github.liquip.api;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.jetbrains.annotations.ApiStatus.Internal;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Provides static access to the {@link Liquip} API.
@@ -9,7 +8,6 @@ import org.jetbrains.annotations.ApiStatus.Internal;
 public final class LiquipProvider {
     private static Liquip instance = null;
 
-    @Internal
     private LiquipProvider() {
         throw new UnsupportedOperationException("This class cannot be instantiated.");
     }
@@ -23,7 +21,7 @@ public final class LiquipProvider {
      * @throws IllegalStateException if the API is not loaded yet
      * @since 0.0.1-alpha
      */
-    public static @NonNull Liquip get() throws IllegalStateException {
+    public static @NotNull Liquip get() throws IllegalStateException {
         Liquip instance = LiquipProvider.instance;
         if (instance == null) {
             throw new IllegalStateException("The Liquip API isn't loaded yet");
@@ -31,12 +29,10 @@ public final class LiquipProvider {
         return instance;
     }
 
-    @Internal
     static void register(Liquip instance) {
         LiquipProvider.instance = instance;
     }
 
-    @Internal
     static void unregister() {
         LiquipProvider.instance = null;
     }

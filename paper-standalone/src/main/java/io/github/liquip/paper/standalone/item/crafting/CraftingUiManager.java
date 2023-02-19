@@ -45,6 +45,7 @@ public class CraftingUiManager implements Service {
     private int pageCount;
 
     public CraftingUiManager(@NotNull StandaloneLiquipImpl api) {
+        Objects.requireNonNull(api);
         this.api = api;
         this.craftingTableManager = new CraftingTableManager(api);
         this.craftingTableUi = this.createCraftingTableUi();
@@ -83,6 +84,7 @@ public class CraftingUiManager implements Service {
     }
 
     public void openCraftingTable(@NotNull Player player) {
+        Objects.requireNonNull(player);
         this.craftingTableUi.open(player);
     }
 
@@ -349,12 +351,14 @@ public class CraftingUiManager implements Service {
 
     @Override
     public void onEnable(@NotNull Plugin plugin) {
+        Objects.requireNonNull(plugin);
         JCougar.initializeSystem(plugin);
         this.loadCatalogue();
     }
 
     @Override
     public void onReload(@NotNull Plugin plugin) {
+        Objects.requireNonNull(plugin);
         this.loadCatalogue();
     }
 }
