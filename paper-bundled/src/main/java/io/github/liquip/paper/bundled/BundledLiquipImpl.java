@@ -21,7 +21,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 import java.util.Objects;
@@ -36,11 +36,11 @@ public class BundledLiquipImpl implements Liquip {
     private final Registry<Enchantment> enchantmentRegistry;
     private boolean enabled;
 
-    public BundledLiquipImpl(@NonNull String namespace, @NonNull Plugin plugin, boolean register) {
+    public BundledLiquipImpl(@NotNull String namespace, @NotNull Plugin plugin, boolean register) {
         this(namespace, plugin, plugin.getSLF4JLogger(), register);
     }
 
-    public BundledLiquipImpl(@NonNull String namespace, @NonNull Plugin plugin, @NonNull Logger systemLogger, boolean register) {
+    public BundledLiquipImpl(@NotNull String namespace, @NotNull Plugin plugin, @NotNull Logger systemLogger, boolean register) {
         this.pdcKey = new NamespacedKey(namespace.toLowerCase(), "key");
         this.plugin = plugin;
         this.systemLogger = systemLogger;
@@ -67,27 +67,27 @@ public class BundledLiquipImpl implements Liquip {
     }
 
     @Override
-    public @NonNull Logger getSystemLogger() {
+    public @NotNull Logger getSystemLogger() {
         return this.systemLogger;
     }
 
     @Override
-    public @NonNull Registry<Item> getItemRegistry() {
+    public @NotNull Registry<Item> getItemRegistry() {
         return this.itemRegistry;
     }
 
     @Override
-    public @NonNull Registry<Feature> getFeatureRegistry() {
+    public @NotNull Registry<Feature> getFeatureRegistry() {
         return this.featureRegistry;
     }
 
     @Override
-    public @NonNull Registry<TaggedFeature<?>> getTaggedFeatureRegistry() {
+    public @NotNull Registry<TaggedFeature<?>> getTaggedFeatureRegistry() {
         return this.taggedFeatureRegistry;
     }
 
     @Override
-    public @NonNull Registry<Enchantment> getEnchantmentRegistry() {
+    public @NotNull Registry<Enchantment> getEnchantmentRegistry() {
         return this.enchantmentRegistry;
     }
 
@@ -97,17 +97,18 @@ public class BundledLiquipImpl implements Liquip {
     }
 
     @Override
-    public @NonNull CraftingSystem getCraftingSystem() {
+    public @NotNull CraftingSystem getCraftingSystem() {
         throw new UnsupportedOperationException();
     }
 
     @Override
     @SuppressWarnings("DataFlowIssue")
-    public boolean isCustomItemStack(@NonNull ItemStack itemStack) {
+    public boolean isCustomItemStack(@NotNull ItemStack itemStack) {
         if (itemStack.getItemMeta() == null) {
             return false;
         }
-        final PersistentDataContainer persistentDataContainer = itemStack.getItemMeta().getPersistentDataContainer();
+        final PersistentDataContainer persistentDataContainer = itemStack.getItemMeta()
+            .getPersistentDataContainer();
         if (!persistentDataContainer.has(this.pdcKey, PersistentDataType.STRING)) {
             return false;
         }
@@ -116,20 +117,24 @@ public class BundledLiquipImpl implements Liquip {
 
     @Override
     @SuppressWarnings("DataFlowIssue")
-    public @NonNull Key getKeyFromItemStack(@NonNull ItemStack itemStack) {
+    public @NotNull Key getKeyFromItemStack(@NotNull ItemStack itemStack) {
         if (itemStack.getItemMeta() == null) {
-            return itemStack.getType().getKey();
+            return itemStack.getType()
+                .getKey();
         }
-        final PersistentDataContainer persistentDataContainer = itemStack.getItemMeta().getPersistentDataContainer();
+        final PersistentDataContainer persistentDataContainer = itemStack.getItemMeta()
+            .getPersistentDataContainer();
         if (!persistentDataContainer.has(this.pdcKey, PersistentDataType.STRING)) {
-            return itemStack.getType().getKey();
+            return itemStack.getType()
+                .getKey();
         }
         return Objects.requireNonNull(
             NamespacedKey.fromString(persistentDataContainer.get(this.pdcKey, PersistentDataType.STRING)));
     }
 
     @Override
-    public void setKeyForItemStack(@NonNull ItemStack itemStack, @NonNull Key key) {
-        itemStack.editMeta(meta -> meta.getPersistentDataContainer().set(this.pdcKey, PersistentDataType.STRING, key.asString()));
+    public void setKeyForItemStack(@NotNull ItemStack itemStack, @NotNull Key key) {
+        itemStack.editMeta(meta -> meta.getPersistentDataContainer()
+            .set(this.pdcKey, PersistentDataType.STRING, key.asString()));
     }
 }
