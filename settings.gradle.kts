@@ -1,7 +1,6 @@
 rootProject.name = "liquip"
 
-include("api", "paper-core", "paper-bundled", "paper-standalone", "gui")
-project(":gui").name = "liquip-gui"
+include("api", "paper-core", "paper-bundled", "paper-standalone")
 
 pluginManagement {
     repositories {
