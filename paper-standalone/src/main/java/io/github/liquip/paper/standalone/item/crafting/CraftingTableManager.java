@@ -1,7 +1,7 @@
 package io.github.liquip.paper.standalone.item.crafting;
 
 import io.github.liquip.api.item.crafting.Recipe;
-import io.github.liquip.paper.standalone.StandaloneLiquipImpl;
+import io.github.liquip.paper.standalone.StandaloneLiquip;
 import net.kyori.adventure.key.KeyedValue;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -16,9 +16,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class CraftingTableManager {
-    private final StandaloneLiquipImpl api;
+    private final StandaloneLiquip api;
 
-    public CraftingTableManager(@NotNull StandaloneLiquipImpl api) {
+    public CraftingTableManager(@NotNull StandaloneLiquip api) {
         this.api = api;
     }
 
@@ -52,7 +52,7 @@ public class CraftingTableManager {
                 stacks.set(row * 3 + column, KeyedValue.keyedValue(this.api.getKeyFromItemStack(item), item.getAmount()));
             }
         }
-        final UnboundCraftMatrixImpl craftMatrix = new UnboundCraftMatrixImpl(true, stacks);
+        final UnboundCraftMatrix craftMatrix = new UnboundCraftMatrix(true, stacks);
         final Recipe shapedRecipe = this.api.getCraftingSystem()
             .getShapedRecipe(craftMatrix);
         if (this.apply(view, shapedRecipe)) {

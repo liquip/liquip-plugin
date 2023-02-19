@@ -11,7 +11,7 @@ import io.github.liquip.paper.core.listener.BlockEventListener;
 import io.github.liquip.paper.core.listener.EntityEventListener;
 import io.github.liquip.paper.core.listener.PlayerEventListener;
 import io.github.liquip.paper.core.listener.SystemEventListener;
-import io.github.liquip.paper.core.util.RegistryImpl;
+import io.github.liquip.paper.core.util.HashRegistry;
 import io.github.liquip.paper.core.util.api.ApiRegistrationUtil;
 import net.kyori.adventure.key.Key;
 import org.bukkit.Bukkit;
@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 
 import java.util.Objects;
 
-public class BundledLiquipImpl implements Liquip {
+public class BundledLiquip implements Liquip {
     private final NamespacedKey pdcKey;
     private final Plugin plugin;
     private final Logger systemLogger;
@@ -36,21 +36,21 @@ public class BundledLiquipImpl implements Liquip {
     private final Registry<Enchantment> enchantmentRegistry;
     private boolean enabled;
 
-    public BundledLiquipImpl(@NotNull String namespace, @NotNull Plugin plugin, boolean register) {
+    public BundledLiquip(@NotNull String namespace, @NotNull Plugin plugin, boolean register) {
         this(namespace, plugin, plugin.getSLF4JLogger(), register);
     }
 
-    public BundledLiquipImpl(@NotNull String namespace, @NotNull Plugin plugin, @NotNull Logger systemLogger, boolean register) {
+    public BundledLiquip(@NotNull String namespace, @NotNull Plugin plugin, @NotNull Logger systemLogger, boolean register) {
         Objects.requireNonNull(namespace);
         Objects.requireNonNull(plugin);
         Objects.requireNonNull(systemLogger);
         this.pdcKey = new NamespacedKey(namespace.toLowerCase(), "key");
         this.plugin = plugin;
         this.systemLogger = systemLogger;
-        this.itemRegistry = new RegistryImpl<>();
-        this.featureRegistry = new RegistryImpl<>();
-        this.taggedFeatureRegistry = new RegistryImpl<>();
-        this.enchantmentRegistry = new RegistryImpl<>();
+        this.itemRegistry = new HashRegistry<>();
+        this.featureRegistry = new HashRegistry<>();
+        this.taggedFeatureRegistry = new HashRegistry<>();
+        this.enchantmentRegistry = new HashRegistry<>();
         this.enabled = false;
         if (register) {
             ApiRegistrationUtil.registerProvider(this);

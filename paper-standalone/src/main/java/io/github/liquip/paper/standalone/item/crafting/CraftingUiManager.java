@@ -9,7 +9,7 @@ import com.github.sqyyy.jcougar.impl.panel.SlotClickEventPanel;
 import com.github.sqyyy.jcougar.impl.panel.StoragePanel;
 import com.github.sqyyy.jcougar.impl.panel.TakeableSlotEventPanel;
 import io.github.liquip.paper.standalone.Service;
-import io.github.liquip.paper.standalone.StandaloneLiquipImpl;
+import io.github.liquip.paper.standalone.StandaloneLiquip;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.kyori.adventure.text.Component;
@@ -34,7 +34,7 @@ import java.util.UUID;
 import java.util.stream.StreamSupport;
 
 public class CraftingUiManager implements Service {
-    private final StandaloneLiquipImpl api;
+    private final StandaloneLiquip api;
     private final CraftingTableManager craftingTableManager;
     private final Ui craftingTableUi;
     private final Ui recipeBookUi;
@@ -44,7 +44,7 @@ public class CraftingUiManager implements Service {
     private final Object2IntMap<UUID> openRecipeShowcasePages;
     private int pageCount;
 
-    public CraftingUiManager(@NotNull StandaloneLiquipImpl api) {
+    public CraftingUiManager(@NotNull StandaloneLiquip api) {
         Objects.requireNonNull(api);
         this.api = api;
         this.craftingTableManager = new CraftingTableManager(api);

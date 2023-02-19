@@ -4,7 +4,7 @@ import io.github.liquip.paper.core.util.api.ApiRegistrationUtil;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class LiquipPaperPlugin extends JavaPlugin {
-    private final StandaloneLiquipImpl api = new StandaloneLiquipImpl(this);
+    private final StandaloneLiquip api = new StandaloneLiquip(this);
 
     @Override
     public void onLoad() {

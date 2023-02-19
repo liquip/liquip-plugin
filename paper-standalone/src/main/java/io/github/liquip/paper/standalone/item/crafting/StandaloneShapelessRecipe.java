@@ -11,15 +11,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public class ShapelessRecipeImpl implements ShapelessRecipe {
+public class StandaloneShapelessRecipe implements ShapelessRecipe {
     private final Item item;
     private final CraftMatrix matrix;
 
-    public ShapelessRecipeImpl(@NotNull Item item, @NotNull Set<KeyedValue<Integer>> ingredients) {
+    public StandaloneShapelessRecipe(@NotNull Item item, @NotNull Set<KeyedValue<Integer>> ingredients) {
         Objects.requireNonNull(item);
         Objects.requireNonNull(ingredients);
         this.item = item;
-        this.matrix = new ShapelessCraftMatrixImpl(ingredients);
+        this.matrix = new ShapelessCraftMatrix(ingredients);
     }
 
     @Override

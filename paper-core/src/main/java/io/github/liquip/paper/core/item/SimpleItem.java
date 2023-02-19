@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
-public class ItemImpl implements Item {
+public class SimpleItem implements Item {
     private final Liquip api;
     private final Key key;
     private final Material material;
@@ -36,7 +36,7 @@ public class ItemImpl implements Item {
     private final List<Feature> features;
     private final Map<TaggedFeature<?>, Object> taggedFeatures;
 
-    public ItemImpl(@NotNull Liquip api, @NotNull Key key, @NotNull Material material, @NotNull Component displayName,
+    public SimpleItem(@NotNull Liquip api, @NotNull Key key, @NotNull Material material, @NotNull Component displayName,
         @NotNull List<Component> lore, @NotNull Object2IntMap<Enchantment> enchantments, @NotNull List<Feature> features,
         @NotNull Map<TaggedFeature<?>, ConfigElement> taggedFeatures,
         @NotNull Multimap<Class<? extends Event>, BiConsumer<? extends Event, ItemStack>> eventHandlers) {

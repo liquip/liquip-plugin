@@ -12,15 +12,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
-public class CraftingSystemImpl implements CraftingSystem {
+public class StandaloneCraftingSystem implements CraftingSystem {
     private final Map<CraftMatrix, ShapedRecipe> shapedMap;
     private final Map<CraftMatrix, ShapelessRecipe> shapelessMap;
 
-    public CraftingSystemImpl() {
+    public StandaloneCraftingSystem() {
         this(16);
     }
 
-    public CraftingSystemImpl(int initialCapacity) {
+    public StandaloneCraftingSystem(int initialCapacity) {
         this.shapedMap = new HashMap<>(initialCapacity);
         this.shapelessMap = new HashMap<>(initialCapacity);
     }
