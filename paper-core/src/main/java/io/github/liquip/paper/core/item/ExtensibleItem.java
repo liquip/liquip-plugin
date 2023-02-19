@@ -1,17 +1,21 @@
 package io.github.liquip.paper.core.item;
 
+import com.google.common.collect.Multimap;
 import io.github.liquip.api.Liquip;
-import io.github.liquip.api.config.ConfigElement;
 import io.github.liquip.api.item.Enchantment;
 import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.TaggedFeature;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.event.Event;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
+import java.util.function.BiConsumer;
 
 public class ExtensibleItem extends ItemBase {
     public ExtensibleItem(@NotNull Liquip api, @NotNull NamespacedKey key, @NotNull Material material,
@@ -24,34 +28,24 @@ public class ExtensibleItem extends ItemBase {
         super(api, key, material, displayName, lore);
     }
 
-    public void appendLore(@NotNull List<Component> lines) {
-        Objects.requireNonNull(lines);
-        for (final Component line : lines) {
-            Objects.requireNonNull(line);
-        }
-        lore.addAll(lines);
+    public @NotNull List<Component> getLore() {
+        return lore;
     }
 
-    public void enchant(@NotNull Enchantment enchantment, int level) {
-        Objects.requireNonNull(enchantment);
-        enchantments.put(enchantment, level);
-        enchantment.initialize(this, level);
+    public @NotNull Object2IntMap<Enchantment> getEnchants() {
+        return enchantments;
     }
 
-    public void addFeature(@NotNull Feature feature) {
-        Objects.requireNonNull(feature);
-        features.add(feature);
-        feature.initialize(this);
+    public @NotNull List<Feature> getFeatures() {
+        return features;
     }
 
-    public <T> boolean addTaggedFeature(@NotNull TaggedFeature<T> feature, @NotNull ConfigElement config) {
-        Objects.requireNonNull(feature);
-        Objects.requireNonNull(config);
-        final T value = feature.initialize(this, config);
-        if (value == null) {
-            return false;
-        }
-        taggedFeatures.put(feature, value);
-        return true;
+    public @NotNull Map<TaggedFeature<?>, Object> getTaggedFeatures() {
+        return taggedFeatures;
+    }
+
+    @Deprecated(forRemoval = true)
+    public @NotNull Multimap<Class<? extends Event>, BiConsumer<? extends Event, ItemStack>> getEventHandlers() {
+        return eventHandlers;
     }
 }
