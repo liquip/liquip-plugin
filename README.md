@@ -27,7 +27,6 @@ The project is divided into several Gradle submodules:
 ```
 .
 ├── api
-├── gui
 ├── paper-bundled
 ├── paper-core
 └── paper-standalone
@@ -37,20 +36,17 @@ Each submodule has its own purpose.
 
 The `api` submodule contains the code for the API.
 
-The `gui` submodule contains the *old* code for the inventory gui used in the old crafting table.
-It will be removed in the future.
-
 The `paper-core` submodules implements the parts of the API that are common between the submodules
 `paper-bundled` and `paper-standalone`.
 
 The `paper-bundled` submodule is a minimal implementation of the API without any plugin
 functionality.
 It also does not have an implementation for the crafting system.
-The module depends on `api`, `gui` and `paper-core`.
+The module depends on `api` and `paper-core`.
 
 The `paper-standalone` submodule contains the code for the Liquip plugin. It implements the crafting
 system and propably every other component of the API.
-The module depends on `api`, `gui` and `paper-core`.
+The module depends on `api` and `paper-core`.
 
 ## TODO
 
