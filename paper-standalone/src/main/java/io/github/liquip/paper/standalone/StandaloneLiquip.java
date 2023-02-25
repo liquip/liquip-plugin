@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.github.liquip.api.Liquip;
 import io.github.liquip.api.Registry;
+import io.github.liquip.api.event.EventSystem;
 import io.github.liquip.api.item.Enchantment;
 import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
@@ -14,6 +15,7 @@ import io.github.liquip.api.item.crafting.CraftingSystem;
 import io.github.liquip.api.item.crafting.Recipe;
 import io.github.liquip.api.item.crafting.ShapedRecipe;
 import io.github.liquip.api.item.crafting.ShapelessRecipe;
+import io.github.liquip.paper.core.core.HashEventSystem;
 import io.github.liquip.paper.core.item.enchantment.BukkitEnchantment;
 import io.github.liquip.paper.core.item.feature.minecraft.AttributeModifierFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.CustomModelDataFeature;
@@ -68,6 +70,7 @@ public final class StandaloneLiquip implements Liquip {
     private final Registry<TaggedFeature<?>> taggedFeatureRegistry;
     private final Registry<Enchantment> enchantmentRegistry;
     private final CraftingSystem craftingSystem;
+    private final EventSystem eventSystem;
     private final List<Service> services;
     private final Set<Key> configItems;
     private final Set<ShapedRecipe> configShapedRecipes;
@@ -91,6 +94,7 @@ public final class StandaloneLiquip implements Liquip {
         this.taggedFeatureRegistry = new HashRegistry<>();
         this.enchantmentRegistry = new HashRegistry<>();
         this.craftingSystem = new StandaloneCraftingSystem();
+        this.eventSystem = new HashEventSystem();
         this.services = List.of(this.craftingUiManager, this.commandManager);
         this.configItems = new HashSet<>();
         this.configShapedRecipes = new HashSet<>();
@@ -253,7 +257,12 @@ public final class StandaloneLiquip implements Liquip {
 
     @Override
     public boolean supportsEventSystem() {
-        return false;
+        return true;
+    }
+
+    @Override
+    public @NotNull EventSystem getEventSystem() {
+        return eventSystem;
     }
 
     @Override
