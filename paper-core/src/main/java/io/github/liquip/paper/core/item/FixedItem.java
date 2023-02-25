@@ -35,6 +35,13 @@ public class FixedItem extends ItemBase {
         @NotNull List<Component> lore, @NotNull Object2IntMap<Enchantment> enchantments, @NotNull List<Feature> features,
         @NotNull Map<TaggedFeature<?>, ConfigElement> taggedFeatures,
         @NotNull Multimap<Class<? extends Event>, BiConsumer<? extends Event, ItemStack>> eventHandlers) {
+        this(api, key, material, displayName, lore, enchantments, features, taggedFeatures, Map.of(), eventHandlers);
+    }
+
+    public FixedItem(@NotNull Liquip api, @NotNull NamespacedKey key, @NotNull Material material, @NotNull Component displayName,
+        @NotNull List<Component> lore, @NotNull Object2IntMap<Enchantment> enchantments, @NotNull List<Feature> features,
+        @NotNull Map<TaggedFeature<?>, ConfigElement> taggedFeatures, @NotNull Map<TaggedFeature<?>, ?> initializedTaggedFeatures,
+        @NotNull Multimap<Class<? extends Event>, BiConsumer<? extends Event, ItemStack>> eventHandlers) {
         super(api, key, material, displayName, lore);
         for (final Object2IntMap.Entry<Enchantment> entry : enchantments.object2IntEntrySet()) {
             this.enchantments.put(entry.getKey(), entry.getIntValue());
@@ -56,6 +63,7 @@ public class FixedItem extends ItemBase {
             }
             this.taggedFeatures.put(entry.getKey(), res);
         }
+        this.taggedFeatures.putAll(initializedTaggedFeatures);
     }
 
     public static class Builder {
@@ -63,6 +71,7 @@ public class FixedItem extends ItemBase {
         private final Object2IntMap<Enchantment> enchantments;
         private final List<Feature> features;
         private final Map<TaggedFeature<?>, ConfigElement> taggedFeatures;
+        private final Map<TaggedFeature<?>, Object> initializedTaggedFeatures;
         private final Multimap<Class<? extends Event>, BiConsumer<? extends Event, ItemStack>> eventHandlers;
         private Liquip api;
         private NamespacedKey key;
@@ -74,6 +83,7 @@ public class FixedItem extends ItemBase {
             enchantments = new Object2IntOpenHashMap<>(0);
             features = new ArrayList<>(0);
             taggedFeatures = new HashMap<>(0);
+            initializedTaggedFeatures = new HashMap<>(0);
             eventHandlers = HashMultimap.create(0, 1);
         }
 
@@ -103,11 +113,6 @@ public class FixedItem extends ItemBase {
         public Builder name(@NotNull Component displayName) {
             Objects.requireNonNull(displayName);
             this.displayName = displayName;
-            return this;
-        }
-
-        public Builder lore() {
-            lore.clear();
             return this;
         }
 
@@ -148,11 +153,6 @@ public class FixedItem extends ItemBase {
             return this;
         }
 
-        public Builder features() {
-            features.clear();
-            return this;
-        }
-
         public Builder features(@NotNull List<Feature> features) {
             Objects.requireNonNull(features);
             for (final Feature feature : features) {
@@ -169,8 +169,10 @@ public class FixedItem extends ItemBase {
             return this;
         }
 
-        public Builder taggedFeatures() {
-            taggedFeatures.clear();
+        public <T> Builder taggedFeature(@NotNull TaggedFeature<T> taggedFeature, @NotNull T config) {
+            Objects.requireNonNull(taggedFeature);
+            Objects.requireNonNull(config);
+            initializedTaggedFeatures.put(taggedFeature, config);
             return this;
         }
 
@@ -222,8 +224,10 @@ public class FixedItem extends ItemBase {
             Objects.requireNonNull(enchantments);
             Objects.requireNonNull(features);
             Objects.requireNonNull(taggedFeatures);
+            Objects.requireNonNull(initializedTaggedFeatures);
             Objects.requireNonNull(eventHandlers);
-            return new FixedItem(api, key, material, displayName, lore, enchantments, features, taggedFeatures, eventHandlers);
+            return new FixedItem(api, key, material, displayName, lore, enchantments, features, taggedFeatures,
+                initializedTaggedFeatures, eventHandlers);
         }
     }
 }
