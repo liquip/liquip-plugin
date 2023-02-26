@@ -2,10 +2,12 @@ package io.github.liquip.paper.bundled;
 
 import io.github.liquip.api.Liquip;
 import io.github.liquip.api.Registry;
+import io.github.liquip.api.event.EventSystem;
 import io.github.liquip.api.item.Enchantment;
 import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
+import io.github.liquip.paper.core.event.HashEventSystem;
 import io.github.liquip.paper.core.listener.BlockEventListener;
 import io.github.liquip.paper.core.listener.EntityEventListener;
 import io.github.liquip.paper.core.listener.PlayerEventListener;
@@ -33,6 +35,7 @@ public class BundledLiquip implements Liquip {
     protected final Registry<Feature> featureRegistry;
     protected final Registry<TaggedFeature<?>> taggedFeatureRegistry;
     protected final Registry<Enchantment> enchantmentRegistry;
+    protected final EventSystem eventSystem;
     protected boolean enabled;
 
     public BundledLiquip(@NotNull String namespace, @NotNull Plugin plugin, boolean register) {
@@ -50,6 +53,7 @@ public class BundledLiquip implements Liquip {
         this.featureRegistry = new HashRegistry<>();
         this.taggedFeatureRegistry = new HashRegistry<>();
         this.enchantmentRegistry = new HashRegistry<>();
+        this.eventSystem = new HashEventSystem();
         this.enabled = false;
         if (register) {
             ApiRegistrationUtil.registerProvider(this);
@@ -100,7 +104,12 @@ public class BundledLiquip implements Liquip {
 
     @Override
     public boolean supportsEventSystem() {
-        return false;
+        return true;
+    }
+
+    @Override
+    public @NotNull EventSystem getEventSystem() {
+        return Liquip.super.getEventSystem();
     }
 
     @Override
