@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class CraftingCatalogueEntry {
+    private final static ItemStack AIR = new ItemStack(Material.AIR);
     private final Recipe recipe;
     private final ItemStack showcaseItem;
     private final ItemStack[] items;
@@ -39,11 +40,10 @@ public class CraftingCatalogueEntry {
         final List<KeyedValue<Integer>> stacks = recipe.getMatrix()
             .getStacks();
         final ItemStack[] items = new ItemStack[9];
-        final ItemStack air = new ItemStack(Material.AIR);
         for (int i = 0; i < stacks.size(); i++) {
             final KeyedValue<Integer> stack = stacks.get(i);
             if (stack == null || stack.value() < 1) {
-                items[i] = air;
+                items[i] = AIR;
                 continue;
             }
             final Material material = Registry.MATERIAL.get((NamespacedKey) stack.key());

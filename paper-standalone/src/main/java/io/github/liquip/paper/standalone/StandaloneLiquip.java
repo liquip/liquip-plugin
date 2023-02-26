@@ -330,7 +330,7 @@ public final class StandaloneLiquip implements Liquip {
     }
 
     private void registerBukkitEnchantments() {
-        for (org.bukkit.enchantments.Enchantment value : org.bukkit.enchantments.Enchantment.values()) {
+        for (final org.bukkit.enchantments.Enchantment value : org.bukkit.enchantments.Enchantment.values()) {
             this.enchantmentRegistry.register(value.getKey(), new BukkitEnchantment(value));
         }
     }
