@@ -12,7 +12,7 @@ public class LiquipPluginLoader implements PluginLoader {
     @Override
     public void classloader(@NotNull PluginClasspathBuilder classpathBuilder) {
         final MavenLibraryResolver resolver = new MavenLibraryResolver();
-        resolver.addDependency(new Dependency(new DefaultArtifact("com.fasterxml.jackson.core:jackson-databind:2.14.0"), null));
+        resolver.addDependency(new Dependency(new DefaultArtifact("com.fasterxml.jackson.core:jackson-databind:2.14.2"), null));
         resolver.addRepository(new RemoteRepository.Builder("central", "default", "https://repo1.maven.org/maven2/").build());
         classpathBuilder.addLibrary(resolver);
     }
