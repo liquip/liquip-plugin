@@ -15,7 +15,7 @@ import io.github.liquip.api.item.crafting.CraftingSystem;
 import io.github.liquip.api.item.crafting.Recipe;
 import io.github.liquip.api.item.crafting.ShapedRecipe;
 import io.github.liquip.api.item.crafting.ShapelessRecipe;
-import io.github.liquip.paper.core.core.HashEventSystem;
+import io.github.liquip.paper.core.event.HashEventSystem;
 import io.github.liquip.paper.core.item.enchantment.BukkitEnchantment;
 import io.github.liquip.paper.core.item.feature.minecraft.AttributeModifierFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.CustomModelDataFeature;

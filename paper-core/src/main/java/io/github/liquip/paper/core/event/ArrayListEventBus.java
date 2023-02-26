@@ -1,4 +1,4 @@
-package io.github.liquip.paper.core.core;
+package io.github.liquip.paper.core.event;
 
 import io.github.liquip.api.event.EventBus;
 import io.github.liquip.api.event.EventListener;
