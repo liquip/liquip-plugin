@@ -24,7 +24,7 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
-    compileOnly("com.fasterxml.jackson.core:jackson-databind:2.14.0")
+    compileOnly("com.fasterxml.jackson.core:jackson-databind:2.14.2")
     implementation(project(":api"))
     implementation(project(":paper-core"))
     implementation("dev.jorel:commandapi-shade:8.7.0")
