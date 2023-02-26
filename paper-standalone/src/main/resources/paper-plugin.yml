@@ -1,0 +1,5 @@
+name: Liquip
+version: ${version}
+main: io.github.liquip.paper.standalone.LiquipPaperPlugin
+api-version: 1.19
+loader: io.github.liquip.paper.standalone.LiquipPluginLoader

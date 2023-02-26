@@ -1,7 +1,6 @@
 plugins {
     `java-library`
     id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("net.minecrell.plugin-yml.bukkit") version "0.5.2"
 }
 
 java {
@@ -25,22 +24,22 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
+    compileOnly("com.fasterxml.jackson.core:jackson-databind:2.14.0")
     implementation(project(":api"))
     implementation(project(":paper-core"))
     implementation("dev.jorel:commandapi-shade:8.7.0")
     implementation("com.github.sqyyy:jcougar-ui:0.5.1-alpha")
-    bukkitLibrary("com.fasterxml.jackson.core:jackson-databind:2.14.0")
-}
-
-bukkit {
-    name = "Liquip"
-    main = "io.github.liquip.paper.standalone.LiquipPaperPlugin"
-    version = project.version.toString()
-    apiVersion = "1.19"
-    author = "sqyyy"
 }
 
 tasks.shadowJar {
     relocate("dev.jorel.commandapi", "io.github.liquip.paper.standalone.commandapi")
     relocate("com.github.sqyyy.jcougar", "io.github.liquip.paper.standalone.jcougar")
+}
+
+tasks.processResources {
+    filesMatching("**/paper-plugin.yml") {
+        filter {
+            return@filter it.replace("\${version}", project.version.toString())
+        }
+    }
 }
