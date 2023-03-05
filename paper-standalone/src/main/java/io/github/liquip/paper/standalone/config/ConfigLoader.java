@@ -13,6 +13,7 @@ import io.github.liquip.paper.standalone.config.structure.EnchantmentStructure;
 import io.github.liquip.paper.standalone.config.structure.IngredientStructure;
 import io.github.liquip.paper.standalone.config.structure.ItemStructure;
 import io.github.liquip.paper.standalone.config.structure.RecipeStructure;
+import io.github.liquip.paper.standalone.event.CraftingInteractListener;
 import io.github.liquip.paper.standalone.item.crafting.StandaloneShapedRecipe;
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
@@ -285,7 +286,8 @@ public class ConfigLoader {
             return false;
         }
         if (!this.config.hasCustomCraftingTable()) {
-            craftingTableItem.registerEvent(PlayerInteractEvent.class, this::craftingTableOnInteract);
+            Bukkit.getPluginManager()
+                .registerEvents(new CraftingInteractListener(api), api.getPlugin());
         }
         this.wasLoadedBefore = true;
         return true;
