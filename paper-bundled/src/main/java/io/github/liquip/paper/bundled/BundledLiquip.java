@@ -8,9 +8,6 @@ import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
 import io.github.liquip.paper.core.event.HashEventSystem;
-import io.github.liquip.paper.core.listener.BlockEventListener;
-import io.github.liquip.paper.core.listener.EntityEventListener;
-import io.github.liquip.paper.core.listener.PlayerEventListener;
 import io.github.liquip.paper.core.listener.SystemEventListener;
 import io.github.liquip.paper.core.util.HashRegistry;
 import io.github.liquip.paper.core.util.api.ApiRegistrationUtil;
@@ -67,9 +64,6 @@ public class BundledLiquip implements Liquip {
         this.enabled = true;
         final PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new SystemEventListener(this), this.plugin);
-        pluginManager.registerEvents(new BlockEventListener(this), this.plugin);
-        pluginManager.registerEvents(new EntityEventListener(this), this.plugin);
-        pluginManager.registerEvents(new PlayerEventListener(this), this.plugin);
     }
 
     @Override

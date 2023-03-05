@@ -27,9 +27,6 @@ import io.github.liquip.paper.core.item.feature.minecraft.HideUnbreakableFeature
 import io.github.liquip.paper.core.item.feature.minecraft.LeatherDyeFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.SkullTextureFeature;
 import io.github.liquip.paper.core.item.feature.minecraft.UnbreakableFeature;
-import io.github.liquip.paper.core.listener.BlockEventListener;
-import io.github.liquip.paper.core.listener.EntityEventListener;
-import io.github.liquip.paper.core.listener.PlayerEventListener;
 import io.github.liquip.paper.core.listener.SystemEventListener;
 import io.github.liquip.paper.core.util.HashRegistry;
 import io.github.liquip.paper.standalone.command.CommandManager;
@@ -128,9 +125,6 @@ public final class StandaloneLiquip implements Liquip {
         this.enabled = true;
         final PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new SystemEventListener(this), this.plugin);
-        pluginManager.registerEvents(new BlockEventListener(this), this.plugin);
-        pluginManager.registerEvents(new EntityEventListener(this), this.plugin);
-        pluginManager.registerEvents(new PlayerEventListener(this), this.plugin);
         this.currentlyLoadingConfig = true;
         if (!this.configLoader.loadConfig()) {
             this.plugin.getSLF4JLogger()
