@@ -9,8 +9,10 @@ jobs:
   nightly:
     runs-on: "ubuntu-latest"
     permissions:
-      contents: read
-      packages: read
+      contents: write
+      packages: write
+      id-token: write
+      pull-requests: read
 
     steps:
       - uses: actions/checkout@v3
