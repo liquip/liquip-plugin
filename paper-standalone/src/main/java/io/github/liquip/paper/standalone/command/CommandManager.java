@@ -7,7 +7,6 @@ import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.MultiLiteralArgument;
 import dev.jorel.commandapi.arguments.NamespacedKeyArgument;
 import dev.jorel.commandapi.executors.CommandArguments;
-import dev.jorel.commandapi.executors.PlayerCommandExecutor;
 import io.github.liquip.api.item.Enchantment;
 import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
@@ -49,7 +48,7 @@ public class CommandManager implements Service {
                     .map(NamespacedKey::asString)
                     .filter(s -> s.contains(suggestionInfo.currentArg()))
                     .toList())))
-            .executesPlayer((PlayerCommandExecutor) this::giveSubcommand);
+            .executesPlayer(this::giveSubcommand);
     }
 
     private @NotNull CommandAPICommand createCraftSubcommand() {
@@ -73,6 +72,9 @@ public class CommandManager implements Service {
 
     private void giveSubcommand(Player player, CommandArguments args) {
         final NamespacedKey key = (NamespacedKey) args.get(0);
+        if (key == null) {
+            return;
+        }
         final Item item = this.api.getItemRegistry()
             .get(key);
         if (item == null) {
@@ -97,7 +99,11 @@ public class CommandManager implements Service {
     }
 
     private void dumpSubcommand(CommandSender sender, CommandArguments args) {
-        switch ((String) args.get(0)) {
+        final String arg = (String) args.get(0);
+        if (arg == null) {
+            return;
+        }
+        switch (arg) {
             case "items" -> {
                 for (final Item item : this.api.getItemRegistry()) {
                     sender.sendMessage(Component.text(item.key()
