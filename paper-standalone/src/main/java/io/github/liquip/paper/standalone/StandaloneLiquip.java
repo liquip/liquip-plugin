@@ -41,8 +41,8 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -57,7 +57,7 @@ public final class StandaloneLiquip implements Liquip {
     public static final int COLOR_OK = 0x32cd32;
     public static final int COLOR_ERROR = 0xe32636;
     private static final NamespacedKey PDC_KEY = new NamespacedKey(NAMESPACE, "key");
-    private final Plugin plugin;
+    private final JavaPlugin plugin;
     private final ObjectMapper mapper;
     private final ConfigLoader configLoader;
     private final CraftingUiManager craftingUiManager;
@@ -76,7 +76,7 @@ public final class StandaloneLiquip implements Liquip {
     private boolean loaded;
     private boolean enabled;
 
-    public StandaloneLiquip(@NotNull Plugin plugin) {
+    public StandaloneLiquip(@NotNull JavaPlugin plugin) {
         Objects.requireNonNull(plugin);
         this.plugin = plugin;
         this.mapper = new JsonMapper().enable(JsonParser.Feature.ALLOW_COMMENTS)
@@ -194,7 +194,7 @@ public final class StandaloneLiquip implements Liquip {
         }
     }
 
-    public @NotNull Plugin getPlugin() {
+    public @NotNull JavaPlugin getPlugin() {
         return this.plugin;
     }
 

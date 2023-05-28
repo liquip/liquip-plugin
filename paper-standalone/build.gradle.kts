@@ -1,7 +1,7 @@
 plugins {
     `java-library`
     `maven-publish`
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 java {
@@ -42,11 +42,11 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
     compileOnly("com.fasterxml.jackson.core:jackson-databind:2.14.2")
     implementation(project(":api"))
     implementation(project(":paper-core"))
-    implementation("dev.jorel:commandapi-shade:8.7.0")
+    implementation("dev.jorel:commandapi-bukkit-shade:9.0.1")
     implementation("com.github.sqyyy:jcougar-ui:0.5.1-alpha")
 }
 
