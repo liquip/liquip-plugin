@@ -1,11 +1,13 @@
 package io.github.liquip.paper.standalone.command;
 
 import dev.jorel.commandapi.CommandAPI;
+import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.CommandAPIConfig;
 import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.MultiLiteralArgument;
 import dev.jorel.commandapi.arguments.NamespacedKeyArgument;
+import dev.jorel.commandapi.executors.CommandArguments;
+import dev.jorel.commandapi.executors.PlayerCommandExecutor;
 import io.github.liquip.api.item.Enchantment;
 import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
@@ -17,7 +19,7 @@ import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -47,7 +49,7 @@ public class CommandManager implements Service {
                     .map(NamespacedKey::asString)
                     .filter(s -> s.contains(suggestionInfo.currentArg()))
                     .toList())))
-            .executesPlayer(this::giveSubcommand);
+            .executesPlayer((PlayerCommandExecutor) this::giveSubcommand);
     }
 
     private @NotNull CommandAPICommand createCraftSubcommand() {
@@ -69,8 +71,8 @@ public class CommandManager implements Service {
             .executes(this::dumpSubcommand);
     }
 
-    private void giveSubcommand(Player player, Object[] args) {
-        final NamespacedKey key = (NamespacedKey) args[0];
+    private void giveSubcommand(Player player, CommandArguments args) {
+        final NamespacedKey key = (NamespacedKey) args.get(0);
         final Item item = this.api.getItemRegistry()
             .get(key);
         if (item == null) {
@@ -84,7 +86,7 @@ public class CommandManager implements Service {
             .color(TextColor.color(StandaloneLiquip.COLOR_OK)));
     }
 
-    private void reloadSubcommand(CommandSender sender, Object[] args) {
+    private void reloadSubcommand(CommandSender sender, CommandArguments args) {
         if (this.api.reloadSystem()) {
             sender.sendMessage(Component.text("Successfully reloaded config")
                 .color(TextColor.color(StandaloneLiquip.COLOR_OK)));
@@ -94,8 +96,8 @@ public class CommandManager implements Service {
         }
     }
 
-    private void dumpSubcommand(CommandSender sender, Object[] args) {
-        switch ((String) args[0]) {
+    private void dumpSubcommand(CommandSender sender, CommandArguments args) {
+        switch ((String) args.get(0)) {
             case "items" -> {
                 for (final Item item : this.api.getItemRegistry()) {
                     sender.sendMessage(Component.text(item.key()
@@ -133,28 +135,28 @@ public class CommandManager implements Service {
     }
 
     @Override
-    public void onLoad(@NotNull Plugin plugin) {
+    public void onLoad(@NotNull JavaPlugin plugin) {
         Objects.requireNonNull(plugin);
-        CommandAPI.onLoad(new CommandAPIConfig().silentLogs(true));
+        CommandAPI.onLoad(new CommandAPIBukkitConfig(plugin).silentLogs(true));
     }
 
     @Override
-    public void onEnable(@NotNull Plugin plugin) {
+    public void onEnable(@NotNull JavaPlugin plugin) {
         Objects.requireNonNull(plugin);
-        CommandAPI.onEnable(plugin);
+        CommandAPI.onEnable();
         this.reloadCache();
         this.createCommand()
             .register();
     }
 
     @Override
-    public void onReload(@NotNull Plugin plugin) {
+    public void onReload(@NotNull JavaPlugin plugin) {
         Objects.requireNonNull(plugin);
         this.reloadCache();
     }
 
     @Override
-    public void onDisable(@NotNull Plugin plugin) {
+    public void onDisable(@NotNull JavaPlugin plugin) {
         Objects.requireNonNull(plugin);
         CommandAPI.onDisable();
     }

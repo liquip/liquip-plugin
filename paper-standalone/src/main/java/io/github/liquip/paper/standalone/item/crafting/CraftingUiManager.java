@@ -22,15 +22,10 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Spliterators;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.StreamSupport;
 
 public class CraftingUiManager implements Service {
@@ -79,8 +74,9 @@ public class CraftingUiManager implements Service {
                     .serialize(displayName);
             }))
             .toList());
-        this.pageCount = this.catalogue.size() % itemsPerPage == 0 ? this.catalogue.size() / itemsPerPage :
-            this.catalogue.size() / itemsPerPage + 1;
+        this.pageCount = this.catalogue.size() % itemsPerPage == 0
+            ? this.catalogue.size() / itemsPerPage
+            : this.catalogue.size() / itemsPerPage + 1;
     }
 
     public void openCraftingTable(@NotNull Player player) {
@@ -213,8 +209,10 @@ public class CraftingUiManager implements Service {
         this.recipeBookUi.open(player);
     }
 
-    private void craftingTableClose(@NotNull Player player, @NotNull InventoryView view,
-        InventoryCloseEvent.@NotNull Reason reason) {
+    private void craftingTableClose(@NotNull Player player,
+        @NotNull InventoryView view,
+        InventoryCloseEvent.@NotNull Reason reason
+    ) {
         final Inventory topInventory = view.getTopInventory();
         final Inventory bottomInventory = view.getBottomInventory();
         for (int row = 0; row < 3; row++) {
@@ -254,8 +252,8 @@ public class CraftingUiManager implements Service {
         this.updateRecipeBook(player, inventory);
     }
 
-    private void recipeBookClose(@NotNull Player player, @NotNull InventoryView view,
-        InventoryCloseEvent.@NotNull Reason reason) {
+    private void recipeBookClose(@NotNull Player player, @NotNull InventoryView view, InventoryCloseEvent.@NotNull Reason reason
+    ) {
         if (reason != InventoryCloseEvent.Reason.OPEN_NEW) {
             this.openRecipeBookPages.removeInt(player.getUniqueId());
         }
@@ -336,8 +334,10 @@ public class CraftingUiManager implements Service {
         inventory.setItem(30, items[8]);
     }
 
-    private void recipeShowcaseClose(@NotNull Player player, @NotNull InventoryView view,
-        InventoryCloseEvent.@NotNull Reason reason) {
+    private void recipeShowcaseClose(@NotNull Player player,
+        @NotNull InventoryView view,
+        InventoryCloseEvent.@NotNull Reason reason
+    ) {
         this.openRecipeShowcasePages.removeInt(player.getUniqueId());
     }
 
@@ -350,14 +350,14 @@ public class CraftingUiManager implements Service {
     }
 
     @Override
-    public void onEnable(@NotNull Plugin plugin) {
+    public void onEnable(@NotNull JavaPlugin plugin) {
         Objects.requireNonNull(plugin);
         JCougar.initializeSystem(plugin);
         this.loadCatalogue();
     }
 
     @Override
-    public void onReload(@NotNull Plugin plugin) {
+    public void onReload(@NotNull JavaPlugin plugin) {
         Objects.requireNonNull(plugin);
         this.loadCatalogue();
     }
