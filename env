@@ -1,4 +1,2 @@
 #!/usr/bin/env bash
-cd ./jcougar-ui &&
-./gradlew publishToMavenLocal &&
-cd ..
+cd ./jcougar-ui && ./gradlew publishToMavenLocal && cd ..

@@ -10,12 +10,13 @@ jobs:
     runs-on: "ubuntu-latest"
     permissions:
       contents: write
-      packages: write
       id-token: write
       pull-requests: read
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: recursive
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
@@ -34,9 +35,6 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           arguments: paper-standalone:shadowJar
-        env:
-          GRADLE_GITHUB_USERNAME: ${{ github.actor }}
-          GRADLE_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
