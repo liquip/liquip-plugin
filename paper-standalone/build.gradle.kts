@@ -42,12 +42,12 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT")
-    compileOnly("com.fasterxml.jackson.core:jackson-databind:2.14.2")
+    compileOnly(libs.paperApi)
+    compileOnly(libs.jacksonDatabind)
     implementation(project(":api"))
     implementation(project(":paper-core"))
-    implementation("dev.jorel:commandapi-bukkit-shade:9.0.1")
-    implementation("com.github.sqyyy:jcougar-ui:0.5.1-alpha")
+    implementation(libs.commandApi)
+    implementation(libs.jcougar)
 }
 
 tasks.shadowJar {
