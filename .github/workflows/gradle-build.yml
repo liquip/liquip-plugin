@@ -22,6 +22,9 @@ jobs:
           server-id: github
           settings-path: ${{ github.workspace }}
 
+      - name: Install JCougar
+        run: ./env
+
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
         with:
