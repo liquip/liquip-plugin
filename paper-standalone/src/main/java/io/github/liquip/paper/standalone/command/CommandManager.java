@@ -66,7 +66,7 @@ public class CommandManager implements Service {
 
     private @NotNull CommandAPICommand createDumpSubcommand() {
         return new CommandAPICommand("dump").withPermission("liquip.command.dump")
-            .withArguments(new MultiLiteralArgument("items", "features", "tagged_features", "enchantments"))
+            .withArguments(new MultiLiteralArgument("list", List.of("items", "features", "tagged_features", "enchantments")))
             .executes(this::dumpSubcommand);
     }
 

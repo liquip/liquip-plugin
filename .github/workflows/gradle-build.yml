@@ -7,10 +7,11 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: read
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@master
+        with:
+          submodules: recursive
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
@@ -26,6 +27,3 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           arguments: build
-        env:
-          GRADLE_GITHUB_USERNAME: ${{ github.actor }}
-          GRADLE_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
