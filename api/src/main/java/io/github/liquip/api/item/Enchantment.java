@@ -1,6 +1,6 @@
 package io.github.liquip.api.item;
 
-import org.bukkit.Keyed;
+import net.kyori.adventure.key.Keyed;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 

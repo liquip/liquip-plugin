@@ -10,5 +10,5 @@ java {
 }
 
 dependencies {
-    compileOnly(libs.paperApi)
+    compileOnly(libs.paper)
 }

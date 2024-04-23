@@ -23,23 +23,21 @@ public class CraftingInteractListener implements Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
+        if (!event.getAction().isRightClick()) {
+            return;
+        }
         final Player player = event.getPlayer();
-        final ItemStack item = player.getInventory()
-            .getItemInMainHand();
-        if (!api.isCustomItemStack(item)) {
+        final ItemStack item = player.getInventory().getItemInMainHand();
+        if (!this.api.isCustomItemStack(item)) {
             return;
         }
-        if (!KEY.equals(api.getKeyFromItemStack(item))) {
+        if (!KEY.equals(this.api.getKeyFromItemStack(item))) {
             return;
         }
-        if (event.getPlayer()
-            .getOpenInventory()
-            .getTopInventory()
-            .getType() != InventoryType.CRAFTING) {
+        if (event.getPlayer().getOpenInventory().getTopInventory().getType() != InventoryType.CRAFTING) {
             return;
         }
         event.setCancelled(true);
-        this.api.getCraftingUiManager()
-            .openCraftingTable(event.getPlayer());
+        this.api.getCraftingUiManager().openCraftingTable(event.getPlayer());
     }
 }

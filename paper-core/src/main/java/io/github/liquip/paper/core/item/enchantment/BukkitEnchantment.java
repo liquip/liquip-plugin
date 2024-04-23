@@ -2,7 +2,7 @@ package io.github.liquip.paper.core.item.enchantment;
 
 import io.github.liquip.api.item.Enchantment;
 import io.github.liquip.api.item.Item;
-import org.bukkit.NamespacedKey;
+import net.kyori.adventure.key.Key;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -14,8 +14,8 @@ public class BukkitEnchantment implements Enchantment {
     }
 
     @Override
-    public @NotNull NamespacedKey getKey() {
-        return this.base.getKey();
+    public @NotNull Key key() {
+        return this.base.key();
     }
 
     @Override

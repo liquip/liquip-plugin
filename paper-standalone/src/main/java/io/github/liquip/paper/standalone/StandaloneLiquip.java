@@ -35,6 +35,7 @@ import io.github.liquip.paper.standalone.item.crafting.CraftingUiManager;
 import io.github.liquip.paper.standalone.item.crafting.StandaloneCraftingSystem;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
@@ -54,8 +55,8 @@ import java.util.Set;
 public final class StandaloneLiquip implements Liquip {
     public static final MiniMessage MM = MiniMessage.miniMessage();
     public static final String NAMESPACE = "liquip";
-    public static final int COLOR_OK = 0x32cd32;
-    public static final int COLOR_ERROR = 0xe32636;
+    public static final TextColor COLOR_OK = TextColor.color(0x6BCD51);
+    public static final TextColor COLOR_ERROR = TextColor.color(0xE36B5D);
     private static final NamespacedKey PDC_KEY = new NamespacedKey(NAMESPACE, "key");
     private final JavaPlugin plugin;
     private final ObjectMapper mapper;
@@ -256,7 +257,7 @@ public final class StandaloneLiquip implements Liquip {
 
     @Override
     public @NotNull EventSystem getEventSystem() {
-        return eventSystem;
+        return this.eventSystem;
     }
 
     @Override

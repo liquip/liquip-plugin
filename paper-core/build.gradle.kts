@@ -10,6 +10,6 @@ java {
 }
 
 dependencies {
-    compileOnly(libs.paperApi)
+    compileOnly(libs.paper)
     implementation(project(":api"))
 }

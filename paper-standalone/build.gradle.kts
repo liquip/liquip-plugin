@@ -1,6 +1,7 @@
 plugins {
     `java-library`
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("xyz.jpenilla.run-paper") version "2.2.4"
 }
 
 java {
@@ -10,11 +11,11 @@ java {
 }
 
 dependencies {
-    compileOnly(libs.paperApi)
+    compileOnly(libs.paper)
     compileOnly(libs.jacksonDatabind)
     implementation(project(":api"))
     implementation(project(":paper-core"))
-    implementation(libs.commandApi)
+    implementation(libs.cloud)
     implementation("com.github.sqyyy:jcougar-ui:0.5.1-alpha") {
         version { branch = "main" }
     }
@@ -31,4 +32,8 @@ tasks.processResources {
             return@filter it.replace("\${version}", project.version.toString())
         }
     }
+}
+
+tasks.runServer {
+    minecraftVersion("1.20.4")
 }
