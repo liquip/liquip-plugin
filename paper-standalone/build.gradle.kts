@@ -1,5 +1,5 @@
 plugins {
-    `java-library`
+    java
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("xyz.jpenilla.run-paper") version "2.2.4"
 }
@@ -16,7 +16,7 @@ dependencies {
     implementation(project(":api"))
     implementation(project(":paper-core"))
     implementation(libs.cloud)
-    implementation("com.github.sqyyy:jcougar-ui:0.5.1-alpha") {
+    implementation(libs.jcougarUi) {
         version { branch = "main" }
     }
 }
