@@ -2,8 +2,10 @@
 paper = "1.20.4-R0.1-SNAPSHOT"
 jackson-databind = "2.17.0"
 cloud = "2.0.0-beta.2"
+jcougar-ui = "0.5.2-alpha"
 
 [libraries]
 paper = { module = "io.papermc.paper:paper-api", version.ref = "paper" }
 jacksonDatabind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson-databind" }
 cloud = { module = "org.incendo:cloud-paper", version.ref = "cloud" }
+jcougarUi = { module = "com.github.sqyyy:jcougar-ui", version.ref = "jcougar-ui" }
