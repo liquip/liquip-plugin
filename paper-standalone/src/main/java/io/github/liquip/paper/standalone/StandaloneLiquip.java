@@ -56,6 +56,7 @@ public final class StandaloneLiquip implements Liquip {
     public static final MiniMessage MM = MiniMessage.miniMessage();
     public static final String NAMESPACE = "liquip";
     public static final TextColor COLOR_OK = TextColor.color(0x6BCD51);
+    public static final TextColor COLOR_INFO = TextColor.color(0x57CDB9);
     public static final TextColor COLOR_ERROR = TextColor.color(0xE36B5D);
     private static final NamespacedKey PDC_KEY = new NamespacedKey(NAMESPACE, "key");
     private final JavaPlugin plugin;

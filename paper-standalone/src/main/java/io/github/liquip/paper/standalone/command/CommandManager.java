@@ -110,21 +110,25 @@ public class CommandManager implements Service {
         CommandSender sender = context.sender();
         switch (type) {
             case ITEMS -> {
+                sender.sendMessage(Component.text("Dumping items:", StandaloneLiquip.COLOR_INFO));
                 for (final Item item : this.api.getItemRegistry()) {
                     sender.sendMessage(Component.text(item.key().asString()));
                 }
             }
             case FEATURES -> {
+                sender.sendMessage(Component.text("Dumping features:", StandaloneLiquip.COLOR_INFO));
                 for (final Feature feature : this.api.getFeatureRegistry()) {
                     sender.sendMessage(Component.text(feature.key().asString()));
                 }
             }
             case TAGGED_FEATURES -> {
+                sender.sendMessage(Component.text("Dumping tagged_features:", StandaloneLiquip.COLOR_INFO));
                 for (final TaggedFeature<?> taggedFeature : this.api.getTaggedFeatureRegistry()) {
                     sender.sendMessage(Component.text(taggedFeature.key().asString()));
                 }
             }
             case ENCHANTMENTS -> {
+                sender.sendMessage(Component.text("Dumping enchantments:", StandaloneLiquip.COLOR_INFO));
                 for (final Enchantment enchantment : this.api.getEnchantmentRegistry()) {
                     sender.sendMessage(Component.text(enchantment.key().asString()));
                 }

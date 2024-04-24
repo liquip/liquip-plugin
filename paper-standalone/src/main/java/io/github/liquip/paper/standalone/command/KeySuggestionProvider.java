@@ -13,11 +13,11 @@ public final class KeySuggestionProvider implements BlockingSuggestionProvider.S
     private List<String> cache;
 
     public KeySuggestionProvider(List<Key> keys) {
-        this.cache = keys.stream().map(Key::toString).toList();
+        this.cache = keys.stream().map(Key::asString).toList();
     }
 
     public void updateKeys(List<Key> keys) {
-        this.cache = keys.stream().map(Key::toString).toList();
+        this.cache = keys.stream().map(Key::asString).toList();
     }
 
     @Override
