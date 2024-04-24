@@ -10,8 +10,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@master
-        with:
-          submodules: recursive
+
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
