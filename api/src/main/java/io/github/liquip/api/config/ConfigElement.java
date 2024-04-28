@@ -21,9 +21,12 @@ public interface ConfigElement {
 
     double asDouble();
 
-    @NotNull String asString();
+    @NotNull
+    String asString();
 
-    @NotNull ConfigArray asArray();
+    @NotNull
+    ConfigArray asArray();
 
-    @NotNull ConfigObject asObject();
+    @NotNull
+    ConfigObject asObject();
 }

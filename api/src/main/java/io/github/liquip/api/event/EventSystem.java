@@ -10,5 +10,6 @@ import org.jetbrains.annotations.Nullable;
 public interface EventSystem {
     void registerBus(@NotNull NamespacedKey key, @NotNull EventBus<?, ?> bus);
 
-    @Nullable EventBus<?, ?> getBus(@NotNull NamespacedKey key);
+    @Nullable
+    EventBus<?, ?> getBus(@NotNull NamespacedKey key);
 }

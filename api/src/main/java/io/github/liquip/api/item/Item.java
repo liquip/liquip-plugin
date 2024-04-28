@@ -18,5 +18,6 @@ public interface Item extends Keyed {
      * @return a new item stack of itself
      * @since 0.0.1-alpha
      */
-    @NotNull ItemStack newItemStack();
+    @NotNull
+    ItemStack newItemStack();
 }

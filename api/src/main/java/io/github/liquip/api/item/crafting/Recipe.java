@@ -7,11 +7,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public interface Recipe {
-    @NotNull CraftMatrix getMatrix();
+    @NotNull
+    CraftMatrix getMatrix();
 
     void apply(@NotNull ItemStack @NotNull [] stacks);
 
-    @NotNull ItemStack getResult(@NotNull List<KeyedValue<Integer>> stacks);
+    @NotNull
+    ItemStack getResult(@NotNull List<KeyedValue<Integer>> stacks);
 
-    @NotNull ItemStack getShowcaseItem();
+    @NotNull
+    ItemStack getShowcaseItem();
 }

@@ -23,9 +23,12 @@ public interface ConfigObject {
 
     double getDouble(@NotNull String key);
 
-    @NotNull String getString(@NotNull String key);
+    @NotNull
+    String getString(@NotNull String key);
 
-    @NotNull ConfigArray getArray(@NotNull String key);
+    @NotNull
+    ConfigArray getArray(@NotNull String key);
 
-    @NotNull ConfigObject getObject(@NotNull String key);
+    @NotNull
+    ConfigObject getObject(@NotNull String key);
 }

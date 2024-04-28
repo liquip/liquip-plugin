@@ -33,7 +33,8 @@ public interface Liquip {
      * @return the system's logger
      * @since 1.2.0-beta
      */
-    @NotNull Logger getSystemLogger();
+    @NotNull
+    Logger getSystemLogger();
 
     /**
      * Gets the {@link Registry}, responsible for managing {@link Item} instances.
@@ -41,7 +42,8 @@ public interface Liquip {
      * @return the item registry
      * @since 0.0.1-alpha
      */
-    @NotNull Registry<Item> getItemRegistry();
+    @NotNull
+    Registry<Item> getItemRegistry();
 
     /**
      * Gets the {@link Registry}, responsible for managing {@link Feature} instances.
@@ -49,7 +51,8 @@ public interface Liquip {
      * @return the feature registry
      * @since 0.0.1-alpha
      */
-    @NotNull Registry<Feature> getFeatureRegistry();
+    @NotNull
+    Registry<Feature> getFeatureRegistry();
 
     /**
      * Gets the {@link Registry}, responsible for managing {@link TaggedFeature} instances.
@@ -57,7 +60,8 @@ public interface Liquip {
      * @return the tagged feature registry
      * @since 0.0.1-alpha
      */
-    @NotNull Registry<TaggedFeature<?>> getTaggedFeatureRegistry();
+    @NotNull
+    Registry<TaggedFeature<?>> getTaggedFeatureRegistry();
 
     /**
      * Gets the {@link Registry}, responsible for managing {@link Enchantment} instances.
@@ -65,7 +69,8 @@ public interface Liquip {
      * @return the enchantment registry
      * @since 0.0.1-alpha
      */
-    @NotNull Registry<Enchantment> getEnchantmentRegistry();
+    @NotNull
+    Registry<Enchantment> getEnchantmentRegistry();
 
     /**
      * Return whether the {@link CraftingSystem} - responsible for managing {@link Recipe} instances - is available on this
@@ -120,7 +125,8 @@ public interface Liquip {
      * @return the key of the provided item stack
      * @since 0.0.1-alpha
      */
-    @NotNull Key getKeyFromItemStack(@NotNull ItemStack itemStack);
+    @NotNull
+    Key getKeyFromItemStack(@NotNull ItemStack itemStack);
 
     /**
      * Sets the {@link Key} from the {@link ItemStack}, representing the material of the item.

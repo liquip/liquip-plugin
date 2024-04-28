@@ -14,11 +14,15 @@ public interface CraftingSystem {
 
     void unregisterShapelessRecipe(@NotNull ShapelessRecipe recipe);
 
-    @Nullable ShapedRecipe getShapedRecipe(@NotNull CraftMatrix craftMatrix);
+    @Nullable
+    ShapedRecipe getShapedRecipe(@NotNull CraftMatrix craftMatrix);
 
-    @Nullable ShapelessRecipe getShapelessRecipe(@NotNull CraftMatrix craftMatrix);
+    @Nullable
+    ShapelessRecipe getShapelessRecipe(@NotNull CraftMatrix craftMatrix);
 
-    @NotNull Iterator<ShapedRecipe> shapedIterator();
+    @NotNull
+    Iterator<ShapedRecipe> shapedIterator();
 
-    @NotNull Iterator<ShapelessRecipe> shapelessIterator();
+    @NotNull
+    Iterator<ShapelessRecipe> shapelessIterator();
 }

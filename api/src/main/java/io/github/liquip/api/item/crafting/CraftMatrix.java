@@ -12,7 +12,8 @@ public interface CraftMatrix {
 
     boolean matches(@NotNull CraftMatrix that);
 
-    @NotNull List<KeyedValue<Integer>> getStacks() throws IllegalStateException;
+    @NotNull
+    List<KeyedValue<Integer>> getStacks() throws IllegalStateException;
 
     int hashCode();
 

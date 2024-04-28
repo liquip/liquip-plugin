@@ -36,5 +36,6 @@ public interface Registry<V extends Keyed> extends Iterable<V> {
      * @return the value that is stored under the specified key
      * @since 0.0.1-alpha
      */
-    @Nullable V get(@NotNull Key key);
+    @Nullable
+    V get(@NotNull Key key);
 }
