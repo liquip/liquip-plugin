@@ -25,12 +25,12 @@ public class HashEventSystem implements EventSystem {
     public void registerBus(@NotNull NamespacedKey key, @NotNull EventBus<?, ?> bus) {
         Objects.requireNonNull(key);
         Objects.requireNonNull(bus);
-        buses.put(key, bus);
+        this.buses.put(key, bus);
     }
 
     @Override
     public @Nullable EventBus<?, ?> getBus(@NotNull NamespacedKey key) {
         Objects.requireNonNull(key);
-        return buses.get(key);
+        return this.buses.get(key);
     }
 }

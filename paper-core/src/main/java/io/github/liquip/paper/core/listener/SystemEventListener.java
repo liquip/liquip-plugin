@@ -21,8 +21,7 @@ public class SystemEventListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onCraft(CraftItemEvent event) {
-        for (final ItemStack item : event.getInventory()
-            .getMatrix()) {
+        for (final ItemStack item : event.getInventory().getMatrix()) {
             if (item == null) {
                 continue;
             }

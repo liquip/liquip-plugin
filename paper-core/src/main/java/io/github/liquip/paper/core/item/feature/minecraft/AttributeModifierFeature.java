@@ -27,7 +27,9 @@ public class AttributeModifierFeature implements TaggedFeature<List<Pair<Attribu
     }
 
     @Override
-    public @Nullable List<Pair<Attribute, AttributeModifier>> initialize(@NotNull Item item, @NotNull ConfigElement element) {
+    public @Nullable List<Pair<Attribute, AttributeModifier>> initialize(
+        @NotNull Item item, @NotNull ConfigElement element
+    ) {
         if (element.isObject()) {
             final ConfigObject attributeModifier = element.asObject();
             final Pair<Attribute, AttributeModifier> result = this.parseAttribute(attributeModifier);
@@ -61,8 +63,7 @@ public class AttributeModifierFeature implements TaggedFeature<List<Pair<Attribu
         }
         final Attribute attribute;
         try {
-            attribute = Attribute.valueOf(attributeModifier.getString("attribute")
-                .toUpperCase());
+            attribute = Attribute.valueOf(attributeModifier.getString("attribute").toUpperCase());
         } catch (IllegalArgumentException ignored) {
             return null;
         }
@@ -77,8 +78,7 @@ public class AttributeModifierFeature implements TaggedFeature<List<Pair<Attribu
         if (!attributeModifier.hasElement("operation") || !attributeModifier.isString("operation")) {
             return null;
         }
-        final AttributeModifier.Operation operation = switch (attributeModifier.getString("operation")
-            .toLowerCase()) {
+        final AttributeModifier.Operation operation = switch (attributeModifier.getString("operation").toLowerCase()) {
             case "+", "add" -> AttributeModifier.Operation.ADD_NUMBER;
             case "*", "multiply" -> AttributeModifier.Operation.MULTIPLY_SCALAR_1;
             default -> null;
@@ -92,8 +92,7 @@ public class AttributeModifierFeature implements TaggedFeature<List<Pair<Attribu
                 return null;
             }
             try {
-                slot = EquipmentSlot.valueOf(attributeModifier.getString("slot")
-                    .toUpperCase());
+                slot = EquipmentSlot.valueOf(attributeModifier.getString("slot").toUpperCase());
             } catch (IllegalArgumentException ignored) {
                 return null;
             }
@@ -105,8 +104,9 @@ public class AttributeModifierFeature implements TaggedFeature<List<Pair<Attribu
     }
 
     @Override
-    public void apply(@NotNull Item item, @NotNull ItemStack itemStack,
-        @NotNull List<Pair<Attribute, AttributeModifier>> object) {
+    public void apply(
+        @NotNull Item item, @NotNull ItemStack itemStack, @NotNull List<Pair<Attribute, AttributeModifier>> object
+    ) {
         itemStack.editMeta(meta -> {
             for (final Pair<Attribute, AttributeModifier> pair : object) {
                 meta.addAttributeModifier(pair.key(), pair.value());

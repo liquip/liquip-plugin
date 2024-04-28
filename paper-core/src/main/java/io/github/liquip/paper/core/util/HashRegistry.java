@@ -28,8 +28,7 @@ public class HashRegistry<V extends Keyed> implements Registry<V> {
 
     @Override
     public @NotNull Iterator<V> iterator() {
-        return this.map.values()
-            .iterator();
+        return this.map.values().iterator();
     }
 
     @Override

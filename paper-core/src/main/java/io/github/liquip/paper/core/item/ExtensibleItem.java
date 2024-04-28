@@ -19,25 +19,31 @@ import java.util.Map;
  * </p>
  */
 public class ExtensibleItem extends ItemBase {
-    public ExtensibleItem(@NotNull Liquip api, @NotNull NamespacedKey key, @NotNull Material material,
-        @NotNull Component displayName) {
+    public ExtensibleItem(
+        @NotNull Liquip api, @NotNull NamespacedKey key, @NotNull Material material, @NotNull Component displayName
+    ) {
         super(api, key, material, displayName);
     }
 
-    public ExtensibleItem(@NotNull Liquip api, @NotNull NamespacedKey key, @NotNull Material material,
-        @NotNull Component displayName, @NotNull List<Component> lore) {
+    public ExtensibleItem(
+        @NotNull Liquip api,
+        @NotNull NamespacedKey key,
+        @NotNull Material material,
+        @NotNull Component displayName,
+        @NotNull List<Component> lore
+    ) {
         super(api, key, material, displayName, lore);
     }
 
     public @NotNull List<Component> getLore() {
-        return lore;
+        return this.lore;
     }
 
     public @NotNull List<Feature> getFeatures() {
-        return features;
+        return this.features;
     }
 
     public @NotNull Map<TaggedFeature<?>, Object> getTaggedFeatures() {
-        return taggedFeatures;
+        return this.taggedFeatures;
     }
 }

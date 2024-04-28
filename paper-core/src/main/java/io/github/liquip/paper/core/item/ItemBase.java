@@ -31,12 +31,19 @@ public class ItemBase implements Item {
     protected final List<Feature> features;
     protected final Map<TaggedFeature<?>, Object> taggedFeatures;
 
-    public ItemBase(@NotNull Liquip api, @NotNull NamespacedKey key, @NotNull Material material, @NotNull Component displayName) {
+    public ItemBase(
+        @NotNull Liquip api, @NotNull NamespacedKey key, @NotNull Material material, @NotNull Component displayName
+    ) {
         this(api, key, material, displayName, List.of());
     }
 
-    public ItemBase(@NotNull Liquip api, @NotNull NamespacedKey key, @NotNull Material material, @NotNull Component displayName,
-        @NotNull List<Component> lore) {
+    public ItemBase(
+        @NotNull Liquip api,
+        @NotNull NamespacedKey key,
+        @NotNull Material material,
+        @NotNull Component displayName,
+        @NotNull List<Component> lore
+    ) {
         Objects.requireNonNull(api);
         Objects.requireNonNull(key);
         Objects.requireNonNull(material);
@@ -54,22 +61,22 @@ public class ItemBase implements Item {
 
     @Override
     public @NotNull ItemStack newItemStack() {
-        final ItemStack itemStack = new ItemStack(material);
+        final ItemStack itemStack = new ItemStack(this.material);
         itemStack.editMeta(meta -> {
-            meta.displayName(displayName);
-            meta.lore(lore);
+            meta.displayName(this.displayName);
+            meta.lore(this.lore);
         });
-        for (final Feature feature : features) {
+        for (final Feature feature : this.features) {
             feature.apply(this, itemStack);
         }
-        taggedFeatures.forEach((feature, obj) -> applyToTaggedFeature(feature, itemStack, obj));
-        api.setKeyForItemStack(itemStack, key);
+        this.taggedFeatures.forEach((feature, obj) -> applyToTaggedFeature(feature, itemStack, obj));
+        this.api.setKeyForItemStack(itemStack, this.key);
         return itemStack;
     }
 
     @Override
     public @NotNull NamespacedKey key() {
-        return key;
+        return this.key;
     }
 
     @SuppressWarnings("unchecked")

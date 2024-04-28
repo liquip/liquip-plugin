@@ -16,20 +16,19 @@ public abstract class ArrayListEventBus<T, F> implements EventBus<T, F> {
     }
 
     public ArrayListEventBus(int initialCapacity) {
-        listeners = new ArrayList<>(initialCapacity);
+        this.listeners = new ArrayList<>(initialCapacity);
     }
 
     @Override
     public void register(@NotNull EventListener<T> listener, @NotNull F filter) {
-        listeners.add(Pair.of(listener, filter));
+        this.listeners.add(Pair.of(listener, filter));
     }
 
     @Override
     public void unregister(@NotNull EventListener<T> listener) {
-        for (int i = 0; i < listeners.size(); i++) {
-            if (listeners.get(i)
-                .first() == listener) {
-                listeners.remove(i);
+        for (int i = 0; i < this.listeners.size(); i++) {
+            if (this.listeners.get(i).first() == listener) {
+                this.listeners.remove(i);
                 return;
             }
         }
@@ -37,7 +36,7 @@ public abstract class ArrayListEventBus<T, F> implements EventBus<T, F> {
 
     @Override
     public void invoke(@NotNull T instance) {
-        for (final Pair<EventListener<T>, F> listener : listeners) {
+        for (final Pair<EventListener<T>, F> listener : this.listeners) {
             final EventListener<T> first = listener.first();
             final F second = listener.second();
             if (shouldInvoke(instance, second)) {

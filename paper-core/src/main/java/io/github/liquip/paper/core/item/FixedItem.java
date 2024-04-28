@@ -23,27 +23,39 @@ import java.util.Objects;
  * </p>
  */
 public class FixedItem extends ItemBase {
-    public FixedItem(@NotNull Liquip api, @NotNull NamespacedKey key, @NotNull Material material, @NotNull Component displayName,
-        @NotNull List<Component> lore, @NotNull List<Feature> features,
-        @NotNull Map<TaggedFeature<?>, ConfigElement> taggedFeatures) {
+    public FixedItem(
+        @NotNull Liquip api,
+        @NotNull NamespacedKey key,
+        @NotNull Material material,
+        @NotNull Component displayName,
+        @NotNull List<Component> lore,
+        @NotNull List<Feature> features,
+        @NotNull Map<TaggedFeature<?>, ConfigElement> taggedFeatures
+    ) {
         this(api, key, material, displayName, lore, features, taggedFeatures, Map.of());
     }
 
-    public FixedItem(@NotNull Liquip api, @NotNull NamespacedKey key, @NotNull Material material, @NotNull Component displayName,
-        @NotNull List<Component> lore, @NotNull List<Feature> features,
-        @NotNull Map<TaggedFeature<?>, ConfigElement> taggedFeatures, @NotNull Map<TaggedFeature<?>, ?> initializedTaggedFeatures) {
+    public FixedItem(
+        @NotNull Liquip api,
+        @NotNull NamespacedKey key,
+        @NotNull Material material,
+        @NotNull Component displayName,
+        @NotNull List<Component> lore,
+        @NotNull List<Feature> features,
+        @NotNull Map<TaggedFeature<?>, ConfigElement> taggedFeatures,
+        @NotNull Map<TaggedFeature<?>, ?> initializedTaggedFeatures
+    ) {
         super(api, key, material, displayName, lore);
         for (final Feature feature : features) {
             this.features.add(feature);
             feature.initialize(this);
         }
         for (final Map.Entry<TaggedFeature<?>, ConfigElement> entry : taggedFeatures.entrySet()) {
-            final Object res = entry.getKey()
-                .initialize(this, entry.getValue());
+            final Object res = entry.getKey().initialize(this, entry.getValue());
             if (res == null) {
-                this.api.getSystemLogger()
-                    .warn("Tagged feature '{}' could not be applied to item '{}'", entry.getKey()
-                        .getKey(), this.key);
+                this.api
+                    .getSystemLogger()
+                    .warn("Tagged feature '{}' could not be applied to item '{}'", entry.getKey().getKey(), this.key);
                 continue;
             }
             this.taggedFeatures.put(entry.getKey(), res);
@@ -62,10 +74,10 @@ public class FixedItem extends ItemBase {
         private Component displayName;
 
         public Builder() {
-            lore = new ArrayList<>(0);
-            features = new ArrayList<>(0);
-            taggedFeatures = new HashMap<>(0);
-            initializedTaggedFeatures = new HashMap<>(0);
+            this.lore = new ArrayList<>(0);
+            this.features = new ArrayList<>(0);
+            this.taggedFeatures = new HashMap<>(0);
+            this.initializedTaggedFeatures = new HashMap<>(0);
         }
 
         public Builder(@NotNull Liquip api) {
@@ -99,7 +111,7 @@ public class FixedItem extends ItemBase {
 
         public Builder lore(@NotNull Component line) {
             Objects.requireNonNull(line);
-            lore.add(line);
+            this.lore.add(line);
             return this;
         }
 
@@ -108,13 +120,13 @@ public class FixedItem extends ItemBase {
             for (final Component line : lines) {
                 Objects.requireNonNull(line);
             }
-            lore.addAll(lines);
+            this.lore.addAll(lines);
             return this;
         }
 
         public Builder feature(@NotNull Feature feature) {
             Objects.requireNonNull(feature);
-            features.add(feature);
+            this.features.add(feature);
             return this;
         }
 
@@ -130,14 +142,14 @@ public class FixedItem extends ItemBase {
         public <T> Builder taggedFeature(@NotNull TaggedFeature<T> taggedFeature, @NotNull ConfigElement config) {
             Objects.requireNonNull(taggedFeature);
             Objects.requireNonNull(config);
-            taggedFeatures.put(taggedFeature, config);
+            this.taggedFeatures.put(taggedFeature, config);
             return this;
         }
 
         public <T> Builder taggedFeature(@NotNull TaggedFeature<T> taggedFeature, @NotNull T config) {
             Objects.requireNonNull(taggedFeature);
             Objects.requireNonNull(config);
-            initializedTaggedFeatures.put(taggedFeature, config);
+            this.initializedTaggedFeatures.put(taggedFeature, config);
             return this;
         }
 
@@ -156,16 +168,16 @@ public class FixedItem extends ItemBase {
         }
 
         public FixedItem build() {
-            Objects.requireNonNull(api);
-            Objects.requireNonNull(key);
-            Objects.requireNonNull(material);
-            Objects.requireNonNull(displayName);
-            Objects.requireNonNull(lore);
-            Objects.requireNonNull(features);
-            Objects.requireNonNull(taggedFeatures);
-            Objects.requireNonNull(initializedTaggedFeatures);
-            return new FixedItem(api, key, material, displayName, lore, features, taggedFeatures,
-                initializedTaggedFeatures);
+            Objects.requireNonNull(this.api);
+            Objects.requireNonNull(this.key);
+            Objects.requireNonNull(this.material);
+            Objects.requireNonNull(this.displayName);
+            Objects.requireNonNull(this.lore);
+            Objects.requireNonNull(this.features);
+            Objects.requireNonNull(this.taggedFeatures);
+            Objects.requireNonNull(this.initializedTaggedFeatures);
+            return new FixedItem(this.api, this.key, this.material, this.displayName, this.lore, this.features,
+                this.taggedFeatures, this.initializedTaggedFeatures);
         }
     }
 }

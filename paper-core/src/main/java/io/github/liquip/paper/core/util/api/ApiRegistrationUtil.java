@@ -27,7 +27,7 @@ public class ApiRegistrationUtil {
         try {
             REGISTER.invoke(null, api);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
@@ -35,7 +35,7 @@ public class ApiRegistrationUtil {
         try {
             UNREGISTER.invoke(null);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 }
