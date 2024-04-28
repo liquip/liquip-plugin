@@ -1,8 +1,6 @@
 # The Liquip Plugin
 
 [![Gradle Build](https://github.com/liquip/liquip-plugin/actions/workflows/gradle-build.yml/badge.svg)](https://github.com/liquip/liquip-plugin/actions/workflows/gradle-build.yml)
-[![Nightly](https://github.com/liquip/liquip-plugin/actions/workflows/nightly.yml/badge.svg)](https://github.com/liquip/liquip-plugin/actions/workflows/nightly.yml)
-[![Release](https://github.com/liquip/liquip-plugin/actions/workflows/release.yml/badge.svg)](https://github.com/liquip/liquip-plugin/actions/workflows/release.yml)
 
 Liquip is a paper-only plugin. It adds additional gameplay-features to Minecraft like the ability to
 add "custom" items.
