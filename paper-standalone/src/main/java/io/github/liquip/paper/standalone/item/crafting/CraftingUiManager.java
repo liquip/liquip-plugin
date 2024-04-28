@@ -55,28 +55,23 @@ public class CraftingUiManager implements Service {
     public void loadCatalogue() {
         final int itemsPerPage = 7 * 4;
         this.catalogue.clear();
-        this.catalogue.addAll(StreamSupport.stream(Spliterators.spliteratorUnknownSize(this.api.getCraftingSystem()
-                .shapedIterator(), 0), false)
+        this.catalogue.addAll(StreamSupport
+            .stream(Spliterators.spliteratorUnknownSize(this.api.getCraftingSystem().shapedIterator(), 0), false)
             .map(it -> CraftingCatalogueEntry.load(this.api, it))
             .filter(Objects::nonNull)
-            .filter(it -> it.getShowcaseItem()
-                .getItemMeta() != null && it.getShowcaseItem()
+            .filter(it -> it.getShowcaseItem().getItemMeta() != null && it
+                .getShowcaseItem()
                 .getItemMeta()
                 .displayName() != null)
             .sorted(Comparator.comparing(it -> {
-                final Component displayName = it.getShowcaseItem()
-                    .getItemMeta()
-                    .displayName();
+                final Component displayName = it.getShowcaseItem().getItemMeta().displayName();
                 if (displayName == null) {
                     throw new NullPointerException();
                 }
-                return PlainTextComponentSerializer.plainText()
-                    .serialize(displayName);
+                return PlainTextComponentSerializer.plainText().serialize(displayName);
             }))
             .toList());
-        this.pageCount = this.catalogue.size() % itemsPerPage == 0
-            ? this.catalogue.size() / itemsPerPage
-            : this.catalogue.size() / itemsPerPage + 1;
+        this.pageCount = this.catalogue.size() % itemsPerPage == 0 ? this.catalogue.size() / itemsPerPage : this.catalogue.size() / itemsPerPage + 1;
     }
 
     public void openCraftingTable(@NotNull Player player) {
@@ -85,13 +80,14 @@ public class CraftingUiManager implements Service {
     }
 
     private Ui createCraftingTableUi() {
-        return new UiBuilder.PaperUiBuilder().title(Component.text("Crafting Table"))
+        return new UiBuilder.PaperUiBuilder()
+            .title(Component.text("Crafting Table"))
             .rows(5)
             .onClose(0, this::craftingTableClose)
             .frame(0, Slot.RowOneSlotOne, Slot.RowFiveSlotNine, this.backgroundFillItem())
             .fill(0, Slot.RowTwoSlotFive, Slot.RowFiveSlotFive, this.backgroundFillItem())
-            .addPanel(0,
-                new StoragePanel(Slot.RowTwoSlotTwo.chestSlot, Slot.RowFourSlotFour.chestSlot, 9, this::craftingTableUpdate))
+            .addPanel(0, new StoragePanel(Slot.RowTwoSlotTwo.chestSlot, Slot.RowFourSlotFour.chestSlot, 9,
+                this::craftingTableUpdate))
             .frame(0, Slot.RowTwoSlotSix, Slot.RowFourSlotEight, this.craftingResultFrameItem())
             .addPanel(0, new TakeableSlotEventPanel(Slot.RowThreeSlotSeven.chestSlot, this::craftingTableTake))
             .put(1, Slot.RowThreeSlotNine, this.recipeBookItem())
@@ -100,7 +96,8 @@ public class CraftingUiManager implements Service {
     }
 
     private Ui createRecipeBookUi() {
-        return new UiBuilder.PaperUiBuilder().title(Component.text("Recipe Book"))
+        return new UiBuilder.PaperUiBuilder()
+            .title(Component.text("Recipe Book"))
             .rows(6)
             .frame(0, Slot.RowOneSlotOne, Slot.RowSixSlotNine, this.backgroundFillItem())
             .put(1, Slot.RowThreeSlotNine, this.craftingTableItem())
@@ -118,7 +115,8 @@ public class CraftingUiManager implements Service {
     }
 
     private Ui createRecipeShowcaseUi() {
-        return new UiBuilder.PaperUiBuilder().title(Component.text("Recipe Showcase"))
+        return new UiBuilder.PaperUiBuilder()
+            .title(Component.text("Recipe Showcase"))
             .rows(5)
             .frame(0, Slot.RowOneSlotOne, Slot.RowFiveSlotNine, this.backgroundFillItem())
             .fill(0, Slot.RowTwoSlotFive, Slot.RowFiveSlotFive, this.backgroundFillItem())
@@ -152,7 +150,8 @@ public class CraftingUiManager implements Service {
 
     private ItemStack recipeBookItem() {
         final ItemStack item = new ItemStack(Material.KNOWLEDGE_BOOK);
-        item.editMeta(it -> it.displayName(Component.empty()
+        item.editMeta(it -> it.displayName(Component
+            .empty()
             .decoration(TextDecoration.ITALIC, false)
             .color(TextColor.color(0xFFC0))
             .append(Component.text("Recipe Book"))));
@@ -161,7 +160,8 @@ public class CraftingUiManager implements Service {
 
     private ItemStack craftingTableItem() {
         final ItemStack item = new ItemStack(Material.CRAFTING_TABLE);
-        item.editMeta(it -> it.displayName(Component.empty()
+        item.editMeta(it -> it.displayName(Component
+            .empty()
             .decoration(TextDecoration.ITALIC, false)
             .color(TextColor.color(0xFFC0))
             .append(Component.text("Crafting Table"))));
@@ -170,7 +170,8 @@ public class CraftingUiManager implements Service {
 
     private ItemStack previousArrowItem() {
         final ItemStack item = new ItemStack(Material.ARROW);
-        item.editMeta(it -> it.displayName(Component.empty()
+        item.editMeta(it -> it.displayName(Component
+            .empty()
             .decoration(TextDecoration.ITALIC, false)
             .color(TextColor.color(0xFFC0))
             .append(Component.text("Previous Page"))));
@@ -179,7 +180,8 @@ public class CraftingUiManager implements Service {
 
     private ItemStack nextArrowItem() {
         final ItemStack item = new ItemStack(Material.ARROW);
-        item.editMeta(it -> it.displayName(Component.empty()
+        item.editMeta(it -> it.displayName(Component
+            .empty()
             .decoration(TextDecoration.ITALIC, false)
             .color(TextColor.color(0xFFC0))
             .append(Component.text("Next Page"))));
@@ -188,7 +190,8 @@ public class CraftingUiManager implements Service {
 
     private ItemStack currentPageItem() {
         final ItemStack item = new ItemStack(Material.PAPER);
-        item.editMeta(it -> it.displayName(Component.empty()
+        item.editMeta(it -> it.displayName(Component
+            .empty()
             .decoration(TextDecoration.ITALIC, false)
             .color(TextColor.color(0xFFC0))
             .append(Component.text("Page 0/0"))));
@@ -197,7 +200,8 @@ public class CraftingUiManager implements Service {
 
     private ItemStack backArrowItem() {
         final ItemStack item = new ItemStack(Material.ARROW);
-        item.editMeta(it -> it.displayName(Component.empty()
+        item.editMeta(it -> it.displayName(Component
+            .empty()
             .decoration(TextDecoration.ITALIC, false)
             .color(TextColor.color(0xFFC0))
             .append(Component.text("Back"))));
@@ -209,9 +213,8 @@ public class CraftingUiManager implements Service {
         this.recipeBookUi.open(player);
     }
 
-    private void craftingTableClose(@NotNull Player player,
-        @NotNull InventoryView view,
-        InventoryCloseEvent.@NotNull Reason reason
+    private void craftingTableClose(
+        @NotNull Player player, @NotNull InventoryView view, InventoryCloseEvent.@NotNull Reason reason
     ) {
         final Inventory topInventory = view.getTopInventory();
         final Inventory bottomInventory = view.getBottomInventory();
@@ -226,8 +229,7 @@ public class CraftingUiManager implements Service {
                     bottomInventory.addItem(item);
                     continue;
                 }
-                player.getWorld()
-                    .dropItem(player.getEyeLocation(), item);
+                player.getWorld().dropItem(player.getEyeLocation(), item);
             }
         }
     }
@@ -252,7 +254,8 @@ public class CraftingUiManager implements Service {
         this.updateRecipeBook(player, inventory);
     }
 
-    private void recipeBookClose(@NotNull Player player, @NotNull InventoryView view, InventoryCloseEvent.@NotNull Reason reason
+    private void recipeBookClose(
+        @NotNull Player player, @NotNull InventoryView view, InventoryCloseEvent.@NotNull Reason reason
     ) {
         if (reason != InventoryCloseEvent.Reason.OPEN_NEW) {
             this.openRecipeBookPages.removeInt(player.getUniqueId());
@@ -305,7 +308,8 @@ public class CraftingUiManager implements Service {
             item = this.currentPageItem();
             inventory.setItem(Slot.RowSixSlotFive.chestSlot, item);
         }
-        item.editMeta(it -> it.displayName(Component.text("Page " + (page + 1) + "/" + this.pageCount)
+        item.editMeta(it -> it.displayName(Component
+            .text("Page " + (page + 1) + "/" + this.pageCount)
             .decoration(TextDecoration.ITALIC, false)
             .color(TextColor.color(0xFFC0))));
         final int startIndex = page * itemsPerPage;
@@ -313,14 +317,13 @@ public class CraftingUiManager implements Service {
         for (int i = startIndex; i < endIndex; i++) {
             final int column = Slot.getColumn(7, i % itemsPerPage) + 1;
             final int row = Slot.getRow(7, i % itemsPerPage) + 1;
-            inventory.setItem(row * 9 + column, this.catalogue.get(i)
-                .getShowcaseItem());
+            inventory.setItem(row * 9 + column, this.catalogue.get(i).getShowcaseItem());
         }
     }
 
     private void recipeShowcaseOpen(@NotNull Player player, @NotNull Inventory inventory) {
-        final CraftingCatalogueEntry catalogueEntry =
-            this.catalogue.get(this.openRecipeShowcasePages.getInt(player.getUniqueId()));
+        final CraftingCatalogueEntry catalogueEntry = this.catalogue.get(
+            this.openRecipeShowcasePages.getInt(player.getUniqueId()));
         inventory.setItem(Slot.RowThreeSlotSeven.chestSlot, catalogueEntry.getResult());
         final ItemStack[] items = catalogueEntry.getItems();
         inventory.setItem(10, items[0]);
@@ -334,9 +337,8 @@ public class CraftingUiManager implements Service {
         inventory.setItem(30, items[8]);
     }
 
-    private void recipeShowcaseClose(@NotNull Player player,
-        @NotNull InventoryView view,
-        InventoryCloseEvent.@NotNull Reason reason
+    private void recipeShowcaseClose(
+        @NotNull Player player, @NotNull InventoryView view, InventoryCloseEvent.@NotNull Reason reason
     ) {
         this.openRecipeShowcasePages.removeInt(player.getUniqueId());
     }

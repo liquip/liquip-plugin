@@ -42,8 +42,7 @@ public class UnboundCraftMatrix implements CraftMatrix {
     public int hashCode() {
         int result = 1;
         for (KeyedValue<Integer> element : this.stacks) {
-            result = 31 * result + (element == null ? 0 : element.key()
-                .hashCode());
+            result = 31 * result + (element == null ? 0 : element.key().hashCode());
         }
         return result;
     }

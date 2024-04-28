@@ -53,16 +53,13 @@ public class ConfigLoader {
     public ConfigLoader(@NotNull StandaloneLiquip api) {
         Objects.requireNonNull(api);
         this.api = api;
-        this.logger = api.getPlugin()
-            .getSLF4JLogger();
+        this.logger = api.getPlugin().getSLF4JLogger();
         this.config = null;
         this.wasLoadedBefore = false;
     }
 
     public boolean loadConfig() {
-        final Path dataDirectory = this.api.getPlugin()
-            .getDataFolder()
-            .toPath();
+        final Path dataDirectory = this.api.getPlugin().getDataFolder().toPath();
         if (!Files.exists(dataDirectory)) {
             try {
                 Files.createDirectories(dataDirectory);
@@ -91,16 +88,14 @@ public class ConfigLoader {
             }
         }
         try {
-            this.config = this.api.getMapper()
-                .readValue(path.toFile(), ConfigStructure.class);
+            this.config = this.api.getMapper().readValue(path.toFile(), ConfigStructure.class);
         } catch (Exception e) {
             this.config = null;
             this.logger.error("Exception whilst loading config file", e);
             return false;
         }
-        final List<ItemStructure> items = new ArrayList<>(this.config.getItems()
-            .size());
-        for (final String item : this.config.getItems()) {
+        final List<ItemStructure> items = new ArrayList<>(this.config.items().size());
+        for (final String item : this.config.items()) {
             if (item.contains("..")) {
                 this.logger.warn("Path '{}' for item is backwards relative, skipping...", item);
                 continue;
@@ -115,36 +110,38 @@ public class ConfigLoader {
                 continue;
             }
             try {
-                items.add(this.api.getMapper()
-                    .readValue(file.toFile(), ItemStructure.class));
+                items.add(this.api.getMapper().readValue(file.toFile(), ItemStructure.class));
             } catch (Exception e) {
                 this.logger.error("Exception whilst loading item file", e);
             }
         }
         for (final ItemStructure item : items) {
-            final NamespacedKey key = NamespacedKey.fromString(item.getKey());
+            final NamespacedKey key = NamespacedKey.fromString(item.key());
             if (key == null) {
-                this.logger.warn("Could not get key for item '{}', skipping...", item.getKey());
+                this.logger.warn("Could not get key for item '{}', skipping...", item.key());
                 continue;
             }
-            final Key materialKey = NamespacedKey.fromString(item.getMaterial());
+            final Key materialKey = NamespacedKey.fromString(item.material());
             if (materialKey == null) {
                 this.logger.warn("Could not get material key for item '{}', skipping...", key.asString());
                 continue;
             }
-            final Material material = Registry.MATERIAL.get(new NamespacedKey(materialKey.namespace(), materialKey.value()));
+            final Material material = Registry.MATERIAL.get(
+                new NamespacedKey(materialKey.namespace(), materialKey.value()));
             if (material == null) {
                 this.logger.warn("Could not get material for item '{}', skipping...", key.asString());
                 continue;
             }
-            final Component displayName = Component.text()
+            final Component displayName = Component
+                .text()
                 .decoration(TextDecoration.ITALIC, false)
-                .append(StandaloneLiquip.MM(item.getDisplayName()))
+                .append(StandaloneLiquip.MM(item.displayName()))
                 .build();
             final List<Component> lore = new ArrayList<>(0);
-            if (item.getLore() != null) {
-                for (final String loreLine : item.getLore()) {
-                    lore.add(Component.text()
+            if (item.lore() != null) {
+                for (final String loreLine : item.lore()) {
+                    lore.add(Component
+                        .text()
                         .decoration(TextDecoration.ITALIC, false)
                         .append(StandaloneLiquip.MM(loreLine))
                         .build());
@@ -152,12 +149,12 @@ public class ConfigLoader {
             }
             final List<Feature> features = new ArrayList<>(0);
             final Map<TaggedFeature<?>, ConfigElement> taggedFeatures = new HashMap<>(0);
-            if (item.getFeatures() != null) {
-                for (Map.Entry<String, JsonNode> featureEntry : item.getFeatures()
-                    .entrySet()) {
+            if (item.features() != null) {
+                for (Map.Entry<String, JsonNode> featureEntry : item.features().entrySet()) {
                     final JsonNode value = featureEntry.getValue();
                     if (value.isNull()) {
-                        this.resolveFeature(featureEntry.getKey())
+                        this
+                            .resolveFeature(featureEntry.getKey())
                             .ifPresentOrElse(features::add,
                                 () -> this.logger.warn("Could not get feature '{}' for item '{}', skipping...",
                                     featureEntry.getKey(), key.asString()));
@@ -172,24 +169,26 @@ public class ConfigLoader {
                             continue;
                         }
                     }
-                    this.resolveTaggedFeature(featureEntry.getKey())
+                    this
+                        .resolveTaggedFeature(featureEntry.getKey())
                         .ifPresentOrElse(it -> taggedFeatures.put(it, new JsonConfigElement(featureEntry.getValue())),
                             () -> this.logger.warn("Could not get tagged feature '{}' for item '{}', skipping...",
                                 featureEntry.getKey(), key.asString()));
                 }
             }
-            final Item itemInstance = new FixedItem.Builder(api).key(key)
+            final Item itemInstance = new FixedItem.Builder(this.api)
+                .key(key)
                 .material(material)
                 .name(displayName)
                 .lore(lore)
                 .features(features)
                 .taggedFeatures(taggedFeatures)
                 .build();
-            api.addConfigItem(itemInstance);
-            if (item.getRecipes() != null) {
+            this.api.addConfigItem(itemInstance);
+            if (item.recipes() != null) {
                 recipe:
-                for (final RecipeStructure recipe : item.getRecipes()) {
-                    final List<String> recipeShapeList = recipe.getShape();
+                for (final RecipeStructure recipe : item.recipes()) {
+                    final List<String> recipeShapeList = recipe.shape();
                     if (recipeShapeList != null) {
                         if (!this.verifyShape(recipeShapeList)) {
                             this.logger.warn("Could not load recipe with invalid shape for item '{}', skipping...",
@@ -197,42 +196,41 @@ public class ConfigLoader {
                             continue;
                         }
                         final Char2ObjectMap<IngredientStructure> ingredientMap = new Char2ObjectOpenHashMap<>();
-                        for (final IngredientStructure ingredient : recipe.getIngredients()) {
-                            if (ingredient.getC()
-                                .length() != 1 || ingredient.getCount() < 1 || ingredient.getCount() > 64) {
-                                this.logger.warn("Could not load recipe with invalid ingredient for item '{}', skipping...",
+                        for (final IngredientStructure ingredient : recipe.ingredients()) {
+                            if (ingredient.c().length() != 1 || ingredient.count() < 1 || ingredient.count() > 64) {
+                                this.logger.warn(
+                                    "Could not load recipe with invalid ingredient for item '{}', skipping...",
                                     key.asString());
                                 continue recipe;
                             }
-                            ingredientMap.put(ingredient.getC()
-                                .charAt(0), ingredient);
+                            ingredientMap.put(ingredient.c().charAt(0), ingredient);
                         }
                         final List<KeyedValue<Integer>> shape = new ArrayList<>(Collections.nCopies(9, null));
                         for (int i = 0; i < 3; i++) {
                             for (int j = 0; j < 3; j++) {
-                                final char c = recipeShapeList.get(i)
-                                    .charAt(j);
+                                final char c = recipeShapeList.get(i).charAt(j);
                                 if (c == ' ') {
                                     shape.set(i * 3 + j, null);
                                     continue;
                                 }
                                 final IngredientStructure ingredientStructure = ingredientMap.get(c);
                                 if (ingredientStructure == null) {
-                                    this.logger.warn("Could not load recipe with invalid shape for item '{}', skipping...",
+                                    this.logger.warn(
+                                        "Could not load recipe with invalid shape for item '{}', skipping...",
                                         key.asString());
                                     continue recipe;
                                 }
-                                final Key ingredientKey = NamespacedKey.fromString(ingredientStructure.getKey());
+                                final Key ingredientKey = NamespacedKey.fromString(ingredientStructure.key());
                                 if (ingredientKey == null) {
                                     this.logger.warn(
                                         "Could not load recipe with invalid ingredient key for item '{}', skipping...",
                                         key.asString());
                                     continue recipe;
                                 }
-                                shape.set(i * 3 + j, KeyedValue.keyedValue(ingredientKey, ingredientStructure.getCount()));
+                                shape.set(i * 3 + j, KeyedValue.keyedValue(ingredientKey, ingredientStructure.count()));
                             }
                         }
-                        this.api.addConfigRecipe(new StandaloneShapedRecipe(itemInstance, recipe.getCount(), shape));
+                        this.api.addConfigRecipe(new StandaloneShapedRecipe(itemInstance, recipe.count(), shape));
                         continue;
                     }
                     this.logger.warn("Shapeless crafting is not implemented yet");
@@ -244,36 +242,33 @@ public class ConfigLoader {
                 }
             }
         }
-        Key craftingTableKey = NamespacedKey.fromString(this.config.getCraftingTable());
+        Key craftingTableKey = NamespacedKey.fromString(this.config.craftingTable());
         if (craftingTableKey == null) {
             this.config = null;
             this.logger.error("Invalid key for crafting table item");
             return false;
         }
-        if (!this.config.hasCustomCraftingTable()) {
+        if (this.config.craftingTable() == null) {
             final Item defaultCraftingTableItem = this.getDefaultCraftingTable();
-            this.api.getItemRegistry()
-                .register(defaultCraftingTableItem.key(), defaultCraftingTableItem);
+            this.api.getItemRegistry().register(defaultCraftingTableItem.key(), defaultCraftingTableItem);
             craftingTableKey = defaultCraftingTableItem.key();
             if (!this.wasLoadedBefore) {
-                final ShapedRecipe craftingTableRecipe =
-                    new ShapedRecipe((NamespacedKey) defaultCraftingTableItem.key(), defaultCraftingTableItem.newItemStack());
+                final ShapedRecipe craftingTableRecipe = new ShapedRecipe(
+                    (NamespacedKey) defaultCraftingTableItem.key(), defaultCraftingTableItem.newItemStack());
                 craftingTableRecipe.shape("aaa", "bbb", "bbb");
                 craftingTableRecipe.setIngredient('a', Material.IRON_INGOT);
                 craftingTableRecipe.setIngredient('b', new RecipeChoice.MaterialChoice(Tag.PLANKS));
                 Bukkit.addRecipe(craftingTableRecipe);
             }
         }
-        final Item craftingTableItem = this.api.getItemRegistry()
-            .get(craftingTableKey);
+        final Item craftingTableItem = this.api.getItemRegistry().get(craftingTableKey);
         if (craftingTableItem == null) {
             this.config = null;
             this.logger.error("Invalid crafting table item");
             return false;
         }
-        if (!this.config.hasCustomCraftingTable()) {
-            Bukkit.getPluginManager()
-                .registerEvents(new CraftingInteractListener(api), api.getPlugin());
+        if (this.config.craftingTable() == null) {
+            Bukkit.getPluginManager().registerEvents(new CraftingInteractListener(this.api), this.api.getPlugin());
         }
         this.wasLoadedBefore = true;
         return true;
@@ -284,8 +279,7 @@ public class ConfigLoader {
         if (namespacedKey == null) {
             return Optional.empty();
         }
-        return Optional.ofNullable(this.api.getFeatureRegistry()
-            .get(namespacedKey));
+        return Optional.ofNullable(this.api.getFeatureRegistry().get(namespacedKey));
     }
 
     private @NotNull Optional<TaggedFeature<?>> resolveTaggedFeature(@NotNull String key) {
@@ -293,8 +287,7 @@ public class ConfigLoader {
         if (namespacedKey == null) {
             return Optional.empty();
         }
-        return Optional.ofNullable(this.api.getTaggedFeatureRegistry()
-            .get(namespacedKey));
+        return Optional.ofNullable(this.api.getTaggedFeatureRegistry().get(namespacedKey));
     }
 
     private boolean verifyShape(@NotNull List<String> shape) {
@@ -314,22 +307,18 @@ public class ConfigLoader {
     }
 
     private Item getDefaultCraftingTable() {
-        return new FixedItem.Builder(api).key(new NamespacedKey("liquip", "crafting_table"))
+        return new FixedItem.Builder(this.api)
+            .key(new NamespacedKey("liquip", "crafting_table"))
             .material(Material.CRAFTING_TABLE)
-            .name(Component.text("Advanced Crafting Table")
-                .decoration(TextDecoration.ITALIC, false))
+            .name(Component.text("Advanced Crafting Table").decoration(TextDecoration.ITALIC, false))
             .build();
     }
 
     private void craftingTableOnInteract(@NotNull PlayerInteractEvent event, @Nullable ItemStack item) {
-        if (event.getPlayer()
-            .getOpenInventory()
-            .getTopInventory()
-            .getType() != InventoryType.CRAFTING) {
+        if (event.getPlayer().getOpenInventory().getTopInventory().getType() != InventoryType.CRAFTING) {
             return;
         }
         event.setCancelled(true);
-        this.api.getCraftingUiManager()
-            .openCraftingTable(event.getPlayer());
+        this.api.getCraftingUiManager().openCraftingTable(event.getPlayer());
     }
 }

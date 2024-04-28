@@ -23,8 +23,9 @@ public class CraftingTableManager {
     }
 
     private @Nullable ItemStack @NotNull [] collectItemStacks(@NotNull Inventory inventory) {
-        return new ItemStack[]{inventory.getItem(10), inventory.getItem(11), inventory.getItem(12), inventory.getItem(19),
-            inventory.getItem(20), inventory.getItem(21), inventory.getItem(28), inventory.getItem(29), inventory.getItem(30)};
+        return new ItemStack[]{inventory.getItem(10), inventory.getItem(11), inventory.getItem(12), inventory.getItem(
+            19), inventory.getItem(20), inventory.getItem(21), inventory.getItem(28), inventory.getItem(
+            29), inventory.getItem(30)};
     }
 
     private void applyItemStacks(@NotNull Inventory inventory, @NotNull ItemStack @NotNull [] stacks) {
@@ -49,18 +50,17 @@ public class CraftingTableManager {
                     stacks.set(row * 3 + column, null);
                     continue;
                 }
-                stacks.set(row * 3 + column, KeyedValue.keyedValue(this.api.getKeyFromItemStack(item), item.getAmount()));
+                stacks.set(row * 3 + column,
+                    KeyedValue.keyedValue(this.api.getKeyFromItemStack(item), item.getAmount()));
             }
         }
         final UnboundCraftMatrix craftMatrix = new UnboundCraftMatrix(true, stacks);
-        final Recipe shapedRecipe = this.api.getCraftingSystem()
-            .getShapedRecipe(craftMatrix);
+        final Recipe shapedRecipe = this.api.getCraftingSystem().getShapedRecipe(craftMatrix);
         if (this.apply(view, shapedRecipe)) {
             return false;
         }
         craftMatrix.setShaped(false);
-        final Recipe shapelessMatrix = this.api.getCraftingSystem()
-            .getShapelessRecipe(craftMatrix);
+        final Recipe shapelessMatrix = this.api.getCraftingSystem().getShapelessRecipe(craftMatrix);
         if (this.apply(view, shapelessMatrix)) {
             return false;
         }

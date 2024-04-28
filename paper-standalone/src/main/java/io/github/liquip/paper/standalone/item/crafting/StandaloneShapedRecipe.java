@@ -33,9 +33,8 @@ public class StandaloneShapedRecipe implements ShapedRecipe {
         this.showcaseItem.setAmount(1);
         this.showcaseItem.editMeta(it -> {
             final MiniMessage mm = MiniMessage.miniMessage();
-            it.lore(List.of(mm.deserialize("<dark_gray>Shaped")
-                .decoration(TextDecoration.ITALIC, false), mm.deserialize("<dark_gray>Amount: " + count)
-                .decoration(TextDecoration.ITALIC, false)));
+            it.lore(List.of(mm.deserialize("<dark_gray>Shaped").decoration(TextDecoration.ITALIC, false),
+                mm.deserialize("<dark_gray>Amount: " + count).decoration(TextDecoration.ITALIC, false)));
             it.addItemFlags(ItemFlag.values());
         });
     }

@@ -26,15 +26,13 @@ public class JsonConfigObject implements ConfigObject {
     @Override
     public boolean isBoolean(@NotNull String key) {
         Objects.requireNonNull(key);
-        return this.node.get(key)
-            .isBoolean();
+        return this.node.get(key).isBoolean();
     }
 
     @Override
     public boolean isInt(@NotNull String key) {
         Objects.requireNonNull(key);
-        return this.node.get(key)
-            .isInt();
+        return this.node.get(key).isInt();
     }
 
     @Override
@@ -47,50 +45,43 @@ public class JsonConfigObject implements ConfigObject {
     @Override
     public boolean isString(@NotNull String key) {
         Objects.requireNonNull(key);
-        return this.node.get(key)
-            .isTextual();
+        return this.node.get(key).isTextual();
     }
 
     @Override
     public boolean isArray(@NotNull String key) {
         Objects.requireNonNull(key);
-        return this.node.get(key)
-            .isArray();
+        return this.node.get(key).isArray();
     }
 
     @Override
     public boolean isObject(@NotNull String key) {
         Objects.requireNonNull(key);
-        return this.node.get(key)
-            .isObject();
+        return this.node.get(key).isObject();
     }
 
     @Override
     public boolean getBoolean(@NotNull String key) {
         Objects.requireNonNull(key);
-        return this.node.get(key)
-            .booleanValue();
+        return this.node.get(key).booleanValue();
     }
 
     @Override
     public int getInt(@NotNull String key) {
         Objects.requireNonNull(key);
-        return this.node.get(key)
-            .intValue();
+        return this.node.get(key).intValue();
     }
 
     @Override
     public double getDouble(@NotNull String key) {
         Objects.requireNonNull(key);
-        return this.node.get(key)
-            .doubleValue();
+        return this.node.get(key).doubleValue();
     }
 
     @Override
     public @NotNull String getString(@NotNull String key) {
         Objects.requireNonNull(key);
-        return this.node.get(key)
-            .textValue();
+        return this.node.get(key).textValue();
     }
 
     @Override

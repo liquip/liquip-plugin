@@ -80,7 +80,8 @@ public final class StandaloneLiquip implements Liquip {
     public StandaloneLiquip(@NotNull JavaPlugin plugin) {
         Objects.requireNonNull(plugin);
         this.plugin = plugin;
-        this.mapper = new JsonMapper().enable(JsonParser.Feature.ALLOW_COMMENTS)
+        this.mapper = new JsonMapper()
+            .enable(JsonParser.Feature.ALLOW_COMMENTS)
             .enable(JsonParser.Feature.ALLOW_SINGLE_QUOTES)
             .enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES)
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -127,15 +128,12 @@ public final class StandaloneLiquip implements Liquip {
         pluginManager.registerEvents(new SystemEventListener(this), this.plugin);
         this.currentlyLoadingConfig = true;
         if (!this.configLoader.loadConfig()) {
-            this.plugin.getSLF4JLogger()
-                .error("Could not load config, disabling...");
-            Bukkit.getPluginManager()
-                .disablePlugin(this.plugin);
+            this.plugin.getSLF4JLogger().error("Could not load config, disabling...");
+            Bukkit.getPluginManager().disablePlugin(this.plugin);
             return;
         }
         this.currentlyLoadingConfig = false;
-        this.plugin.getSLF4JLogger()
-            .info("Successfully loaded config");
+        this.plugin.getSLF4JLogger().info("Successfully loaded config");
         for (final Service service : this.services) {
             service.onEnable(this.plugin);
         }
@@ -266,8 +264,7 @@ public final class StandaloneLiquip implements Liquip {
         if (itemStack.getItemMeta() == null) {
             return false;
         }
-        final PersistentDataContainer persistentDataContainer = itemStack.getItemMeta()
-            .getPersistentDataContainer();
+        final PersistentDataContainer persistentDataContainer = itemStack.getItemMeta().getPersistentDataContainer();
         if (!persistentDataContainer.has(PDC_KEY, PersistentDataType.STRING)) {
             return false;
         }
@@ -279,24 +276,22 @@ public final class StandaloneLiquip implements Liquip {
     public @NotNull Key getKeyFromItemStack(@NotNull ItemStack itemStack) {
         Objects.requireNonNull(itemStack);
         if (itemStack.getItemMeta() == null) {
-            return itemStack.getType()
-                .getKey();
+            return itemStack.getType().getKey();
         }
-        final PersistentDataContainer persistentDataContainer = itemStack.getItemMeta()
-            .getPersistentDataContainer();
+        final PersistentDataContainer persistentDataContainer = itemStack.getItemMeta().getPersistentDataContainer();
         if (!persistentDataContainer.has(PDC_KEY, PersistentDataType.STRING)) {
-            return itemStack.getType()
-                .getKey();
+            return itemStack.getType().getKey();
         }
-        return Objects.requireNonNull(NamespacedKey.fromString(persistentDataContainer.get(PDC_KEY, PersistentDataType.STRING)));
+        return Objects.requireNonNull(
+            NamespacedKey.fromString(persistentDataContainer.get(PDC_KEY, PersistentDataType.STRING)));
     }
 
     @Override
     public void setKeyForItemStack(@NotNull ItemStack itemStack, @NotNull Key key) {
         Objects.requireNonNull(itemStack);
         Objects.requireNonNull(key);
-        itemStack.editMeta(meta -> meta.getPersistentDataContainer()
-            .set(PDC_KEY, PersistentDataType.STRING, key.asString()));
+        itemStack.editMeta(
+            meta -> meta.getPersistentDataContainer().set(PDC_KEY, PersistentDataType.STRING, key.asString()));
     }
 
     private void registerMinecraftFeatures() {

@@ -21,8 +21,12 @@ public class CraftingCatalogueEntry {
     private final ItemStack[] items;
     private final ItemStack result;
 
-    public CraftingCatalogueEntry(@NotNull Recipe recipe, @NotNull ItemStack showcaseItem, @Nullable ItemStack @NotNull [] items,
-        @NotNull ItemStack result) {
+    public CraftingCatalogueEntry(
+        @NotNull Recipe recipe,
+        @NotNull ItemStack showcaseItem,
+        @Nullable ItemStack @NotNull [] items,
+        @NotNull ItemStack result
+    ) {
         Objects.requireNonNull(recipe);
         Objects.requireNonNull(showcaseItem);
         Objects.requireNonNull(items);
@@ -37,8 +41,7 @@ public class CraftingCatalogueEntry {
     }
 
     public static @Nullable CraftingCatalogueEntry load(@NotNull Liquip api, @NotNull Recipe recipe) {
-        final List<KeyedValue<Integer>> stacks = recipe.getMatrix()
-            .getStacks();
+        final List<KeyedValue<Integer>> stacks = recipe.getMatrix().getStacks();
         final ItemStack[] items = new ItemStack[9];
         for (int i = 0; i < stacks.size(); i++) {
             final KeyedValue<Integer> stack = stacks.get(i);
@@ -51,8 +54,7 @@ public class CraftingCatalogueEntry {
                 items[i] = new ItemStack(material, stack.value());
                 continue;
             }
-            final Item item = api.getItemRegistry()
-                .get(stack.key());
+            final Item item = api.getItemRegistry().get(stack.key());
             if (item == null) {
                 return null;
             }

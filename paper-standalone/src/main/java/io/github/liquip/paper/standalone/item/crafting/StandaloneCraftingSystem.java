@@ -79,13 +79,11 @@ public class StandaloneCraftingSystem implements CraftingSystem {
 
     @Override
     public @NotNull Iterator<ShapedRecipe> shapedIterator() {
-        return this.shapedMap.values()
-            .iterator();
+        return this.shapedMap.values().iterator();
     }
 
     @Override
     public @NotNull Iterator<ShapelessRecipe> shapelessIterator() {
-        return this.shapelessMap.values()
-            .iterator();
+        return this.shapelessMap.values().iterator();
     }
 }
