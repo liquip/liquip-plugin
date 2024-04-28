@@ -197,7 +197,7 @@ public class ConfigLoader {
                         }
                         final Char2ObjectMap<IngredientStructure> ingredientMap = new Char2ObjectOpenHashMap<>();
                         for (final IngredientStructure ingredient : recipe.ingredients()) {
-                            if (ingredient.c().length() != 1 || ingredient.count() < 1 || ingredient.count() > 64) {
+                            if (ingredient.c().length() != 1) {
                                 this.logger.warn(
                                     "Could not load recipe with invalid ingredient for item '{}', skipping...",
                                     key.asString());
@@ -227,10 +227,12 @@ public class ConfigLoader {
                                         key.asString());
                                     continue recipe;
                                 }
-                                shape.set(i * 3 + j, KeyedValue.keyedValue(ingredientKey, ingredientStructure.count()));
+                                shape.set(i * 3 + j, KeyedValue.keyedValue(ingredientKey,
+                                    Math.min(64, Math.max(1, ingredientStructure.count()))));
                             }
                         }
-                        this.api.addConfigRecipe(new StandaloneShapedRecipe(itemInstance, recipe.count(), shape));
+                        this.api.addConfigRecipe(
+                            new StandaloneShapedRecipe(itemInstance, Math.min(64, Math.max(1, recipe.count())), shape));
                         continue;
                     }
                     this.logger.warn("Shapeless crafting is not implemented yet");
@@ -242,16 +244,9 @@ public class ConfigLoader {
                 }
             }
         }
-        Key craftingTableKey = NamespacedKey.fromString(this.config.craftingTable());
-        if (craftingTableKey == null) {
-            this.config = null;
-            this.logger.error("Invalid key for crafting table item");
-            return false;
-        }
         if (this.config.craftingTable() == null) {
             final Item defaultCraftingTableItem = this.getDefaultCraftingTable();
             this.api.getItemRegistry().register(defaultCraftingTableItem.key(), defaultCraftingTableItem);
-            craftingTableKey = defaultCraftingTableItem.key();
             if (!this.wasLoadedBefore) {
                 final ShapedRecipe craftingTableRecipe = new ShapedRecipe(
                     (NamespacedKey) defaultCraftingTableItem.key(), defaultCraftingTableItem.newItemStack());
@@ -260,15 +255,20 @@ public class ConfigLoader {
                 craftingTableRecipe.setIngredient('b', new RecipeChoice.MaterialChoice(Tag.PLANKS));
                 Bukkit.addRecipe(craftingTableRecipe);
             }
-        }
-        final Item craftingTableItem = this.api.getItemRegistry().get(craftingTableKey);
-        if (craftingTableItem == null) {
-            this.config = null;
-            this.logger.error("Invalid crafting table item");
-            return false;
-        }
-        if (this.config.craftingTable() == null) {
             Bukkit.getPluginManager().registerEvents(new CraftingInteractListener(this.api), this.api.getPlugin());
+        } else { // TODO: this item never gets a Vanilla crafting recipe from liquip
+            Key craftingTableKey = NamespacedKey.fromString(this.config.craftingTable());
+            if (craftingTableKey == null) {
+                this.config = null;
+                this.logger.error("Invalid key for crafting table item");
+                return false;
+            }
+            final Item craftingTableItem = this.api.getItemRegistry().get(craftingTableKey);
+            if (craftingTableItem == null) {
+                this.config = null;
+                this.logger.error("Invalid crafting table item");
+                return false;
+            }
         }
         this.wasLoadedBefore = true;
         return true;
