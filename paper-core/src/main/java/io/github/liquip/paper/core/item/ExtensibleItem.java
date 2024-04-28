@@ -1,6 +1,5 @@
 package io.github.liquip.paper.core.item;
 
-import com.google.common.collect.Multimap;
 import io.github.liquip.api.Liquip;
 import io.github.liquip.api.item.Enchantment;
 import io.github.liquip.api.item.Feature;
@@ -10,13 +9,10 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.event.Event;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
 /**
  * Implementation of the {@link Item} interface.
@@ -49,10 +45,5 @@ public class ExtensibleItem extends ItemBase {
 
     public @NotNull Map<TaggedFeature<?>, Object> getTaggedFeatures() {
         return taggedFeatures;
-    }
-
-    @Deprecated(forRemoval = true)
-    public @NotNull Multimap<Class<? extends Event>, BiConsumer<? extends Event, ItemStack>> getEventHandlers() {
-        return eventHandlers;
     }
 }
