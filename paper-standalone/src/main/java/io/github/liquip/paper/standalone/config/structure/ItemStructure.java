@@ -12,7 +12,6 @@ public class ItemStructure {
     private final String material;
     private final String displayName;
     private final List<String> lore;
-    private final List<EnchantmentStructure> enchantments;
     private final List<RecipeStructure> recipes;
     private final Map<String, JsonNode> features;
 
@@ -20,13 +19,11 @@ public class ItemStructure {
     public ItemStructure(@JsonProperty(value = "key", required = true) String key,
         @JsonProperty(value = "material", required = true) String material,
         @JsonProperty(value = "displayName", required = true) String displayName, @JsonProperty("lore") List<String> lore,
-        @JsonProperty("enchantments") List<EnchantmentStructure> enchantments,
         @JsonProperty("recipes") List<RecipeStructure> recipes, @JsonProperty("features") Map<String, JsonNode> features) {
         this.key = key;
         this.material = material;
         this.displayName = displayName;
         this.lore = lore;
-        this.enchantments = enchantments;
         this.recipes = recipes;
         this.features = features;
     }
@@ -45,10 +42,6 @@ public class ItemStructure {
 
     public List<String> getLore() {
         return this.lore;
-    }
-
-    public List<EnchantmentStructure> getEnchantments() {
-        return this.enchantments;
     }
 
     public List<RecipeStructure> getRecipes() {

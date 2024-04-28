@@ -2,12 +2,9 @@ package io.github.liquip.paper.core.item;
 
 import io.github.liquip.api.Liquip;
 import io.github.liquip.api.config.ConfigElement;
-import io.github.liquip.api.item.Enchantment;
 import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -27,20 +24,15 @@ import java.util.Objects;
  */
 public class FixedItem extends ItemBase {
     public FixedItem(@NotNull Liquip api, @NotNull NamespacedKey key, @NotNull Material material, @NotNull Component displayName,
-        @NotNull List<Component> lore, @NotNull Object2IntMap<Enchantment> enchantments, @NotNull List<Feature> features,
+        @NotNull List<Component> lore, @NotNull List<Feature> features,
         @NotNull Map<TaggedFeature<?>, ConfigElement> taggedFeatures) {
-        this(api, key, material, displayName, lore, enchantments, features, taggedFeatures, Map.of());
+        this(api, key, material, displayName, lore, features, taggedFeatures, Map.of());
     }
 
     public FixedItem(@NotNull Liquip api, @NotNull NamespacedKey key, @NotNull Material material, @NotNull Component displayName,
-        @NotNull List<Component> lore, @NotNull Object2IntMap<Enchantment> enchantments, @NotNull List<Feature> features,
+        @NotNull List<Component> lore, @NotNull List<Feature> features,
         @NotNull Map<TaggedFeature<?>, ConfigElement> taggedFeatures, @NotNull Map<TaggedFeature<?>, ?> initializedTaggedFeatures) {
         super(api, key, material, displayName, lore);
-        for (final Object2IntMap.Entry<Enchantment> entry : enchantments.object2IntEntrySet()) {
-            this.enchantments.put(entry.getKey(), entry.getIntValue());
-            entry.getKey()
-                .initialize(this, entry.getIntValue());
-        }
         for (final Feature feature : features) {
             this.features.add(feature);
             feature.initialize(this);
@@ -61,7 +53,6 @@ public class FixedItem extends ItemBase {
 
     public static class Builder {
         private final List<Component> lore;
-        private final Object2IntMap<Enchantment> enchantments;
         private final List<Feature> features;
         private final Map<TaggedFeature<?>, ConfigElement> taggedFeatures;
         private final Map<TaggedFeature<?>, Object> initializedTaggedFeatures;
@@ -72,7 +63,6 @@ public class FixedItem extends ItemBase {
 
         public Builder() {
             lore = new ArrayList<>(0);
-            enchantments = new Object2IntOpenHashMap<>(0);
             features = new ArrayList<>(0);
             taggedFeatures = new HashMap<>(0);
             initializedTaggedFeatures = new HashMap<>(0);
@@ -119,22 +109,6 @@ public class FixedItem extends ItemBase {
                 Objects.requireNonNull(line);
             }
             lore.addAll(lines);
-            return this;
-        }
-
-        public Builder enchant(@NotNull Enchantment enchantment, int level) {
-            Objects.requireNonNull(enchantment);
-            enchantments.put(enchantment, level);
-            return this;
-        }
-
-        public Builder enchant(@NotNull Object2IntMap<Enchantment> enchants) {
-            Objects.requireNonNull(enchants);
-            enchants.forEach((k, v) -> {
-                Objects.requireNonNull(k);
-                Objects.requireNonNull(v);
-            });
-            enchantments.putAll(enchants);
             return this;
         }
 
@@ -187,11 +161,10 @@ public class FixedItem extends ItemBase {
             Objects.requireNonNull(material);
             Objects.requireNonNull(displayName);
             Objects.requireNonNull(lore);
-            Objects.requireNonNull(enchantments);
             Objects.requireNonNull(features);
             Objects.requireNonNull(taggedFeatures);
             Objects.requireNonNull(initializedTaggedFeatures);
-            return new FixedItem(api, key, material, displayName, lore, enchantments, features, taggedFeatures,
+            return new FixedItem(api, key, material, displayName, lore, features, taggedFeatures,
                 initializedTaggedFeatures);
         }
     }

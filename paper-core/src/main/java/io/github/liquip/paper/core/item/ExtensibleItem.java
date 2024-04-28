@@ -1,11 +1,9 @@
 package io.github.liquip.paper.core.item;
 
 import io.github.liquip.api.Liquip;
-import io.github.liquip.api.item.Enchantment;
 import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -33,10 +31,6 @@ public class ExtensibleItem extends ItemBase {
 
     public @NotNull List<Component> getLore() {
         return lore;
-    }
-
-    public @NotNull Object2IntMap<Enchantment> getEnchants() {
-        return enchantments;
     }
 
     public @NotNull List<Feature> getFeatures() {

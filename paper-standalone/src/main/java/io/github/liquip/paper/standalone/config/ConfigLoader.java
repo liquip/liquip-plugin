@@ -2,14 +2,12 @@ package io.github.liquip.paper.standalone.config;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.liquip.api.config.ConfigElement;
-import io.github.liquip.api.item.Enchantment;
 import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
 import io.github.liquip.paper.core.item.FixedItem;
 import io.github.liquip.paper.standalone.StandaloneLiquip;
 import io.github.liquip.paper.standalone.config.structure.ConfigStructure;
-import io.github.liquip.paper.standalone.config.structure.EnchantmentStructure;
 import io.github.liquip.paper.standalone.config.structure.IngredientStructure;
 import io.github.liquip.paper.standalone.config.structure.ItemStructure;
 import io.github.liquip.paper.standalone.config.structure.RecipeStructure;
@@ -17,8 +15,6 @@ import io.github.liquip.paper.standalone.event.CraftingInteractListener;
 import io.github.liquip.paper.standalone.item.crafting.StandaloneShapedRecipe;
 import it.unimi.dsi.fastutil.chars.Char2ObjectMap;
 import it.unimi.dsi.fastutil.chars.Char2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.key.KeyedValue;
 import net.kyori.adventure.text.Component;
@@ -154,15 +150,6 @@ public class ConfigLoader {
                         .build());
                 }
             }
-            final Object2IntMap<Enchantment> enchantments = new Object2IntOpenHashMap<>();
-            if (item.getEnchantments() != null) {
-                for (final EnchantmentStructure enchantment : item.getEnchantments()) {
-                    this.resolveEnchantment(enchantment.getId())
-                        .ifPresentOrElse(it -> enchantments.put(it, enchantment.getLevel()),
-                            () -> this.logger.warn("Could not get enchantment '{}' for item '{}', skipping...",
-                                enchantment.getId(), key.asString()));
-                }
-            }
             final List<Feature> features = new ArrayList<>(0);
             final Map<TaggedFeature<?>, ConfigElement> taggedFeatures = new HashMap<>(0);
             if (item.getFeatures() != null) {
@@ -195,7 +182,6 @@ public class ConfigLoader {
                 .material(material)
                 .name(displayName)
                 .lore(lore)
-                .enchant(enchantments)
                 .features(features)
                 .taggedFeatures(taggedFeatures)
                 .build();
@@ -291,15 +277,6 @@ public class ConfigLoader {
         }
         this.wasLoadedBefore = true;
         return true;
-    }
-
-    private @NotNull Optional<Enchantment> resolveEnchantment(@NotNull String key) {
-        final Key namespacedKey = NamespacedKey.fromString(key);
-        if (namespacedKey == null) {
-            return Optional.empty();
-        }
-        return Optional.ofNullable(this.api.getEnchantmentRegistry()
-            .get(namespacedKey));
     }
 
     private @NotNull Optional<Feature> resolveFeature(@NotNull String key) {

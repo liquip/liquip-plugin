@@ -1,12 +1,9 @@
 package io.github.liquip.paper.core.item;
 
 import io.github.liquip.api.Liquip;
-import io.github.liquip.api.item.Enchantment;
 import io.github.liquip.api.item.Feature;
 import io.github.liquip.api.item.Item;
 import io.github.liquip.api.item.TaggedFeature;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -31,7 +28,6 @@ public class ItemBase implements Item {
     protected final Material material;
     protected final Component displayName;
     protected final List<Component> lore;
-    protected final Object2IntMap<Enchantment> enchantments;
     protected final List<Feature> features;
     protected final Map<TaggedFeature<?>, Object> taggedFeatures;
 
@@ -52,7 +48,6 @@ public class ItemBase implements Item {
         this.displayName = displayName;
         this.lore = new ArrayList<>(lore.size());
         this.lore.addAll(lore);
-        this.enchantments = new Object2IntOpenHashMap<>();
         this.features = new ArrayList<>(0);
         this.taggedFeatures = new HashMap<>(0);
     }
@@ -64,7 +59,6 @@ public class ItemBase implements Item {
             meta.displayName(displayName);
             meta.lore(lore);
         });
-        enchantments.forEach((enchantment, level) -> enchantment.apply(this, itemStack, level));
         for (final Feature feature : features) {
             feature.apply(this, itemStack);
         }
