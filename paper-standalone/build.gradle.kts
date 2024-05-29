@@ -1,13 +1,12 @@
 plugins {
     java
-    id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("xyz.jpenilla.run-paper") version "2.2.4"
+    id("io.github.goooler.shadow") version "8.1.7"
+    id("xyz.jpenilla.run-paper") version "2.3.0"
 }
 
 java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
-    }
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 dependencies {
@@ -35,5 +34,5 @@ tasks.processResources {
 }
 
 tasks.runServer {
-    minecraftVersion("1.20.4")
+    minecraftVersion("1.20.6")
 }

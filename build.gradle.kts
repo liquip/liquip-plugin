@@ -1,6 +1,6 @@
 allprojects {
     group = "io.github.liquip"
-    version = "3.1.0"
+    version = "4.0.0-beta.1"
 
     repositories {
         mavenLocal()
