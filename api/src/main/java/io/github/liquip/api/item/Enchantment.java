@@ -2,12 +2,16 @@ package io.github.liquip.api.item;
 
 import net.kyori.adventure.key.Keyed;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+@ApiStatus.Experimental
 public interface Enchantment extends Keyed {
-    default void initialize(@NotNull Item item, int level) {
+    default int maxLevel() {
+        return 1;
     }
 
-    default void apply(@NotNull Item item, @NotNull ItemStack itemStack, int level) {
+    default boolean canApply(@NotNull ItemStack itemStack) {
+        return true;
     }
 }
